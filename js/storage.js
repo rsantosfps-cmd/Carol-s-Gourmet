@@ -1,17 +1,66 @@
-function salvarDados(produtos){
+let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+
+
+function salvarProduto(){
+
+let produto = {
+
+codigo: document.getElementById("codigo").value,
+
+nome: document.getElementById("produto").value,
+
+preco: document.getElementById("preco").value,
+
+estoque: document.getElementById("estoque").value
+
+};
+
+
+produtos.push(produto);
+
 
 localStorage.setItem(
-"carol_produtos",
+"produtos",
 JSON.stringify(produtos)
 );
 
+
+mostrarProdutos();
+
+
 }
 
 
-function carregarDados(){
+function mostrarProdutos(){
 
-return JSON.parse(
-localStorage.getItem("carol_produtos")
-) || [];
+let lista = document.getElementById("lista");
+
+lista.innerHTML="";
+
+
+produtos.forEach(p=>{
+
+
+lista.innerHTML += `
+
+<tr>
+
+<td>${p.codigo}</td>
+
+<td>${p.nome}</td>
+
+<td>R$ ${p.preco}</td>
+
+<td>${p.estoque}</td>
+
+</tr>
+
+`;
+
+});
+
 
 }
+
+
+mostrarProdutos();
