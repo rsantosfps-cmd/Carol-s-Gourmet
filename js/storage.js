@@ -309,6 +309,10 @@ let validade =
 document.getElementById("dataValidadeEtiqueta").value;
 
 
+let quantidade =
+parseInt(document.getElementById("quantidadeEtiqueta").value);
+
+
 
 let fab = fabricacao.split("-").reverse().join("/");
 
@@ -316,15 +320,52 @@ let val = validade.split("-").reverse().join("/");
 
 
 
+let etiquetas = "";
+
+
+
+for(let i=0;i<quantidade;i++){
+
+
+etiquetas += `
+
+<div class="etiqueta">
+
+
+<div class="titulo">
+CAROL'S GOURMET
+</div>
+
+
+FAB: ${fab}
+
+<br>
+
+VAL: ${val}
+
+
+<svg id="barcode${i}"></svg>
+
+
+</div>
+
+
+`;
+
+}
+
+
+
 let janela = window.open(
 "",
 "",
-"width=400,height=300"
+"width=400,height=600"
 );
 
 
 
 janela.document.write(`
+
 
 <html>
 
@@ -343,19 +384,28 @@ margin:0;
 
 body{
 
+margin:0;
+
+font-family:Arial;
+
+}
+
+
+
+.etiqueta{
+
 width:50mm;
 
 height:30mm;
 
-margin:0;
-
 text-align:center;
-
-font-family:Arial;
 
 font-size:8px;
 
+page-break-after:always;
+
 }
+
 
 
 .titulo{
@@ -365,6 +415,7 @@ font-weight:bold;
 font-size:9px;
 
 }
+
 
 
 svg{
@@ -378,25 +429,14 @@ height:12mm;
 
 </style>
 
+
 </head>
 
 
 <body>
 
 
-<div class="titulo">
-CAROL'S GOURMET
-</div>
-
-
-FAB: ${fab}
-
-<br>
-
-VAL: ${val}
-
-
-<svg id="barcode"></svg>
+${etiquetas}
 
 
 
@@ -407,25 +447,27 @@ VAL: ${val}
 <script>
 
 
-JsBarcode("#barcode","${codigo}",{
+${Array.from({length: quantidade}, (_,i)=>`
 
+JsBarcode("#barcode${i}",
+"${codigo}",
+{
 format:"CODE128",
-
 width:1.5,
-
 height:35,
-
 displayValue:true,
-
 fontSize:10
-
 });
+
+`).join("")}
+
 
 
 window.print();
 
 
 </script>
+
 
 
 </body>
@@ -436,12 +478,12 @@ window.print();
 `);
 
 
+
 janela.document.close();
 
 
 
 }
-
 
 // ===============================
 // LIMPAR CAMPOS
@@ -502,6 +544,15 @@ produtoEtiqueta = produtos[index];
 
 
 document.getElementById("painelEtiqueta").style.display="block";
+
+
+document.getElementById("produtoEtiquetaNome").innerHTML =
+produtoEtiqueta.nome;
+
+
+document.getElementById("produtoEtiquetaCodigo").innerHTML =
+produtoEtiqueta.codigo;
+
 
 
 }
