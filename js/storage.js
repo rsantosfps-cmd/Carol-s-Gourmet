@@ -645,3 +645,26 @@ document.getElementById("dataValidadeEtiqueta").value =
 
 
 }
+function colocarHoje(){
+
+
+let hoje = new Date();
+
+
+let ano = hoje.getFullYear();
+
+let mes = String(hoje.getMonth()+1).padStart(2,"0");
+
+let dia = String(hoje.getDate()).padStart(2,"0");
+
+
+
+document.getElementById("dataFabricacaoEtiqueta").value =
+`${ano}-${mes}-${dia}`;
+
+
+
+calcularValidadeEtiqueta();
+
+
+}
