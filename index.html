@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 
 <meta charset="UTF-8">
@@ -8,6 +9,9 @@
 <title>Carol's Gourmet</title>
 
 <link rel="stylesheet" href="CSS/style.css">
+
+<!-- Biblioteca para gerar código de barras -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 </head>
 
@@ -24,18 +28,48 @@
 <h2>Cadastro de Produto</h2>
 
 
-<input id="codigo" placeholder="Código de barras automático">
+<input 
+id="codigo" 
+placeholder="Código de barras automático"
+readonly>
 
-<input id="produto" placeholder="Nome do produto">
 
-<input id="preco" placeholder="Preço">
+<input 
+id="produto" 
+placeholder="Nome do produto">
 
-<input id="estoque" placeholder="Estoque">
+
+<input 
+id="preco" 
+placeholder="Preço">
+
+
+<input 
+id="estoque" 
+placeholder="Estoque">
+
 
 
 <button onclick="salvarProduto()">
 Salvar / Atualizar Produto
 </button>
+
+
+
+<h2>Etiqueta</h2>
+
+
+<div id="etiqueta">
+
+<svg id="barcode"></svg>
+
+</div>
+
+
+<button onclick="imprimirEtiqueta()">
+Imprimir Etiqueta
+</button>
+
 
 
 
@@ -65,7 +99,6 @@ Salvar / Atualizar Produto
 </thead>
 
 
-
 <tbody id="lista">
 
 </tbody>
@@ -79,93 +112,10 @@ Salvar / Atualizar Produto
 
 
 
-<script src="js/storage.js"></script>
-
-
-</body>
-</html><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Carol's Gourmet</title>
-
-<link rel="stylesheet" href="CSS/style.css">
-
-</head>
-
-
-<body>
-
-
-<h1>Carol's Gourmet</h1>
-
-
-<div class="container">
-
-
-<h2>Cadastro de Produto</h2>
-
-
-<input id="codigo" placeholder="Código de barras automático">
-
-<input id="produto" placeholder="Nome do produto">
-
-<input id="preco" placeholder="Preço">
-
-<input id="estoque" placeholder="Estoque">
-
-
-<button onclick="salvarProduto()">
-Salvar / Atualizar Produto
-</button>
-
-
-
-<h2>Produtos cadastrados</h2>
-
-
-
-<table>
-
-
-<thead>
-
-<tr>
-
-<th>Código</th>
-
-<th>Produto</th>
-
-<th>Preço</th>
-
-<th>Estoque</th>
-
-<th>Ações</th>
-
-</tr>
-
-</thead>
-
-
-
-<tbody id="lista">
-
-</tbody>
-
-
-</table>
-
-
-
-</div>
-
-
 
 <script src="js/storage.js"></script>
 
 
 </body>
+
 </html>
