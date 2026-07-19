@@ -651,7 +651,7 @@ produtos.length;
 
 let totalEstoque = 0;
 
-let estoqueBaixo = 0;
+
 
 
 
@@ -662,11 +662,7 @@ totalEstoque += Number(produto.estoque);
 
 
 
-if(produto.estoque <= 5){
 
-estoqueBaixo++;
-
-}
 
 
 });
