@@ -1,6 +1,6 @@
 /* ======================================
    CAROL'S GOURMET
-   storage.js
+   storage.js NOVO
 ====================================== */
 
 
@@ -8,26 +8,32 @@ let produtos = JSON.parse(
     localStorage.getItem("carols_gourmet")
 ) || [];
 
+
 let produtoSelecionado = null;
 
 
 
 /* ======================================
-   INICIALIZAÇÃO
+   INICIAR SISTEMA
 ====================================== */
 
 
-window.onload = function(){
+window.addEventListener("load",()=>{
+
 
     gerarCodigos();
 
+
     mostrarProdutos();
+
 
     atualizarDashboard();
 
-    configurarEventos();
 
-};
+    eventos();
+
+
+});
 
 
 
@@ -38,71 +44,42 @@ window.onload = function(){
 ====================================== */
 
 
-function configurarEventos(){
+function eventos(){
 
 
 document
 .getElementById("salvar")
-.addEventListener(
-"click",
-salvarProduto
-);
+.onclick = salvarProduto;
 
 
 
 document
 .getElementById("buscar")
-.addEventListener(
-"keyup",
-mostrarProdutos
-);
+.onkeyup = mostrarProdutos;
+
+
+
+document
+.getElementById("salvarEstoque")
+.onclick = atualizarEstoque;
 
 
 
 document
 .getElementById("hoje")
-.addEventListener(
-"click",
-function(){
+.onclick = colocarHoje;
 
-let hoje =
-new Date()
-.toISOString()
-.substring(0,10);
 
 
 document
 .getElementById("dataFabricacao")
-.value = hoje;
+.onchange = calcularValidade;
 
-
-calcularValidade();
-
-});
-
-
-document
-.getElementById("dataFabricacao")
-.addEventListener(
-"change",
-calcularValidade
-);
-
-
-document
-.getElementById("salvarEstoque")
-.addEventListener(
-"click",
-movimentarEstoque
-);
 
 
 document
 .getElementById("imprimirEtiqueta")
-.addEventListener(
-"click",
-imprimirEtiqueta
-);
+.onclick = imprimirEtiqueta;
 
 
 }
@@ -111,17 +88,16 @@ imprimirEtiqueta
 
 
 
-
 /* ======================================
-   CÓDIGOS AUTOMÁTICOS
+   GERAR CÓDIGOS
 ====================================== */
 
 
 function gerarCodigos(){
 
 
-let numero =
-produtos.length + 1;
+let numero = produtos.length + 1;
+
 
 
 document
@@ -133,62 +109,48 @@ String(numero)
 
 
 
-let ean =
-gerarEAN13(numero);
-
-
-
 document
 .getElementById("codigoBarras")
 .value =
-ean;
+gerarEAN(numero);
+
 
 
 }
 
 
 
+function gerarEAN(numero){
 
 
+let codigo =
 
-/* ======================================
-   EAN 13
-====================================== */
-
-
-function gerarEAN13(numero){
-
-
-let base =
 "789999" +
+
 String(numero)
 .padStart(6,"0");
 
 
 
-let soma = 0;
+let soma=0;
 
 
-for(
-let i=0;
-i<12;
-i++
-){
+
+for(let i=0;i<12;i++){
 
 
-let n =
-parseInt(base[i]);
+let valor =
+Number(codigo[i]);
 
 
-if(i % 2 === 0){
 
-soma += n;
+if(i%2==0){
 
-}
+soma+=valor;
 
-else{
+}else{
 
-soma += n*3;
+soma+=valor*3;
 
 }
 
@@ -197,30 +159,20 @@ soma += n*3;
 
 
 
-let resto =
-soma % 10;
-
+let resto=soma%10;
 
 
 let digito =
-resto === 0
-?
-0
-:
+resto===0?
+0:
 10-resto;
 
 
 
-return base + digito;
+return codigo+digito;
 
 
 }
-
-
-
-
-
-
 /* ======================================
    SALVAR PRODUTO
 ====================================== */
@@ -229,11 +181,11 @@ return base + digito;
 function salvarProduto(){
 
 
-
 let nome =
 document
 .getElementById("produto")
-.value;
+.value
+.trim();
 
 
 
@@ -268,12 +220,10 @@ return;
 
 
 
+let novoProduto = {
 
-let produto = {
 
-
-id:
-Date.now(),
+id:Date.now(),
 
 
 codigoInterno:
@@ -296,20 +246,18 @@ preco:preco,
 
 estoque:estoque
 
+
 };
 
 
 
 
-produtos.push(produto);
+
+produtos.push(novoProduto);
 
 
 
-salvar();
-
-
-
-limparFormulario();
+salvarDados();
 
 
 
@@ -321,8 +269,11 @@ atualizarDashboard();
 
 
 
-gerarCodigos();
+limparCadastro();
 
+
+
+gerarCodigos();
 
 
 }
@@ -333,11 +284,12 @@ gerarCodigos();
 
 
 /* ======================================
-   SALVAR LOCAL
+   SALVAR NO NAVEGADOR
 ====================================== */
 
 
-function salvar(){
+function salvarDados(){
+
 
 localStorage.setItem(
 
@@ -346,6 +298,7 @@ localStorage.setItem(
 JSON.stringify(produtos)
 
 );
+
 
 }
 
@@ -363,8 +316,13 @@ function mostrarProdutos(){
 
 
 let lista =
+
 document
 .getElementById("listaProdutos");
+
+
+
+if(!lista)return;
 
 
 
@@ -372,7 +330,8 @@ lista.innerHTML="";
 
 
 
-let busca =
+let pesquisa =
+
 document
 .getElementById("buscar")
 .value
@@ -381,16 +340,17 @@ document
 
 
 
-
 produtos
-.filter(p=>
 
-p.nome
+.filter(produto =>
+
+produto.nome
 .toLowerCase()
-.includes(busca)
+.includes(pesquisa)
 
 )
-.forEach((p,index)=>{
+
+.forEach((produto,index)=>{
 
 
 
@@ -399,43 +359,84 @@ lista.innerHTML += `
 
 <tr>
 
-<td>${p.codigoInterno}</td>
-
-<td>${p.nome}</td>
 
 <td>
-R$ ${p.preco.toFixed(2)}
+
+${produto.codigoInterno}
+
 </td>
 
-<td>${p.estoque}</td>
 
-<td>${p.codigoBarras}</td>
+<td>
+
+${produto.nome}
+
+</td>
+
+
+
+<td>
+
+R$ ${produto.preco.toFixed(2)}
+
+</td>
+
+
+
+<td>
+
+${produto.estoque}
+
+</td>
+
+
+
+<td>
+
+${produto.codigoBarras}
+
+</td>
+
 
 
 <td>
 
 
-<button onclick="editar(${index})">
+
+<button onclick="editarProduto(${index})">
+
 ✏️
+
 </button>
+
 
 
 <button onclick="abrirEstoque(${index})">
+
 📦
+
 </button>
+
 
 
 <button onclick="abrirEtiqueta(${index})">
+
 🏷️
+
 </button>
 
 
-<button onclick="excluir(${index})">
+
+<button onclick="excluirProduto(${index})">
+
 🗑️
+
 </button>
+
 
 
 </td>
+
 
 
 </tr>
@@ -456,35 +457,54 @@ R$ ${p.preco.toFixed(2)}
 
 
 /* ======================================
-   EDITAR
+   EDITAR PRODUTO
 ====================================== */
 
 
-function editar(index){
+function editarProduto(index){
 
 
-let p =
+let produto =
 produtos[index];
+
+
+
+produtoSelecionado=index;
+
+
+
+document
+.getElementById("codigoInterno")
+.value =
+produto.codigoInterno;
+
+
+
+document
+.getElementById("codigoBarras")
+.value =
+produto.codigoBarras;
 
 
 
 document
 .getElementById("produto")
-.value=p.nome;
+.value =
+produto.nome;
+
 
 
 document
 .getElementById("preco")
-.value=p.preco;
+.value =
+produto.preco;
+
 
 
 document
 .getElementById("estoque")
-.value=p.estoque;
-
-
-
-produtoSelecionado=index;
+.value =
+produto.estoque;
 
 
 
@@ -496,38 +516,80 @@ produtoSelecionado=index;
 
 
 /* ======================================
-   EXCLUIR
+   EXCLUIR PRODUTO
 ====================================== */
 
 
-function excluir(index){
+function excluirProduto(index){
 
 
-if(confirm("Excluir produto?")){
+let confirmar = confirm(
+
+"Excluir este produto?"
+
+);
+
+
+
+if(confirmar){
 
 
 produtos.splice(index,1);
 
 
-salvar();
+
+salvarDados();
+
 
 
 mostrarProdutos();
 
 
+
 atualizarDashboard();
 
 
-}
+
+gerarCodigos();
 
 
 }
 
 
+}
 
 
 
 
+
+
+/* ======================================
+   LIMPAR CADASTRO
+====================================== */
+
+
+function limparCadastro(){
+
+
+document
+.getElementById("produto")
+.value="";
+
+
+document
+.getElementById("preco")
+.value="";
+
+
+document
+.getElementById("estoque")
+.value="";
+
+
+produtoSelecionado=null;
+
+
+}
 /* ======================================
    DASHBOARD
 ====================================== */
@@ -536,28 +598,27 @@ atualizarDashboard();
 function atualizarDashboard(){
 
 
-document
-.getElementById("totalProdutos")
-.innerHTML =
+let totalProdutos =
 produtos.length;
 
 
 
-let total=0;
+let totalEstoque = 0;
 
-let baixo=0;
-
-
-
-produtos.forEach(p=>{
+let estoqueBaixo = 0;
 
 
-total += p.estoque;
+
+produtos.forEach(produto=>{
 
 
-if(p.estoque<=5){
+totalEstoque += Number(produto.estoque);
 
-baixo++;
+
+
+if(produto.estoque <= 5){
+
+estoqueBaixo++;
 
 }
 
@@ -566,17 +627,39 @@ baixo++;
 
 
 
-document
-.getElementById("totalEstoque")
-.innerHTML =
-total;
+
+let campoProdutos =
+document.getElementById("totalProdutos");
+
+
+let campoEstoque =
+document.getElementById("totalEstoque");
+
+
+let campoBaixo =
+document.getElementById("estoqueBaixo");
 
 
 
-document
-.getElementById("estoqueBaixo")
-.innerHTML =
-baixo;
+if(campoProdutos)
+
+campoProdutos.innerHTML =
+totalProdutos;
+
+
+
+if(campoEstoque)
+
+campoEstoque.innerHTML =
+totalEstoque;
+
+
+
+if(campoBaixo)
+
+campoBaixo.innerHTML =
+estoqueBaixo;
+
 
 
 }
@@ -587,7 +670,7 @@ baixo;
 
 
 /* ======================================
-   ESTOQUE
+   ABRIR ESTOQUE
 ====================================== */
 
 
@@ -598,7 +681,7 @@ produtoSelecionado=index;
 
 
 
-let p =
+let produto =
 produtos[index];
 
 
@@ -611,13 +694,29 @@ document
 
 document
 .getElementById("produtoEstoqueNome")
-.innerHTML=p.nome;
+.innerHTML =
+produto.nome;
 
 
 
 document
 .getElementById("estoqueAtual")
-.innerHTML=p.estoque;
+.innerHTML =
+produto.estoque;
+
+
+
+// limpa campos antigos
+
+document
+.getElementById("entrada")
+.value="";
+
+
+document
+.getElementById("saida")
+.value="";
+
 
 
 }
@@ -626,85 +725,141 @@ document
 
 
 
-function movimentarEstoque(){
 
 
-    let p = produtos[produtoSelecionado];
+/* ======================================
+   ATUALIZAR ESTOQUE
+====================================== */
 
 
-    if(!p){
-
-        alert("Nenhum produto selecionado");
-
-        return;
-
-    }
+function atualizarEstoque(){
 
 
 
-    let entrada = Number(
-        document.getElementById("entrada").value
-    ) || 0;
+if(produtoSelecionado===null){
+
+alert(
+"Selecione um produto primeiro"
+);
+
+return;
+
+}
 
 
 
-    let saida = Number(
-        document.getElementById("saida").value
-    ) || 0;
+let produto =
+produtos[produtoSelecionado];
 
 
 
-    // Atualiza estoque
+let entrada =
 
-    p.estoque = p.estoque + entrada - saida;
+Number(
 
+document
+.getElementById("entrada")
+.value
 
-
-    // Impede estoque negativo
-
-    if(p.estoque < 0){
-
-        p.estoque = 0;
-
-    }
+) || 0;
 
 
 
-    salvar();
+let saida =
 
+Number(
 
-    mostrarProdutos();
+document
+.getElementById("saida")
+.value
 
-
-    atualizarDashboard();
-
-
-
-    // Atualiza tela do estoque
-
-    document
-    .getElementById("estoqueAtual")
-    .innerHTML = p.estoque;
+) || 0;
 
 
 
-    // Limpa os campos depois da movimentação
-
-    document
-    .getElementById("entrada")
-    .value = "";
 
 
+// faz o cálculo
 
-    document
-    .getElementById("saida")
-    .value = "";
+produto.estoque =
+
+Number(produto.estoque)
+
++ entrada
+
+- saida;
 
 
 
-    alert(
-        "Estoque atualizado com sucesso!"
-    );
+
+
+// impede negativo
+
+if(produto.estoque < 0){
+
+produto.estoque = 0;
+
+}
+
+
+
+
+
+
+// salva
+
+salvarDados();
+
+
+
+// atualiza tela
+
+mostrarProdutos();
+
+atualizarDashboard();
+
+
+
+
+
+// atualiza valor mostrado
+
+document
+.getElementById("estoqueAtual")
+.innerHTML =
+produto.estoque;
+
+
+
+
+
+
+// limpa campos depois da atualização
+
+document
+.getElementById("entrada")
+.value="";
+
+
+document
+.getElementById("saida")
+.value="";
+
+
+
+
+
+alert(
+
+"Estoque atualizado: "
+
++
+
+produto.estoque
+
+);
+
+
 
 
 }
@@ -712,6 +867,83 @@ function movimentarEstoque(){
 
 
 
+
+
+/* ======================================
+   DATA FABRICAÇÃO
+====================================== */
+
+
+function colocarHoje(){
+
+
+let hoje =
+
+new Date()
+.toISOString()
+.substring(0,10);
+
+
+
+document
+.getElementById("dataFabricacao")
+.value =
+hoje;
+
+
+
+calcularValidade();
+
+
+}
+
+
+
+
+
+
+
+function calcularValidade(){
+
+
+let data =
+
+document
+.getElementById("dataFabricacao")
+.value;
+
+
+
+if(!data)return;
+
+
+
+
+let validade =
+
+new Date(data);
+
+
+
+validade.setDate(
+
+validade.getDate()+7
+
+);
+
+
+
+document
+.getElementById("dataValidade")
+.value =
+
+validade
+.toISOString()
+.substring(0,10);
+
+
+
+}
 /* ======================================
    ETIQUETA
 ====================================== */
@@ -720,7 +952,7 @@ function movimentarEstoque(){
 function abrirEtiqueta(index){
 
 
-let p =
+let produto =
 produtos[index];
 
 
@@ -736,66 +968,42 @@ document
 
 document
 .getElementById("produtoEtiquetaNome")
-.innerHTML=p.nome;
+.innerHTML =
+produto.nome;
 
 
 
 document
 .getElementById("codigoEtiqueta")
-.innerHTML=p.codigoBarras;
+.innerHTML =
+produto.codigoBarras;
 
 
+
+// gera código de barras na prévia
 
 JsBarcode(
+
 "#barcodePreview",
-p.codigoBarras,
+
+produto.codigoBarras,
+
 {
+
 format:"EAN13",
+
 width:2,
-height:50
+
+height:50,
+
+displayValue:true
+
 }
-);
 
-
-}
-
-
-
-
-
-
-
-function calcularValidade(){
-
-
-let data =
-document
-.getElementById("dataFabricacao")
-.value;
-
-
-
-if(!data)return;
-
-
-
-let d =
-new Date(data);
-
-
-
-d.setDate(
-d.getDate()+7
 );
 
 
 
-document
-.getElementById("dataValidade")
-.value =
-d.toISOString()
-.substring(0,10);
-
 
 
 }
@@ -803,6 +1011,10 @@ d.toISOString()
 
 
 
+
+/* ======================================
+   IMPRIMIR ETIQUETA
+====================================== */
 
 
 function imprimirEtiqueta(){
@@ -819,22 +1031,82 @@ window.print();
 
 
 
-function limparFormulario(){
+/* ======================================
+   ATUALIZAR ETIQUETA
+====================================== */
+
+
+function atualizarEtiqueta(){
+
+
+
+let produto =
+
+produtos[produtoSelecionado];
+
+
+
+if(!produto)return;
+
 
 
 document
-.getElementById("produto")
-.value="";
+.getElementById("produtoEtiquetaNome")
+.innerHTML =
+produto.nome;
 
-
-document
-.getElementById("preco")
-.value="";
 
 
 document
-.getElementById("estoque")
-.value="";
+.getElementById("codigoEtiqueta")
+.innerHTML =
+produto.codigoBarras;
+
+
+
+JsBarcode(
+
+"#barcodePreview",
+
+produto.codigoBarras,
+
+{
+
+format:"EAN13",
+
+width:2,
+
+height:50,
+
+displayValue:true
+
+}
+
+);
+
+
+}
+
+
+
+
+
+
+
+/* ======================================
+   LIMPAR DADOS ANTIGOS
+====================================== */
+
+
+function limparDadosTeste(){
+
+
+localStorage.removeItem(
+"carols_gourmet"
+);
+
+
+location.reload();
 
 
 }
