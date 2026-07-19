@@ -1066,7 +1066,46 @@ displayValue:true
 function imprimirEtiqueta(){
 
 
-let etiqueta = document.getElementById("previewEtiqueta").innerHTML;
+let quantidade = Number(
+
+document
+.getElementById("quantidadeEtiqueta")
+.value
+
+) || 1;
+
+
+
+let etiqueta =
+document
+.getElementById("previewEtiqueta")
+.innerHTML;
+
+
+
+let etiquetas = "";
+
+
+
+for(let i=0;i<quantidade;i++){
+
+
+etiquetas += etiqueta;
+
+
+}
+
+
+
+
+totalEtiquetasGeradas += quantidade;
+
+
+localStorage.setItem(
+"totalEtiquetas",
+totalEtiquetasGeradas
+);
+
 
 
 
@@ -1080,14 +1119,14 @@ let janela = window.open(
 
 janela.document.write(`
 
+
 <html>
 
 <head>
 
-<title>Etiqueta</title>
-
 
 <style>
+
 
 @page{
 
@@ -1104,18 +1143,6 @@ margin:0;
 
 padding:0;
 
-width:50mm;
-
-height:30mm;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-family:Arial;
-
 }
 
 
@@ -1125,11 +1152,12 @@ width:50mm;
 
 height:30mm;
 
+page-break-after:always;
+
 text-align:center;
 
-font-size:9px;
-
 }
+
 
 
 svg{
@@ -1150,13 +1178,14 @@ height:14mm;
 <body>
 
 
-${etiqueta}
+${etiquetas}
 
 
 </body>
 
 
 </html>
+
 
 `);
 
@@ -1165,13 +1194,7 @@ ${etiqueta}
 janela.document.close();
 
 
-janela.focus();
-
-
 janela.print();
-
-
-janela.close();
 
 
 }
