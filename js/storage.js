@@ -4,7 +4,7 @@ let editando = null;
 
 
 // ===============================
-// GERAR CÓDIGO INTERNO AUTOMÁTICO
+// GERAR CÓDIGO AUTOMÁTICO
 // ===============================
 
 function gerarCodigo(){
@@ -13,9 +13,7 @@ function gerarCodigo(){
 
     produtos.forEach(p => {
 
-        let numero = parseInt(
-            p.codigo.replace("20","")
-        );
+        let numero = parseInt(p.codigo);
 
         if(numero > maior){
             maior = numero;
@@ -27,23 +25,29 @@ function gerarCodigo(){
     maior++;
 
 
-    return "20" + maior.toString().padStart(10,"0");
+    return maior.toString().padStart(12,"0");
 
 }
 
 
 
 // ===============================
-// SALVAR / ATUALIZAR PRODUTO
+// SALVAR PRODUTO
 // ===============================
 
 function salvarProduto(){
 
 
-let codigo = document.getElementById("codigo").value;
+let codigo;
 
 
-if(codigo === ""){
+
+// Se estiver editando mantém o código
+if(editando !== null){
+
+    codigo = produtos[editando].codigo;
+
+}else{
 
     codigo = gerarCodigo();
 
@@ -53,19 +57,20 @@ if(codigo === ""){
 
 let produto = {
 
-codigo: codigo,
+    codigo: codigo,
 
-nome: document.getElementById("produto").value,
+    nome: document.getElementById("produto").value,
 
-preco: document.getElementById("preco").value,
+    preco: document.getElementById("preco").value,
 
-estoque: document.getElementById("estoque").value
+    estoque: document.getElementById("estoque").value
 
 };
 
 
 
 if(editando !== null){
+
 
     produtos[editando] = produto;
 
@@ -83,15 +88,18 @@ if(editando !== null){
 
 
 localStorage.setItem(
-"produtos",
-JSON.stringify(produtos)
+    "produtos",
+    JSON.stringify(produtos)
 );
 
 
 
+mostrarCodigo(codigo);
+
 limparCampos();
 
 mostrarProdutos();
+
 
 
 }
@@ -99,9 +107,8 @@ mostrarProdutos();
 
 
 // ===============================
-// LISTAR PRODUTOS
+// MOSTRAR PRODUTOS
 // ===============================
-
 
 function mostrarProdutos(){
 
@@ -118,25 +125,17 @@ produtos.forEach((p,index)=>{
 
 lista.innerHTML += `
 
-
 <tr>
-
 
 <td>${p.codigo}</td>
 
-
 <td>${p.nome}</td>
-
 
 <td>R$ ${p.preco}</td>
 
-
 <td>${p.estoque}</td>
 
-
-
 <td>
-
 
 <button onclick="editarProduto(${index})">
 Editar
@@ -153,12 +152,9 @@ Etiqueta
 </button>
 
 
-
 </td>
 
-
 </tr>
-
 
 `;
 
@@ -174,14 +170,11 @@ Etiqueta
 // EDITAR
 // ===============================
 
-
 function editarProduto(index){
 
 
 let p = produtos[index];
 
-
-document.getElementById("codigo").value = p.codigo;
 
 document.getElementById("produto").value = p.nome;
 
@@ -191,6 +184,9 @@ document.getElementById("estoque").value = p.estoque;
 
 
 editando = index;
+
+
+mostrarCodigo(p.codigo);
 
 
 gerarCodigoBarras(p.codigo);
@@ -205,7 +201,6 @@ gerarCodigoBarras(p.codigo);
 // EXCLUIR
 // ===============================
 
-
 function excluirProduto(index){
 
 
@@ -215,17 +210,36 @@ if(confirm("Excluir produto?")){
 produtos.splice(index,1);
 
 
-
 localStorage.setItem(
 "produtos",
 JSON.stringify(produtos)
 );
 
 
-
 mostrarProdutos();
 
 
+}
+
+
+}
+
+
+
+// ===============================
+// MOSTRAR CÓDIGO GERADO
+// ===============================
+
+function mostrarCodigo(codigo){
+
+
+let campo = document.getElementById("codigoGerado");
+
+
+if(campo){
+
+campo.innerHTML = 
+"Código gerado: <br>" + codigo;
 
 }
 
@@ -235,9 +249,8 @@ mostrarProdutos();
 
 
 // ===============================
-// GERAR CÓDIGO DE BARRAS NA TELA
+// GERAR CÓDIGO DE BARRAS
 // ===============================
-
 
 function gerarCodigoBarras(codigo){
 
@@ -252,7 +265,6 @@ height:80,
 
 displayValue:true
 
-
 });
 
 
@@ -260,11 +272,9 @@ displayValue:true
 
 
 
-
 // ===============================
 // GERAR ETIQUETA
 // ===============================
-
 
 function gerarEtiqueta(index){
 
@@ -272,36 +282,40 @@ function gerarEtiqueta(index){
 let produto = produtos[index];
 
 
-document.getElementById("codigo").value = produto.codigo;
+mostrarCodigo(produto.codigo);
 
 
 gerarCodigoBarras(produto.codigo);
-
 
 
 }
 
 
 
-
 // ===============================
-// IMPRIMIR SOMENTE ETIQUETA
+// IMPRIMIR ETIQUETA
 // ===============================
-
 
 function imprimirEtiqueta(){
 
 
-let codigo = document.getElementById("codigo").value;
+let codigo = document
+.getElementById("codigoGerado")
+.innerText
+.replace("Código gerado:","")
+.trim();
 
 
 
-let janela = window.open("","PRINT","width=400,height=300");
+let janela = window.open(
+"",
+"PRINT",
+"width=400,height=300"
+);
 
 
 
 janela.document.write(`
-
 
 <html>
 
@@ -336,13 +350,11 @@ displayValue:true
 
 </html>
 
-
 `);
 
 
 
 janela.document.close();
-
 
 janela.print();
 
@@ -355,11 +367,8 @@ janela.print();
 // LIMPAR CAMPOS
 // ===============================
 
-
 function limparCampos(){
 
-
-document.getElementById("codigo").value="";
 
 document.getElementById("produto").value="";
 
@@ -368,13 +377,10 @@ document.getElementById("preco").value="";
 document.getElementById("estoque").value="";
 
 
-document.getElementById("barcode").innerHTML="";
-
-
 }
 
 
 
-// iniciar sistema
+// INICIAR
 
 mostrarProdutos();
