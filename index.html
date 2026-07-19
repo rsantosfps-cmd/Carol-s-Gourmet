@@ -10,7 +10,6 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-<!-- Biblioteca para gerar código de barras -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 </head>
@@ -19,94 +18,77 @@
 <body>
 
 
-<h1>Carol's Gourmet</h1>
+<header class="topo">
+
+<h1>
+🍰 Carol's Gourmet
+</h1>
+
+<p>
+Sistema de Produtos
+</p>
+
+</header>
+
 
 
 <div class="container">
 
-<div id="painelEtiqueta" style="display:none;">
-
-<h2>Gerar Etiqueta</h2>
-
-<label>
-Data de fabricação
-</label>
-
-<input 
-id="dataFabricacaoEtiqueta"
-type="date"
-onchange="calcularValidadeEtiqueta()">
 
 
-<label>
-Validade
-</label>
-
-<input 
-id="dataValidadeEtiqueta"
-type="date"
-readonly>
+<section class="card">
 
 
-<button onclick="imprimirEtiqueta()">
-Imprimir Etiqueta
-</button>
-
-
-</div>
-<h2>Cadastro de Produto</h2>
+<h2>
+Cadastro de Produto
+</h2>
 
 
 <input 
-<div id="codigoGerado">
-Código será gerado automaticamente
-</div>
-
-<input 
-id="produto" 
+id="produto"
 placeholder="Nome do produto">
 
+
 <input 
-id="preco" 
+id="preco"
 placeholder="Preço">
 
+
 <input 
-id="estoque" 
+id="estoque"
 placeholder="Estoque">
 
-<label>
-Data de fabricação
-</label>
 
-<input 
-id="fabricacao" 
-type="date"
-onchange="calcularValidade()">
+<div id="codigoGerado">
 
+Código será gerado automaticamente
 
-<label>
-Validade (7 dias)
-</label>
-
-<input 
-id="validade" 
-type="date"
-readonly>
+</div>
 
 
 <button onclick="salvarProduto()">
-Salvar / Atualizar Produto
+
+Salvar Produto
+
 </button>
 
 
+</section>
 
-<div id="painelEtiqueta" style="display:none;">
 
-<h2>Gerar Etiqueta</h2>
+
+
+
+<section class="card" id="painelEtiqueta" style="display:none;">
+
+
+<h2>
+Gerar Etiqueta
+</h2>
 
 
 <p>
-Produto selecionado:
+Produto:
 <strong id="produtoEtiquetaNome"></strong>
 </p>
 
@@ -119,8 +101,11 @@ Código:
 
 
 <label>
-Data de fabricação
+Data fabricação
 </label>
+
+
+<div class="linha">
 
 <input 
 id="dataFabricacaoEtiqueta"
@@ -129,14 +114,25 @@ onchange="calcularValidadeEtiqueta()">
 
 
 
+<button onclick="colocarHoje()">
+Hoje
+</button>
+
+</div>
+
+
+
+
 <label>
 Validade
 </label>
 
-<input 
+
+<input
 id="dataValidadeEtiqueta"
 type="date"
 readonly>
+
 
 
 
@@ -144,7 +140,8 @@ readonly>
 Quantidade de etiquetas
 </label>
 
-<input 
+
+<input
 id="quantidadeEtiqueta"
 type="number"
 value="1"
@@ -153,15 +150,24 @@ min="1">
 
 
 <button onclick="imprimirEtiqueta()">
+
 Imprimir Etiquetas
+
 </button>
 
 
-</div>
+</section>
 
 
-<h2>Produtos cadastrados</h2>
 
+
+
+<section class="card">
+
+
+<h2>
+Produtos Cadastrados
+</h2>
 
 
 <table>
@@ -183,6 +189,7 @@ Imprimir Etiquetas
 
 </tr>
 
+
 </thead>
 
 
@@ -194,9 +201,10 @@ Imprimir Etiquetas
 </table>
 
 
+</section>
+
 
 </div>
-
 
 
 
