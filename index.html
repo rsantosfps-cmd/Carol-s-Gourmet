@@ -33,21 +33,36 @@
 Código será gerado automaticamente
 </div>
 
-
 <input 
 id="produto" 
 placeholder="Nome do produto">
-
 
 <input 
 id="preco" 
 placeholder="Preço">
 
-
 <input 
 id="estoque" 
 placeholder="Estoque">
 
+<label>
+Data de fabricação
+</label>
+
+<input 
+id="fabricacao" 
+type="date"
+onchange="calcularValidade()">
+
+
+<label>
+Validade (7 dias)
+</label>
+
+<input 
+id="validade" 
+type="date"
+readonly>
 
 
 <button onclick="salvarProduto()">
