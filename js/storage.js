@@ -314,9 +314,28 @@ parseInt(document.getElementById("quantidadeEtiqueta").value);
 
 
 
-let fab = fabricacao.split("-").reverse().join("/");
+if(!fabricacao || !validade){
 
-let val = validade.split("-").reverse().join("/");
+    alert("Informe a data de fabricação.");
+
+    return;
+
+}
+
+
+
+let fab = fabricacao
+.split("-")
+.reverse()
+.slice(0)
+.join("/");
+
+
+let val = validade
+.split("-")
+.reverse()
+.slice(0)
+.join("/");
 
 
 
@@ -324,7 +343,7 @@ let etiquetas = "";
 
 
 
-for(let i=0;i<quantidade;i++){
+for(let i = 0; i < quantidade; i++){
 
 
 etiquetas += `
@@ -332,16 +351,15 @@ etiquetas += `
 <div class="etiqueta">
 
 
-<div class="titulo">
-CAROL'S GOURMET
-</div>
-
+<div class="datas">
 
 FAB: ${fab}
 
 <br>
 
 VAL: ${val}
+
+</div>
 
 
 <svg id="barcode${i}"></svg>
@@ -352,6 +370,7 @@ VAL: ${val}
 
 `;
 
+
 }
 
 
@@ -359,7 +378,7 @@ VAL: ${val}
 let janela = window.open(
 "",
 "",
-"width=400,height=600"
+"width=400,height=500"
 );
 
 
@@ -373,6 +392,7 @@ janela.document.write(`
 
 <style>
 
+
 @page{
 
 size:50mm 30mm;
@@ -382,11 +402,12 @@ margin:0;
 }
 
 
+
 body{
 
 margin:0;
 
-font-family:Arial;
+padding:0;
 
 }
 
@@ -394,13 +415,20 @@ font-family:Arial;
 
 .etiqueta{
 
+
 width:50mm;
 
 height:30mm;
 
-text-align:center;
+display:flex;
 
-font-size:8px;
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+font-family:Arial, sans-serif;
 
 page-break-after:always;
 
@@ -408,11 +436,17 @@ page-break-after:always;
 
 
 
-.titulo{
+.datas{
+
+
+font-size:8px;
 
 font-weight:bold;
 
-font-size:9px;
+line-height:10px;
+
+margin-bottom:2px;
+
 
 }
 
@@ -420,11 +454,13 @@ font-size:9px;
 
 svg{
 
-width:45mm;
+width:44mm;
 
 height:12mm;
 
+
 }
+
 
 
 </style>
@@ -447,16 +483,24 @@ ${etiquetas}
 <script>
 
 
-${Array.from({length: quantidade}, (_,i)=>`
+${Array.from({length:quantidade},(_,i)=>`
 
 JsBarcode("#barcode${i}",
 "${codigo}",
 {
+
 format:"CODE128",
-width:1.5,
+
+width:1.4,
+
 height:35,
+
 displayValue:true,
-fontSize:10
+
+fontSize:9,
+
+margin:0
+
 });
 
 `).join("")}
@@ -475,12 +519,12 @@ window.print();
 </html>
 
 
+
 `);
 
 
 
 janela.document.close();
-
 
 
 }
@@ -554,6 +598,9 @@ document.getElementById("produtoEtiquetaCodigo").innerHTML =
 produtoEtiqueta.codigo;
 
 
+document.getElementById("dataFabricacaoEtiqueta").value="";
+
+document.getElementById("dataValidadeEtiqueta").value="";
 
 }
 
