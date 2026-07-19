@@ -290,3 +290,22 @@ button{
 
 
 }
+#codigoGerado{
+
+    background:#FFF8E1;
+
+    border:2px dashed #FFC107;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+    color:#C62828;
+
+    margin:10px 0;
+
+}
