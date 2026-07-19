@@ -100,21 +100,64 @@ Salvar / Atualizar Produto
 
 
 
-<h2>Etiqueta</h2>
+<div id="painelEtiqueta" style="display:none;">
+
+<h2>Gerar Etiqueta</h2>
 
 
-<div id="etiqueta">
+<p>
+Produto selecionado:
+<strong id="produtoEtiquetaNome"></strong>
+</p>
 
-<svg id="barcode"></svg>
 
-</div>
+<p>
+Código:
+<strong id="produtoEtiquetaCodigo"></strong>
+</p>
 
 
-<button onclick="abrirEtiqueta()">
-Gerar Etiqueta
+
+<label>
+Data de fabricação
+</label>
+
+<input 
+id="dataFabricacaoEtiqueta"
+type="date"
+onchange="calcularValidadeEtiqueta()">
+
+
+
+<label>
+Validade
+</label>
+
+<input 
+id="dataValidadeEtiqueta"
+type="date"
+readonly>
+
+
+
+<label>
+Quantidade de etiquetas
+</label>
+
+<input 
+id="quantidadeEtiqueta"
+type="number"
+value="1"
+min="1">
+
+
+
+<button onclick="imprimirEtiqueta()">
+Imprimir Etiquetas
 </button>
 
 
+</div>
 
 
 <h2>Produtos cadastrados</h2>
