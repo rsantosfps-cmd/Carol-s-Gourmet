@@ -1,6 +1,3 @@
-body{
-    background:red !important;
-}
 *{
     box-sizing:border-box;
 }
@@ -8,7 +5,7 @@ body{
 
 body{
 
-    font-family:'Arial', sans-serif;
+    font-family:Arial, Helvetica, sans-serif;
 
     background:#FFF4D6;
 
@@ -22,94 +19,132 @@ body{
 
 
 
-/* CABEÇALHO */
+/* TOPO */
 
-h1{
+.topo{
+
+    max-width:950px;
+
+    margin:auto;
 
     background:#C62828;
 
     color:white;
 
-    padding:20px;
-
-    border-radius:15px;
-
     text-align:center;
 
-    max-width:900px;
+    padding:20px;
 
-    margin:0 auto 25px;
+    border-radius:20px;
 
-    font-size:32px;
-
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    box-shadow:0 5px 15px rgba(0,0,0,.2);
 
 }
 
 
-h1::before{
 
-    content:"🍰 ";
+.topo h1{
+
+    margin:0;
+
+    font-size:34px;
 
 }
+
+
+
+.topo p{
+
+    margin:5px;
+
+    font-size:18px;
+
+}
+
+
 
 
 
 /* CONTAINER */
 
+
 .container{
 
-    max-width:900px;
+    max-width:950px;
 
-    margin:auto;
+    margin:25px auto;
+
+}
+
+
+
+
+
+/* CARDS */
+
+
+.card{
 
     background:white;
 
     padding:25px;
 
+    margin-bottom:25px;
+
     border-radius:20px;
 
-    box-shadow:0 5px 20px rgba(0,0,0,0.15);
+    box-shadow:0 5px 15px rgba(0,0,0,.12);
 
 }
+
+
 
 
 
 /* TITULOS */
 
-h2{
 
-    color:#C62828;
+.card h2{
+
+    color:#5D4037;
+
+    background:#FFF4D6;
 
     border-left:8px solid #FFC107;
 
-    padding-left:12px;
+    padding:12px;
 
-    margin-top:25px;
+    border-radius:10px;
+
+    margin-top:0;
 
 }
+
+
 
 
 
 /* CAMPOS */
 
+
 input{
+
 
     width:100%;
 
-    padding:14px;
+    padding:13px;
 
     margin:8px 0;
 
     border-radius:10px;
 
-    border:2px solid #F0C36D;
+    border:2px solid #E6B566;
 
     font-size:16px;
 
-    background:#FFFDF7;
-
 }
+
+
 
 
 
@@ -123,9 +158,42 @@ input:focus{
 
 
 
+
+
+/* CODIGO AUTOMATICO */
+
+
+#codigoGerado{
+
+
+    background:#FFF8E1;
+
+    border:2px dashed #FFC107;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    margin:10px 0;
+
+    font-weight:bold;
+
+    color:#C62828;
+
+
+}
+
+
+
+
+
 /* BOTÕES */
 
+
 button{
+
 
     background:#FFC107;
 
@@ -135,15 +203,14 @@ button{
 
     padding:12px 18px;
 
-    margin:5px;
-
     border-radius:12px;
-
-    font-weight:bold;
 
     cursor:pointer;
 
-    transition:.3s;
+    font-weight:bold;
+
+    margin:5px;
+
 
 }
 
@@ -159,55 +226,63 @@ button:hover{
 
 
 
+
 /* BOTÃO PRINCIPAL */
 
-button:first-of-type{
+
+.card > button{
 
     width:100%;
 
-    font-size:17px;
+    font-size:16px;
 
 }
 
 
 
-/* ÁREA DA ETIQUETA */
 
-#etiqueta{
 
-    background:#FFF8E1;
+/* LINHA */
 
-    border:3px dashed #FFC107;
 
-    border-radius:15px;
+.linha{
 
-    padding:20px;
+    display:flex;
 
-    text-align:center;
+    gap:10px;
 
-    margin:20px auto;
+    align-items:center;
 
 }
+
+
+
+.linha input{
+
+    flex:1;
+
+}
+
 
 
 
 /* TABELA */
 
+
 table{
+
 
     width:100%;
 
-    border-collapse:separate;
-
-    border-spacing:0;
+    border-collapse:collapse;
 
     overflow:hidden;
 
     border-radius:15px;
 
-    margin-top:20px;
-
 }
+
+
 
 
 
@@ -221,11 +296,14 @@ thead{
 
 
 
+
+
 th{
 
-    padding:14px;
+    padding:12px;
 
 }
+
 
 
 
@@ -241,15 +319,33 @@ td{
 
 
 
+
+
 tr:hover{
 
-    background:#FFF4D6;
+    background:#FFF8E1;
 
 }
 
 
 
-/* RESPONSIVO CELULAR */
+
+
+/* ETIQUETA */
+
+
+#etiqueta{
+
+    text-align:center;
+
+}
+
+
+
+
+
+/* CELULAR */
+
 
 @media(max-width:600px){
 
@@ -261,18 +357,21 @@ body{
 }
 
 
-h1{
 
-    font-size:24px;
+.topo h1{
+
+    font-size:25px;
 
 }
 
 
-.container{
+
+.card{
 
     padding:15px;
 
 }
+
 
 
 table{
@@ -282,30 +381,12 @@ table{
 }
 
 
-button{
 
-    font-size:12px;
+.linha{
 
-}
-
+    display:block;
 
 }
-#codigoGerado{
 
-    background:#FFF8E1;
-
-    border:2px dashed #FFC107;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    text-align:center;
-
-    font-weight:bold;
-
-    color:#C62828;
-
-    margin:10px 0;
 
 }
