@@ -220,41 +220,70 @@ return;
 
 
 
-let novoProduto = {
+// EDITAR PRODUTO EXISTENTE
+
+if(produtoSelecionado !== null){
 
 
-id:Date.now(),
+    produtos[produtoSelecionado].nome = nome;
 
 
-codigoInterno:
-document
-.getElementById("codigoInterno")
-.value,
+    produtos[produtoSelecionado].preco = preco;
 
 
-codigoBarras:
-document
-.getElementById("codigoBarras")
-.value,
-
-
-nome:nome,
-
-
-preco:preco,
-
-
-estoque:estoque
-
-
-};
+    produtos[produtoSelecionado].estoque = estoque;
 
 
 
+    alert(
+        "Produto atualizado com sucesso!"
+    );
 
 
-produtos.push(novoProduto);
+}
 
+
+
+// NOVO PRODUTO
+
+else{
+
+
+    let novoProduto = {
+
+
+        id:Date.now(),
+
+
+        codigoInterno:
+        document
+        .getElementById("codigoInterno")
+        .value,
+
+
+        codigoBarras:
+        document
+        .getElementById("codigoBarras")
+        .value,
+
+
+        nome:nome,
+
+
+        preco:preco,
+
+
+        estoque:estoque
+
+
+    };
+
+
+
+    produtos.push(novoProduto);
+
+
+}
 
 
 salvarDados();
