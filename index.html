@@ -4,6 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Carol's Gourmet</title>
@@ -25,7 +26,7 @@
 </h1>
 
 <p>
-Sistema de Produtos
+Sistema de Produtos e Estoque
 </p>
 
 </header>
@@ -36,6 +37,8 @@ Sistema de Produtos
 
 
 
+<!-- CADASTRO -->
+
 <section class="card">
 
 
@@ -44,26 +47,40 @@ Cadastro de Produto
 </h2>
 
 
-<input 
+
+<div id="codigoInternoGerado">
+
+Código interno será gerado automaticamente
+
+</div>
+
+
+
+<input
 id="produto"
 placeholder="Nome do produto">
 
 
-<input 
+
+<input
 id="preco"
 placeholder="Preço">
 
 
-<input 
-id="estoque"
-placeholder="Estoque">
+
+<input
+id="estoqueInicial"
+type="number"
+placeholder="Estoque inicial">
+
 
 
 <div id="codigoGerado">
 
-Código será gerado automaticamente
+Código de barras será gerado automaticamente
 
 </div>
+
 
 
 <button onclick="salvarProduto()">
@@ -79,6 +96,9 @@ Salvar Produto
 
 
 
+<!-- ETIQUETA -->
+
+
 <section class="card" id="painelEtiqueta" style="display:none;">
 
 
@@ -87,10 +107,12 @@ Gerar Etiqueta
 </h2>
 
 
+
 <p>
 Produto:
 <strong id="produtoEtiquetaNome"></strong>
 </p>
+
 
 
 <p>
@@ -101,13 +123,14 @@ Código:
 
 
 <label>
-Data fabricação
+Data de fabricação
 </label>
 
 
 <div class="linha">
 
-<input 
+
+<input
 id="dataFabricacaoEtiqueta"
 type="date"
 onchange="calcularValidadeEtiqueta()">
@@ -117,6 +140,7 @@ onchange="calcularValidadeEtiqueta()">
 <button onclick="colocarHoje()">
 Hoje
 </button>
+
 
 </div>
 
@@ -132,7 +156,6 @@ Validade
 id="dataValidadeEtiqueta"
 type="date"
 readonly>
-
 
 
 
@@ -162,12 +185,73 @@ Imprimir Etiquetas
 
 
 
+
+<!-- ESTOQUE -->
+
+
+<section class="card" id="painelEstoque" style="display:none;">
+
+
+<h2>
+Movimentação de Estoque
+</h2>
+
+
+
+<p>
+Produto:
+<strong id="produtoEstoqueNome"></strong>
+</p>
+
+
+
+<p>
+Estoque atual:
+<strong id="estoqueAtual"></strong>
+</p>
+
+
+
+
+<input
+id="entradaEstoque"
+type="number"
+placeholder="Entrada (+)">
+
+
+
+<input
+id="saidaEstoque"
+type="number"
+placeholder="Saída (-)">
+
+
+
+<button onclick="atualizarEstoque()">
+
+Atualizar Estoque
+
+</button>
+
+
+</section>
+
+
+
+
+
+
+
+<!-- PRODUTOS -->
+
+
 <section class="card">
 
 
 <h2>
 Produtos Cadastrados
 </h2>
+
 
 
 <table>
@@ -177,15 +261,30 @@ Produtos Cadastrados
 
 <tr>
 
-<th>Código</th>
+<th>
+Código Interno
+</th>
 
-<th>Produto</th>
 
-<th>Preço</th>
+<th>
+Produto
+</th>
 
-<th>Estoque</th>
 
-<th>Ações</th>
+<th>
+Estoque
+</th>
+
+
+<th>
+Código Barras
+</th>
+
+
+<th>
+Ações
+</th>
+
 
 </tr>
 
@@ -193,15 +292,19 @@ Produtos Cadastrados
 </thead>
 
 
+
 <tbody id="lista">
 
 </tbody>
+
 
 
 </table>
 
 
 </section>
+
+
 
 
 </div>
