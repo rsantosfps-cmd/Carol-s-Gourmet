@@ -147,7 +147,7 @@ Excluir
 </button>
 
 
-<button onclick="gerarEtiqueta(${index})">
+<button onclick="abrirEtiqueta(${index})">
 Etiqueta
 </button>
 
@@ -295,21 +295,30 @@ gerarCodigoBarras(produto.codigo);
 // ===============================
 // IMPRIMIR ETIQUETA
 // ===============================
-
 function imprimirEtiqueta(){
 
 
-let codigo = document
-.getElementById("codigoGerado")
-.innerText
-.replace("Código gerado:","")
-.trim();
+let codigo = produtoEtiqueta.codigo;
+
+
+let fabricacao =
+document.getElementById("dataFabricacaoEtiqueta").value;
+
+
+let validade =
+document.getElementById("dataValidadeEtiqueta").value;
+
+
+
+let fab = fabricacao.split("-").reverse().join("/");
+
+let val = validade.split("-").reverse().join("/");
 
 
 
 let janela = window.open(
 "",
-"PRINT",
+"",
 "width=400,height=300"
 );
 
@@ -319,28 +328,101 @@ janela.document.write(`
 
 <html>
 
-<body style="text-align:center;">
+<head>
+
+<style>
+
+@page{
+
+size:50mm 30mm;
+
+margin:0;
+
+}
+
+
+body{
+
+width:50mm;
+
+height:30mm;
+
+margin:0;
+
+text-align:center;
+
+font-family:Arial;
+
+font-size:8px;
+
+}
+
+
+.titulo{
+
+font-weight:bold;
+
+font-size:9px;
+
+}
+
+
+svg{
+
+width:45mm;
+
+height:12mm;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="titulo">
+CAROL'S GOURMET
+</div>
+
+
+FAB: ${fab}
+
+<br>
+
+VAL: ${val}
 
 
 <svg id="barcode"></svg>
 
 
+
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 
+
 <script>
+
 
 JsBarcode("#barcode","${codigo}",{
 
 format:"CODE128",
 
-width:2,
+width:1.5,
 
-height:80,
+height:35,
 
-displayValue:true
+displayValue:true,
+
+fontSize:10
 
 });
+
+
+window.print();
 
 
 </script>
@@ -350,17 +432,15 @@ displayValue:true
 
 </html>
 
-`);
 
+`);
 
 
 janela.document.close();
 
-janela.print();
 
 
 }
-
 
 
 // ===============================
@@ -408,5 +488,62 @@ document.getElementById("validade").value =
 `${ano}-${mes}-${dia}`;
 
 }
+
+}
+let produtoEtiqueta = null;
+
+
+// abrir painel de etiqueta
+
+function abrirEtiqueta(index){
+
+
+produtoEtiqueta = produtos[index];
+
+
+document.getElementById("painelEtiqueta").style.display="block";
+
+
+}
+
+
+// calcular validade +7 dias
+
+function calcularValidadeEtiqueta(){
+
+
+let data =
+document.getElementById("dataFabricacaoEtiqueta").value;
+
+
+
+if(data){
+
+
+let validade = new Date(data);
+
+
+validade.setDate(
+validade.getDate()+7
+);
+
+
+
+let ano = validade.getFullYear();
+
+let mes = String(validade.getMonth()+1).padStart(2,"0");
+
+let dia = String(validade.getDate()).padStart(2,"0");
+
+
+
+document.getElementById("dataValidadeEtiqueta").value =
+`${ano}-${mes}-${dia}`;
+
+
+
+}
+
+
 
 }
