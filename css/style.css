@@ -566,3 +566,76 @@ button{
 
 
 }
+/* ===================================
+   IMPRESSÃO NIIMBOT B21
+   ETIQUETA 50x30mm
+=================================== */
+
+@media print {
+
+
+    body * {
+
+        visibility: hidden;
+
+    }
+
+
+
+    #previewEtiqueta,
+    #previewEtiqueta * {
+
+        visibility: visible;
+
+    }
+
+
+
+    #previewEtiqueta {
+
+
+        position:absolute;
+
+        left:0;
+
+        top:0;
+
+        width:50mm;
+
+        height:30mm;
+
+        margin:0;
+
+        padding:0;
+
+    }
+
+
+
+    .etiqueta {
+
+
+        width:50mm;
+
+        height:30mm;
+
+        border:none;
+
+        padding:2mm;
+
+        font-size:9px;
+
+    }
+
+
+
+    #barcodePreview {
+
+        width:45mm;
+
+        height:14mm;
+
+    }
+
+
+}
