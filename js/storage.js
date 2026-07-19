@@ -173,6 +173,15 @@ return codigo+digito;
 
 
 }
+document
+.getElementById("codigoInterno")
+.readOnly = true;
+
+
+document
+.getElementById("codigoBarras")
+.readOnly = true;
+
 /* ======================================
    SALVAR PRODUTO
 ====================================== */
@@ -489,56 +498,64 @@ ${produto.codigoBarras}
    EDITAR PRODUTO
 ====================================== */
 
-
 function editarProduto(index){
 
 
-let produto =
-produtos[index];
+let produto = produtos[index];
+
+
+produtoSelecionado = index;
 
 
 
-produtoSelecionado=index;
-
-
+// Mantém os códigos travados
 
 document
 .getElementById("codigoInterno")
-.value =
-produto.codigoInterno;
-
+.value = produto.codigoInterno;
 
 
 document
 .getElementById("codigoBarras")
-.value =
-produto.codigoBarras;
+.value = produto.codigoBarras;
 
+
+
+// Bloqueia alteração dos códigos
+
+document
+.getElementById("codigoInterno")
+.readOnly = true;
 
 
 document
+.getElementById("codigoBarras")
+.readOnly = true;
+
+
+
+
+// Campos editáveis
+
+document
 .getElementById("produto")
-.value =
-produto.nome;
+.value = produto.nome;
 
 
 
 document
 .getElementById("preco")
-.value =
-produto.preco;
+.value = produto.preco;
 
 
 
 document
 .getElementById("estoque")
-.value =
-produto.estoque;
+.value = produto.estoque;
 
 
 
 }
-
 
 
 
