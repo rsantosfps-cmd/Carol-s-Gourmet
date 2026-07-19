@@ -1,52 +1,272 @@
-body{
-    font-family: Arial, sans-serif;
-    background:#f5f5f5;
-    margin:0;
-    padding:20px;
+/* ==========================
+   CONFIGURAÇÃO GERAL
+========================== */
+
+*{
+    box-sizing:border-box;
 }
 
 
+body{
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:#f3f3f3;
+
+    margin:0;
+
+    padding:20px;
+
+    color:#333;
+
+}
+
+
+
+/* ==========================
+   TITULO
+========================== */
+
+
 h1{
+
     text-align:center;
+
     color:#8b4513;
+
+    margin-bottom:25px;
+
+}
+
+
+h2{
+
+    color:#5a2d0c;
+
+    border-bottom:2px solid #ddd;
+
+    padding-bottom:8px;
+
+}
+
+
+
+/* ==========================
+   CONTAINER
+========================== */
+
+
+.container{
+
+    max-width:900px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,0.15);
+
+}
+
+
+
+/* ==========================
+   CAMPOS
+========================== */
+
+
+input{
+
+
+    width:100%;
+
+    padding:12px;
+
+    margin:8px 0;
+
+    border:1px solid #ccc;
+
+    border-radius:8px;
+
+    font-size:16px;
+
+
+}
+
+
+input:focus{
+
+    outline:none;
+
+    border-color:#8b4513;
+
+}
+
+
+
+/* ==========================
+   BOTÕES
+========================== */
+
+
+button{
+
+
+    padding:10px 15px;
+
+    margin:5px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#8b4513;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+
+}
+
+
+
+button:hover{
+
+    opacity:0.85;
+
+}
+
+
+
+/* botão salvar */
+
+button:first-of-type{
+
+    width:100%;
+
+    font-size:16px;
+
+    padding:13px;
+
+}
+
+
+
+/* ==========================
+   ETIQUETA
+========================== */
+
+
+#etiqueta{
+
+    background:#fff;
+
+    border:2px dashed #999;
+
+    padding:20px;
+
+    text-align:center;
+
+    margin:15px auto;
+
+    max-width:350px;
+
+}
+
+
+
+/* ==========================
+   TABELA
+========================== */
+
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+
+}
+
+
+
+th{
+
+    background:#8b4513;
+
+    color:white;
+
+    padding:12px;
+
+
+}
+
+
+
+td{
+
+    padding:10px;
+
+    border-bottom:1px solid #ddd;
+
+    text-align:center;
+
+}
+
+
+
+tr:hover{
+
+    background:#f8f8f8;
+
+}
+
+
+
+/* ==========================
+   RESPONSIVO CELULAR
+========================== */
+
+
+@media(max-width:600px){
+
+
+body{
+
+    padding:10px;
+
 }
 
 
 .container{
-    background:white;
-    max-width:700px;
-    margin:auto;
-    padding:20px;
-    border-radius:10px;
-}
 
+    padding:15px;
 
-input{
-    width:100%;
-    padding:10px;
-    margin:5px 0;
-}
-
-
-button{
-    width:100%;
-    padding:12px;
-    background:#8b4513;
-    color:white;
-    border:none;
-    cursor:pointer;
 }
 
 
 table{
-    width:100%;
-    margin-top:20px;
-    border-collapse:collapse;
+
+    font-size:12px;
+
 }
 
 
-td,th{
-    border:1px solid #ddd;
-    padding:8px;
-    text-align:center;
+button{
+
+    font-size:12px;
+
+}
+
+
 }
