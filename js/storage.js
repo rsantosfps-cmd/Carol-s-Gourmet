@@ -2,118 +2,137 @@ let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
 
 let editando = null;
 
+let produtoEtiqueta = null;
 
-// ===============================
-// GERAR CÓDIGO AUTOMÁTICO
-// ===============================
+let produtoEstoque = null;
 
-function gerarCodigo(){
 
-    let maior = 0;
+// ==============================
+// GERAR CÓDIGO INTERNO
+// ==============================
 
-    produtos.forEach(p => {
+function gerarCodigoInterno(){
 
-        let numero = parseInt(p.codigo);
+    let numero = produtos.length + 1;
 
-        if(numero > maior){
-            maior = numero;
+    return "PROD" + String(numero).padStart(3,"0");
+
+}
+
+
+
+// ==============================
+// GERAR CÓDIGO DE BARRAS
+// ==============================
+
+function gerarCodigoBarras(){
+
+    let maior = 200000000000;
+
+
+    produtos.forEach(p=>{
+
+        let codigo = Number(p.codigo);
+
+        if(codigo > maior){
+
+            maior = codigo;
+
         }
 
     });
 
 
-    maior++;
-
-
-    return maior.toString().padStart(12,"0");
+    return String(maior + 1);
 
 }
 
 
 
-// ===============================
+// ==============================
 // SALVAR PRODUTO
-// ===============================
+// ==============================
 
 function salvarProduto(){
 
 
-let codigo;
-
-
-
-// Se estiver editando mantém o código
-if(editando !== null){
-
-    codigo = produtos[editando].codigo;
-
-}else{
-
-    codigo = gerarCodigo();
-
-}
-
-
-
 let produto = {
 
-    codigo: codigo,
+    codigoInterno:
+    editando !== null 
+    ? produtos[editando].codigoInterno 
+    : gerarCodigoInterno(),
 
-    nome: document.getElementById("produto").value,
 
-    preco: document.getElementById("preco").value,
+    codigo:
+    editando !== null 
+    ? produtos[editando].codigo 
+    : gerarCodigoBarras(),
 
-    estoque: document.getElementById("estoque").value
+
+
+    nome:
+    document.getElementById("produto").value,
+
+
+    preco:
+    document.getElementById("preco").value,
+
+
+    estoque:
+    Number(document.getElementById("estoqueInicial").value || 0)
 
 };
 
 
 
-if(editando !== null){
 
+if(editando !== null){
 
     produtos[editando] = produto;
 
     editando = null;
 
-
 }else{
 
-
     produtos.push(produto);
-
 
 }
 
 
 
 localStorage.setItem(
-    "produtos",
-    JSON.stringify(produtos)
+"produtos",
+JSON.stringify(produtos)
 );
 
 
 
-mostrarCodigo(codigo);
+mostrarProdutos();
+
 
 limparCampos();
 
-mostrarProdutos();
 
+mostrarCodigo(produto.codigo);
+
+mostrarCodigoInterno(produto.codigoInterno);
 
 
 }
 
 
 
-// ===============================
+
+// ==============================
 // MOSTRAR PRODUTOS
-// ===============================
+// ==============================
 
 function mostrarProdutos(){
 
 
-let lista = document.getElementById("lista");
+let lista =
+document.getElementById("lista");
 
 
 lista.innerHTML="";
@@ -123,28 +142,55 @@ lista.innerHTML="";
 produtos.forEach((p,index)=>{
 
 
+let alerta = "";
+
+
+if(p.estoque <=5){
+
+alerta = " ⚠️";
+
+}
+
+
+
 lista.innerHTML += `
+
 
 <tr>
 
-<td>${p.codigo}</td>
-
-<td>${p.nome}</td>
-
-<td>R$ ${p.preco}</td>
-
-<td>${p.estoque}</td>
 
 <td>
+${p.codigoInterno}
+</td>
+
+
+
+<td>
+${p.nome}
+</td>
+
+
+
+<td>
+${p.estoque}${alerta}
+</td>
+
+
+
+<td>
+${p.codigo}
+</td>
+
+
+
+<td>
+
+
 
 <button onclick="editarProduto(${index})">
 Editar
 </button>
 
-
-<button onclick="excluirProduto(${index})">
-Excluir
-</button>
 
 
 <button onclick="abrirEtiqueta(${index})">
@@ -152,11 +198,27 @@ Etiqueta
 </button>
 
 
+
+<button onclick="abrirEstoque(${index})">
+Estoque
+</button>
+
+
+
+<button onclick="excluirProduto(${index})">
+Excluir
+</button>
+
+
+
 </td>
+
 
 </tr>
 
+
 `;
+
 
 
 });
@@ -166,9 +228,11 @@ Etiqueta
 
 
 
-// ===============================
+
+
+// ==============================
 // EDITAR
-// ===============================
+// ==============================
 
 function editarProduto(index){
 
@@ -176,20 +240,27 @@ function editarProduto(index){
 let p = produtos[index];
 
 
-document.getElementById("produto").value = p.nome;
-
-document.getElementById("preco").value = p.preco;
-
-document.getElementById("estoque").value = p.estoque;
+document.getElementById("produto").value =
+p.nome;
 
 
-editando = index;
+document.getElementById("preco").value =
+p.preco;
+
+
+document.getElementById("estoqueInicial").value =
+p.estoque;
+
+
+
+editando=index;
+
 
 
 mostrarCodigo(p.codigo);
 
+mostrarCodigoInterno(p.codigoInterno);
 
-gerarCodigoBarras(p.codigo);
 
 
 }
@@ -197,9 +268,10 @@ gerarCodigoBarras(p.codigo);
 
 
 
-// ===============================
+
+// ==============================
 // EXCLUIR
-// ===============================
+// ==============================
 
 function excluirProduto(index){
 
@@ -216,30 +288,35 @@ JSON.stringify(produtos)
 );
 
 
+
 mostrarProdutos();
 
 
 }
 
 
+
 }
 
 
 
-// ===============================
-// MOSTRAR CÓDIGO GERADO
-// ===============================
+
+
+// ==============================
+// CÓDIGOS NA TELA
+// ==============================
 
 function mostrarCodigo(codigo){
 
 
-let campo = document.getElementById("codigoGerado");
+let campo =
+document.getElementById("codigoGerado");
 
 
 if(campo){
 
-campo.innerHTML = 
-"Código gerado: <br>" + codigo;
+campo.innerHTML =
+"Código de barras: " + codigo;
 
 }
 
@@ -248,110 +325,243 @@ campo.innerHTML =
 
 
 
-// ===============================
-// GERAR CÓDIGO DE BARRAS
-// ===============================
-
-function gerarCodigoBarras(codigo){
+function mostrarCodigoInterno(codigo){
 
 
-JsBarcode("#barcode", codigo, {
+let campo =
+document.getElementById("codigoInternoGerado");
 
-format:"CODE128",
 
-width:2,
+if(campo){
 
-height:80,
+campo.innerHTML =
+"Código interno: " + codigo;
 
-displayValue:true
-
-});
+}
 
 
 }
 
 
 
-// ===============================
-// GERAR ETIQUETA
-// ===============================
 
-function gerarEtiqueta(index){
-
-
-let produto = produtos[index];
+// ==============================
+// ESTOQUE
+// ==============================
 
 
-mostrarCodigo(produto.codigo);
+function abrirEstoque(index){
 
 
-gerarCodigoBarras(produto.codigo);
+produtoEstoque = produtos[index];
+
+
+document.getElementById("painelEstoque").style.display="block";
+
+
+document.getElementById("produtoEstoqueNome").innerHTML =
+produtoEstoque.nome;
+
+
+document.getElementById("estoqueAtual").innerHTML =
+produtoEstoque.estoque;
+
 
 
 }
 
 
 
-// ===============================
-// IMPRIMIR ETIQUETA
-// ===============================
+
+function atualizarEstoque(){
+
+
+let entrada =
+Number(document.getElementById("entradaEstoque").value || 0);
+
+
+
+let saida =
+Number(document.getElementById("saidaEstoque").value || 0);
+
+
+
+
+produtoEstoque.estoque =
+produtoEstoque.estoque + entrada - saida;
+
+
+
+localStorage.setItem(
+"produtos",
+JSON.stringify(produtos)
+);
+
+
+
+mostrarProdutos();
+
+
+
+document.getElementById("estoqueAtual").innerHTML =
+produtoEstoque.estoque;
+
+
+
+}
+
+
+
+
+
+// ==============================
+// ETIQUETA
+// ==============================
+
+
+function abrirEtiqueta(index){
+
+
+produtoEtiqueta = produtos[index];
+
+
+document.getElementById("painelEtiqueta").style.display="block";
+
+
+document.getElementById("produtoEtiquetaNome").innerHTML =
+produtoEtiqueta.nome;
+
+
+document.getElementById("produtoEtiquetaCodigo").innerHTML =
+produtoEtiqueta.codigo;
+
+
+
+}
+
+
+
+
+function colocarHoje(){
+
+
+let hoje = new Date();
+
+
+let ano = hoje.getFullYear();
+
+let mes =
+String(hoje.getMonth()+1).padStart(2,"0");
+
+let dia =
+String(hoje.getDate()).padStart(2,"0");
+
+
+
+document.getElementById("dataFabricacaoEtiqueta").value =
+`${ano}-${mes}-${dia}`;
+
+
+
+calcularValidadeEtiqueta();
+
+
+}
+
+
+
+
+function calcularValidadeEtiqueta(){
+
+
+let data =
+document.getElementById("dataFabricacaoEtiqueta").value;
+
+
+
+if(data){
+
+
+let validade =
+new Date(data);
+
+
+validade.setDate(
+validade.getDate()+7
+);
+
+
+
+let ano =
+validade.getFullYear();
+
+
+let mes =
+String(validade.getMonth()+1).padStart(2,"0");
+
+
+let dia =
+String(validade.getDate()).padStart(2,"0");
+
+
+
+document.getElementById("dataValidadeEtiqueta").value =
+`${ano}-${mes}-${dia}`;
+
+
+
+}
+
+
+}
+
+
+
+
+
 function imprimirEtiqueta(){
 
 
-let codigo = produtoEtiqueta.codigo;
+let codigo =
+produtoEtiqueta.codigo;
+
+
+
+let quantidade =
+Number(document.getElementById("quantidadeEtiqueta").value);
+
 
 
 let fabricacao =
 document.getElementById("dataFabricacaoEtiqueta").value;
 
 
+
 let validade =
 document.getElementById("dataValidadeEtiqueta").value;
 
 
-let quantidade =
-parseInt(document.getElementById("quantidadeEtiqueta").value);
+
+
+let fab =
+fabricacao.split("-").reverse().join("/");
+
+
+let val =
+validade.split("-").reverse().join("/");
 
 
 
-if(!fabricacao || !validade){
-
-    alert("Informe a data de fabricação.");
-
-    return;
-
-}
+let etiquetas="";
 
 
 
-let fab = fabricacao
-.split("-")
-.reverse()
-.slice(0)
-.join("/");
-
-
-let val = validade
-.split("-")
-.reverse()
-.slice(0)
-.join("/");
-
-
-
-let etiquetas = "";
-
-
-
-for(let i = 0; i < quantidade; i++){
+for(let i=0;i<quantidade;i++){
 
 
 etiquetas += `
 
 <div class="etiqueta">
-
-
-<div class="datas">
 
 FAB: ${fab}
 
@@ -359,36 +569,25 @@ FAB: ${fab}
 
 VAL: ${val}
 
-</div>
-
 
 <svg id="barcode${i}"></svg>
 
 
 </div>
 
-
 `;
-
 
 }
 
 
 
-let janela = window.open(
-"",
-"",
-"width=400,height=500"
-);
+let janela =
+window.open("","","width=400,height=500");
 
 
 
 janela.document.write(`
 
-
-<html>
-
-<head>
 
 <style>
 
@@ -403,32 +602,17 @@ margin:0;
 
 
 
-body{
-
-margin:0;
-
-padding:0;
-
-}
-
-
-
 .etiqueta{
-
 
 width:50mm;
 
 height:30mm;
 
-display:flex;
+text-align:center;
 
-flex-direction:column;
+font-family:Arial;
 
-align-items:center;
-
-justify-content:center;
-
-font-family:Arial, sans-serif;
+font-size:8px;
 
 page-break-after:always;
 
@@ -436,40 +620,17 @@ page-break-after:always;
 
 
 
-.datas{
-
-
-font-size:8px;
-
-font-weight:bold;
-
-line-height:10px;
-
-margin-bottom:2px;
-
-
-}
-
-
-
 svg{
 
-width:44mm;
+width:45mm;
 
 height:12mm;
 
-
 }
-
 
 
 </style>
 
-
-</head>
-
-
-<body>
 
 
 ${etiquetas}
@@ -485,13 +646,12 @@ ${etiquetas}
 
 ${Array.from({length:quantidade},(_,i)=>`
 
-JsBarcode("#barcode${i}",
-"${codigo}",
+JsBarcode("#barcode${i}","${codigo}",
 {
 
 format:"CODE128",
 
-width:1.4,
+width:1.3,
 
 height:35,
 
@@ -513,13 +673,6 @@ window.print();
 </script>
 
 
-
-</body>
-
-</html>
-
-
-
 `);
 
 
@@ -527,11 +680,16 @@ window.print();
 janela.document.close();
 
 
+
 }
 
-// ===============================
-// LIMPAR CAMPOS
-// ===============================
+
+
+
+
+// ==============================
+// LIMPAR
+// ==============================
 
 function limparCampos(){
 
@@ -540,131 +698,14 @@ document.getElementById("produto").value="";
 
 document.getElementById("preco").value="";
 
-document.getElementById("estoque").value="";
-
+document.getElementById("estoqueInicial").value="";
 
 }
 
 
 
+// ==============================
 // INICIAR
+// ==============================
 
 mostrarProdutos();
-function calcularValidade(){
-
-let fabricacao = document.getElementById("fabricacao").value;
-
-
-if(fabricacao){
-
-let data = new Date(fabricacao);
-
-
-data.setDate(data.getDate()+7);
-
-
-let ano = data.getFullYear();
-
-let mes = String(data.getMonth()+1).padStart(2,"0");
-
-let dia = String(data.getDate()).padStart(2,"0");
-
-
-document.getElementById("validade").value =
-`${ano}-${mes}-${dia}`;
-
-}
-
-}
-let produtoEtiqueta = null;
-
-
-// abrir painel de etiqueta
-
-function abrirEtiqueta(index){
-
-
-produtoEtiqueta = produtos[index];
-
-
-document.getElementById("painelEtiqueta").style.display="block";
-
-
-document.getElementById("produtoEtiquetaNome").innerHTML =
-produtoEtiqueta.nome;
-
-
-document.getElementById("produtoEtiquetaCodigo").innerHTML =
-produtoEtiqueta.codigo;
-
-
-document.getElementById("dataFabricacaoEtiqueta").value="";
-
-document.getElementById("dataValidadeEtiqueta").value="";
-
-}
-
-
-// calcular validade +7 dias
-
-function calcularValidadeEtiqueta(){
-
-
-let data =
-document.getElementById("dataFabricacaoEtiqueta").value;
-
-
-
-if(data){
-
-
-let validade = new Date(data);
-
-
-validade.setDate(
-validade.getDate()+7
-);
-
-
-
-let ano = validade.getFullYear();
-
-let mes = String(validade.getMonth()+1).padStart(2,"0");
-
-let dia = String(validade.getDate()).padStart(2,"0");
-
-
-
-document.getElementById("dataValidadeEtiqueta").value =
-`${ano}-${mes}-${dia}`;
-
-
-
-}
-
-
-
-}
-function colocarHoje(){
-
-
-let hoje = new Date();
-
-
-let ano = hoje.getFullYear();
-
-let mes = String(hoje.getMonth()+1).padStart(2,"0");
-
-let dia = String(hoje.getDate()).padStart(2,"0");
-
-
-
-document.getElementById("dataFabricacaoEtiqueta").value =
-`${ano}-${mes}-${dia}`;
-
-
-
-calcularValidadeEtiqueta();
-
-
-}
