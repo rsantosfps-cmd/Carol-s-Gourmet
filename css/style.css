@@ -1,87 +1,240 @@
+/* ===========================
+   CAROL'S GOURMET V2
+=========================== */
+
 *{
+    margin:0;
+    padding:0;
     box-sizing:border-box;
 }
 
-
 body{
 
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:'Poppins',sans-serif;
 
-    background:#FFF4D6;
+    background:#FFF6E9;
 
-    margin:0;
+    color:#333;
 
-    padding:20px;
+}
+
+
+/* ===========================
+LAYOUT
+=========================== */
+
+.layout{
+
+    display:flex;
+
+    min-height:100vh;
+
+}
+
+
+/* ===========================
+MENU LATERAL
+=========================== */
+
+.sidebar{
+
+    width:250px;
+
+    background:#C62828;
+
+    color:#FFF;
+
+    padding:30px 20px;
+
+    box-shadow:4px 0 15px rgba(0,0,0,.15);
+
+}
+
+.logo{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+.logo h2{
+
+    font-size:32px;
+
+}
+
+.logo span{
+
+    font-size:18px;
+
+    font-weight:300;
+
+}
+
+
+.sidebar nav{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+
+.menu{
+
+    background:transparent;
+
+    color:white;
+
+    border:none;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    text-align:left;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+.menu:hover{
+
+    background:#FFC107;
 
     color:#5D4037;
 
 }
 
+.menu.ativo{
 
+    background:#FFC107;
 
-/* TOPO */
+    color:#5D4037;
 
-.topo{
-
-    max-width:950px;
-
-    margin:auto;
-
-    background:#C62828;
-
-    color:white;
-
-    text-align:center;
-
-    padding:20px;
-
-    border-radius:20px;
-
-    box-shadow:0 5px 15px rgba(0,0,0,.2);
+    font-weight:bold;
 
 }
 
+
+/* ===========================
+CONTEÚDO
+=========================== */
+
+.conteudo{
+
+    flex:1;
+
+    padding:35px;
+
+}
+
+
+/* ===========================
+TOPO
+=========================== */
+
+.topo{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
 
 
 .topo h1{
 
-    margin:0;
+    font-size:32px;
 
-    font-size:34px;
+    color:#C62828;
 
 }
-
 
 
 .topo p{
 
-    margin:5px;
-
-    font-size:18px;
+    color:#777;
 
 }
 
 
+.usuario{
 
+    background:white;
 
+    padding:12px 20px;
 
-/* CONTAINER */
+    border-radius:12px;
 
-
-.container{
-
-    max-width:950px;
-
-    margin:25px auto;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
 
 }
 
 
+/* ===========================
+CARDS DASHBOARD
+=========================== */
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
 
 
+.card-info{
 
-/* CARDS */
+    background:white;
 
+    border-radius:20px;
+
+    padding:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    border-left:8px solid #FFC107;
+
+}
+
+.card-info h3{
+
+    color:#777;
+
+    margin-bottom:10px;
+
+}
+
+.card-info h2{
+
+    color:#C62828;
+
+    font-size:32px;
+
+}
+
+
+/* ===========================
+CARDS
+=========================== */
 
 .card{
 
@@ -93,107 +246,89 @@ body{
 
     border-radius:20px;
 
-    box-shadow:0 5px 15px rgba(0,0,0,.12);
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
 
 }
-
-
-
-
-
-/* TITULOS */
 
 
 .card h2{
 
-    color:#5D4037;
+    color:#C62828;
 
-    background:#FFF4D6;
-
-    border-left:8px solid #FFC107;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    margin-top:0;
+    margin-bottom:20px;
 
 }
 
 
+/* ===========================
+GRID
+=========================== */
+
+.grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
 
 
+/* ===========================
+LABEL
+=========================== */
 
-/* CAMPOS */
+label{
 
+    display:block;
+
+    margin-top:15px;
+
+    margin-bottom:6px;
+
+    font-weight:600;
+
+}
+
+
+/* ===========================
+INPUTS
+=========================== */
 
 input{
-
 
     width:100%;
 
     padding:13px;
 
-    margin:8px 0;
+    border-radius:12px;
 
-    border-radius:10px;
+    border:2px solid #EEE;
 
-    border:2px solid #E6B566;
+    font-size:15px;
 
-    font-size:16px;
+    transition:.2s;
 
 }
-
-
-
 
 
 input:focus{
 
+    border-color:#FFC107;
+
     outline:none;
 
-    border-color:#C62828;
-
 }
 
 
-
-
-
-/* CODIGO AUTOMATICO */
-
-
-#codigoGerado{
-
-
-    background:#FFF8E1;
-
-    border:2px dashed #FFC107;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    text-align:center;
-
-    margin:10px 0;
-
-    font-weight:bold;
-
-    color:#C62828;
-
-
-}
-
-
-
-
-
-/* BOTÕES */
-
+/* ===========================
+BOTÕES
+=========================== */
 
 button{
 
+    margin-top:15px;
 
     background:#FFC107;
 
@@ -201,19 +336,17 @@ button{
 
     border:none;
 
-    padding:12px 18px;
-
     border-radius:12px;
+
+    padding:12px 20px;
 
     cursor:pointer;
 
     font-weight:bold;
 
-    margin:5px;
-
+    transition:.3s;
 
 }
-
 
 
 button:hover{
@@ -225,25 +358,9 @@ button:hover{
 }
 
 
-
-
-/* BOTÃO PRINCIPAL */
-
-
-.card > button{
-
-    width:100%;
-
-    font-size:16px;
-
-}
-
-
-
-
-
-/* LINHA */
-
+/* ===========================
+LINHAS
+=========================== */
 
 .linha{
 
@@ -256,34 +373,19 @@ button:hover{
 }
 
 
-
-.linha input{
-
-    flex:1;
-
-}
-
-
-
-
-/* TABELA */
-
+/* ===========================
+TABELA
+=========================== */
 
 table{
-
 
     width:100%;
 
     border-collapse:collapse;
 
-    overflow:hidden;
-
-    border-radius:15px;
+    margin-top:20px;
 
 }
-
-
-
 
 
 thead{
@@ -295,98 +397,118 @@ thead{
 }
 
 
-
-
-
 th{
 
-    padding:12px;
+    padding:14px;
 
 }
-
-
 
 
 td{
 
-    padding:12px;
+    padding:14px;
 
     text-align:center;
 
-    border-bottom:1px solid #eee;
+    border-bottom:1px solid #EEE;
 
 }
 
 
+tbody tr:hover{
 
-
-
-tr:hover{
-
-    background:#FFF8E1;
+    background:#FFF9EC;
 
 }
 
 
+/* ===========================
+ALERTA
+=========================== */
 
+.baixo{
 
+    color:#C62828;
 
-/* ETIQUETA */
-
-
-#etiqueta{
-
-    text-align:center;
-
-}
-
-
-
-
-
-/* CELULAR */
-
-
-@media(max-width:600px){
-
-
-body{
-
-    padding:10px;
+    font-weight:bold;
 
 }
 
 
+/* ===========================
+ETIQUETA
+=========================== */
 
-.topo h1{
+#painelEtiqueta{
 
-    font-size:25px;
-
-}
-
-
-
-.card{
-
-    padding:15px;
+    border:3px dashed #FFC107;
 
 }
 
 
+/* ===========================
+SCROLL
+=========================== */
 
-table{
+::-webkit-scrollbar{
 
-    font-size:12px;
+    width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#FFC107;
+
+    border-radius:20px;
 
 }
 
 
+/* ===========================
+RESPONSIVO
+=========================== */
+
+@media(max-width:900px){
+
+.layout{
+
+    flex-direction:column;
+
+}
+
+.sidebar{
+
+    width:100%;
+
+}
+
+.grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.topo{
+
+    flex-direction:column;
+
+    gap:15px;
+
+    align-items:flex-start;
+
+}
+
+.cards{
+
+    grid-template-columns:1fr;
+
+}
 
 .linha{
 
-    display:block;
+    flex-direction:column;
 
 }
-
 
 }
