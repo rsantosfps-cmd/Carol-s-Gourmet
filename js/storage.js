@@ -629,53 +629,85 @@ document
 function movimentarEstoque(){
 
 
-
-let p =
-produtos[produtoSelecionado];
+    let p = produtos[produtoSelecionado];
 
 
+    if(!p){
 
-let entrada =
-Number(
-document
-.getElementById("entrada")
-.value
-);
+        alert("Nenhum produto selecionado");
+
+        return;
+
+    }
 
 
 
-let saida =
-Number(
-document
-.getElementById("saida")
-.value
-);
+    let entrada = Number(
+        document.getElementById("entrada").value
+    ) || 0;
 
 
 
-p.estoque += entrada;
-
-p.estoque -= saida;
-
-
-
-salvar();
+    let saida = Number(
+        document.getElementById("saida").value
+    ) || 0;
 
 
-mostrarProdutos();
+
+    // Atualiza estoque
+
+    p.estoque = p.estoque + entrada - saida;
 
 
-atualizarDashboard();
+
+    // Impede estoque negativo
+
+    if(p.estoque < 0){
+
+        p.estoque = 0;
+
+    }
 
 
-alert(
-"Estoque atualizado"
-);
+
+    salvar();
+
+
+    mostrarProdutos();
+
+
+    atualizarDashboard();
+
+
+
+    // Atualiza tela do estoque
+
+    document
+    .getElementById("estoqueAtual")
+    .innerHTML = p.estoque;
+
+
+
+    // Limpa os campos depois da movimentação
+
+    document
+    .getElementById("entrada")
+    .value = "";
+
+
+
+    document
+    .getElementById("saida")
+    .value = "";
+
+
+
+    alert(
+        "Estoque atualizado com sucesso!"
+    );
 
 
 }
-
-
 
 
 
