@@ -3,14 +3,19 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<title>Carol's Gourmet 3.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="css/style.css">
+    <title>Carol's Gourmet</title>
 
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 </head>
 
@@ -20,14 +25,13 @@
 
     <div class="logo-area">
 
-        <!-- Quando adicionar a logo -->
-        <!-- <img src="img/logo.png" class="logo"> -->
+        <div class="logo-icone">🍰</div>
 
         <div>
 
-            <h1>🍰 Carol's Gourmet</h1>
+            <h1>Carol's Gourmet</h1>
 
-            <p>Sistema de Gestão de Produtos</p>
+            <span>Central de Produção</span>
 
         </div>
 
@@ -35,337 +39,349 @@
 
 </header>
 
-<div class="container">
+<nav class="menu">
 
-    <!-- DASHBOARD -->
+    <button class="menu-btn ativo"
+        onclick="abrirAba('dashboard')">
 
-    <section class="dashboard">
+        🏠 Dashboard
 
-        <div class="box">
+    </button>
 
-            <h3>📦 Produtos</h3>
+    <button class="menu-btn"
+        onclick="abrirAba('produtos')">
 
-            <strong id="totalProdutos">0</strong>
+        📦 Produtos
 
-        </div>
+    </button>
 
-        <div class="box">
+    <button class="menu-btn"
+        onclick="abrirAba('materiaPrima')">
 
-            <h3>📋 Estoque</h3>
+        🥫 Matéria-Prima
 
-            <strong id="totalEstoque">0</strong>
+    </button>
 
-        </div>
+    <button class="menu-btn"
+        onclick="abrirAba('estoque')">
 
-    </section>
+        📋 Estoque
 
-    <!-- CADASTRO -->
+    </button>
 
-    <section class="card">
+    <button class="menu-btn"
+        onclick="abrirAba('producao')">
 
-        <h2>Cadastro de Produto</h2>
+        🏭 Produção
+
+    </button>
+
+    <button class="menu-btn"
+        onclick="abrirAba('etiquetas')">
+
+        🏷️ Etiquetas
+
+    </button>
+
+    <button class="menu-btn"
+        onclick="abrirAba('configuracoes')">
+
+        ⚙️ Configurações
+
+    </button>
+
+</nav>
+
+<main class="container">
+    <!-- ==========================
+     MENU PRINCIPAL
+========================== -->
+
+<!-- ==========================
+    MENU LATERAL
+========================== -->
+
+<button id="btnMenu" class="btn-menu" onclick="toggleMenu()">
+
+    ☰
+
+</button>
+
+
+<div id="menuLateral" class="sidebar">
+
+    <div class="logo-sidebar">
+
+        <img src="img/logo.png"
+             alt="Carol's Gourmet"
+             class="logo-menu">
+
+        <h2>Carol's Gourmet</h2>
+
+        <span>ERP 4.0</span>
+
+    </div>
+
+
+    <button class="menu-item ativo"
+            onclick="mostrarAba('dashboard', this)">
+
+        🏠
+        <span>Dashboard</span>
+
+    </button>
+
+
+    <button class="menu-item"
+            onclick="mostrarAba('produtos', this)">
+
+        📦
+        <span>Produtos</span>
+
+    </button>
+
+
+    <button class="menu-item"
+            onclick="mostrarAba('materiaPrima', this)">
+
+        🥫
+        <span>Matéria-Prima</span>
+
+    </button>
+
+
+    <button class="menu-item"
+            onclick="mostrarAba('estoque', this)">
+
+        📋
+        <span>Estoque</span>
+
+    </button>
+
+
+    <button class="menu-item"
+            onclick="mostrarAba('producao', this)">
+
+        🏭
+        <span>Produção</span>
+
+    </button>
+
+
+    <button class="menu-item"
+            onclick="mostrarAba('etiquetas', this)">
+
+        🏷️
+        <span>Etiquetas</span>
+
+    </button>
+
+
+    <button class="menu-item"
+            onclick="mostrarAba('configuracoes', this)">
+
+        ⚙️
+        <span>Configurações</span>
+
+    </button>
+
+
+</div>
+
+
+<div class="conteudo-principal">
+
+<main class="container">
+
+
+<!-- =====================================
+            DASHBOARD
+====================================== -->
+
+<section id="dashboard" class="aba ativa">
+
+    <div class="card">
+
+        <h2>
+            🍰 Bem-vindo à Carol's Gourmet
+        </h2>
 
         <p class="subtitulo">
-            O código interno e o código de barras são gerados automaticamente.
+
+            Este sistema foi desenvolvido para controlar toda a produção,
+            estoque e impressão de etiquetas da empresa.
+
         </p>
-                <div class="form-grid">
 
-            <div class="campo">
+        <br>
 
-                <label>Código Interno</label>
+        <div class="dashboard-info">
 
-                <input
-                    type="text"
-                    id="codigoInterno"
-                    readonly>
+            <div class="info-box">
+
+                <h3>Última atualização</h3>
+
+                <span id="ultimaAtualizacao">
+
+                    Nenhuma movimentação registrada.
+
+                </span>
+
+            </div>
+
+            <div class="info-box">
+
+                <h3>Produtos cadastrados</h3>
+
+                <span id="totalProdutos">
+
+                    0
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =====================================
+            PRODUTOS
+====================================== -->
+
+<section id="produtos" class="aba">
+
+    <div class="card">
+
+        <h2>📦 Cadastro de Produtos</h2>
+
+        <p class="subtitulo">
+
+            Cadastre os produtos acabados da Carol's Gourmet.
+            O código interno e o código de barras serão gerados automaticamente.
+
+        </p>
+
+        <form id="formProduto">
+
+            <div class="linha">
+
+                <div class="campo">
+
+                    <label>Código Interno</label>
+
+                    <input
+                        type="text"
+                        id="codigoInterno"
+                        readonly>
+
+                </div>
+
+                <div class="campo">
+
+                    <label>Código de Barras (EAN-13)</label>
+
+                    <input
+                        type="text"
+                        id="codigoBarras"
+                        readonly>
+
+                </div>
 
             </div>
 
             <div class="campo">
 
-                <label>Código de Barras (EAN-13)</label>
+                <label>Nome do Produto</label>
 
                 <input
                     type="text"
-                    id="codigoBarras"
-                    readonly>
-
-            </div>
-
-            <div class="campo campo-duplo">
-
-                <label>Produto</label>
-
-                <input
-                    type="text"
-                    id="produto"
+                    id="nomeProduto"
                     placeholder="Ex.: Palha Italiana Tradicional">
 
             </div>
 
-            <div class="campo">
+            <div class="linha">
 
-                <label>Preço (R$)</label>
+                <div class="campo">
 
-                <input
-                    type="number"
-                    id="preco"
-                    step="0.01"
-                    min="0"
-                    placeholder="0,00">
-
-            </div>
-
-            <div class="campo">
-
-                <label>Estoque Inicial</label>
-
-                <input
-                    type="number"
-                    id="estoque"
-                    min="0"
-                    placeholder="0">
-
-            </div>
-
-        </div>
-
-        <div class="acoes-cadastro">
-
-            <button id="salvar" class="btn btn-principal">
-                💾 Salvar Produto
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-secundario"
-                onclick="limparCadastro()">
-
-                ➕ Novo Cadastro
-
-            </button>
-
-        </div>
-
-    </section>
-
-    <!-- CONTROLE DE ESTOQUE -->
-
-    <section
-        class="card"
-        id="painelEstoque"
-        style="display:none;">
-
-        <h2>Controle de Estoque</h2>
-
-        <p>
-
-            Produto:
-
-            <strong id="produtoEstoqueNome"></strong>
-
-        </p>
-
-        <p>
-
-            Estoque Atual:
-
-            <strong id="estoqueAtual"></strong>
-
-        </p>
-
-        <div class="form-grid">
-
-            <div class="campo">
-
-                <label>Entrada</label>
-
-                <input
-                    type="number"
-                    id="entrada"
-                    min="0"
-                    placeholder="0">
-
-            </div>
-
-            <div class="campo">
-
-                <label>Saída</label>
-
-                <input
-                    type="number"
-                    id="saida"
-                    min="0"
-                    placeholder="0">
-
-            </div>
-
-        </div>
-
-        <button
-            id="salvarEstoque"
-            class="btn btn-principal">
-
-            📦 Atualizar Estoque
-
-        </button>
-
-    </section>
-        <!-- ETIQUETAS -->
-
-    <section
-        class="card"
-        id="painelEtiqueta"
-        style="display:none;">
-
-        <h2>🏷️ Impressão de Etiquetas</h2>
-
-        <div class="info-etiqueta">
-
-            <p>
-
-                <strong>Produto:</strong>
-
-                <span id="produtoEtiquetaNome"></span>
-
-            </p>
-
-            <p>
-
-                <strong>Código:</strong>
-
-                <span id="codigoEtiqueta"></span>
-
-            </p>
-
-        </div>
-
-        <div class="form-grid">
-
-            <div class="campo">
-
-                <label>Data de Fabricação</label>
-
-                <div class="linha">
+                    <label>Preço de Venda</label>
 
                     <input
-                        type="date"
-                        id="dataFabricacao">
+                        type="number"
+                        id="precoProduto"
+                        step="0.01"
+                        min="0">
 
-                    <button
-                        type="button"
-                        id="hoje"
-                        class="btn btn-secundario">
+                </div>
 
-                        Hoje
+                <div class="campo">
 
-                    </button>
+                    <label>Estoque Inicial</label>
+
+                    <input
+                        type="number"
+                        id="estoqueInicial"
+                        value="0"
+                        min="0">
 
                 </div>
 
             </div>
 
-            <div class="campo">
+            <div class="botoes-form">
 
-                <label>Validade</label>
+                <button
+                    type="button"
+                    class="btn-salvar"
+                    onclick="salvarProduto()">
 
-                <input
-                    type="date"
-                    id="dataValidade"
-                    readonly>
+                    💾 Salvar Produto
 
-            </div>
+                </button>
 
-            <div class="campo">
+                <button
+                    type="button"
+                    class="btn-limpar"
+                    onclick="novoCadastro()">
 
-                <label>Quantidade de Etiquetas</label>
+                    ➕ Novo Cadastro
 
-                <input
-                    type="number"
-                    id="quantidadeEtiqueta"
-                    value="1"
-                    min="1">
-
-            </div>
-
-        </div>
-
-
-        <!-- PRÉ-VISUALIZAÇÃO -->
-
-        <div id="previewEtiqueta">
-
-            <div class="etiqueta">
-
-                <div class="datas">
-
-                    <span>
-
-                        FAB:
-                        <strong id="previewFab">--/--/----</strong>
-
-                    </span>
-
-                    <span>
-
-                        VAL:
-                        <strong id="previewVal">--/--/----</strong>
-
-                    </span>
-
-                </div>
-
-                <svg id="barcodePreview"></svg>
+                </button>
 
             </div>
 
-        </div>
+        </form>
+
+    </div>
 
 
-        <button
-            id="imprimirEtiqueta"
-            class="btn btn-principal">
+    <div class="card">
 
-            🖨️ Imprimir Etiquetas
+        <h2>📋 Produtos Cadastrados</h2>
 
-        </button>
+        <input
+            type="text"
+            id="pesquisaProduto"
+            placeholder="Pesquisar produto..."
+            onkeyup="pesquisarProduto()">
 
-    </section>
+        <div class="tabela-responsiva">
 
-
-
-    <!-- LISTA DE PRODUTOS -->
-
-    <section class="card">
-
-        <div class="titulo-tabela">
-
-            <h2>Produtos Cadastrados</h2>
-
-            <input
-                type="text"
-                id="buscar"
-                placeholder="🔍 Pesquisar produto...">
-
-        </div>
-
-        <div class="tabela">
-
-            <table>
+            <table id="tabelaProdutos">
 
                 <thead>
 
                     <tr>
 
-                        <th>Cód. Interno</th>
+                        <th>Código</th>
 
                         <th>Produto</th>
 
                         <th>Preço</th>
 
                         <th>Estoque</th>
-
-                        <th>Cód. Barras</th>
 
                         <th>Ações</th>
 
@@ -381,27 +397,787 @@
 
         </div>
 
-    </section>
-        <footer class="rodape">
+    </div>
 
-        <p>
+</section>
+<!-- =====================================
+        MATÉRIA-PRIMA
+====================================== -->
 
-            Carol's Gourmet © 2026
+<section id="materiaPrima" class="aba">
+
+    <div class="card">
+
+        <h2>🥫 Cadastro de Matéria-Prima</h2>
+
+        <p class="subtitulo">
+
+            Cadastre todos os ingredientes e embalagens utilizados na produção.
 
         </p>
 
-        <small>
+        <form id="formMateriaPrima">
 
-            Sistema de Gestão de Produtos • Versão 3.0
+            <div class="linha">
 
-        </small>
+                <div class="campo">
 
-    </footer>
+                    <label>Código Interno</label>
+
+                    <input
+                        type="text"
+                        id="codigoMP"
+                        readonly>
+
+                </div>
+
+                <div class="campo">
+
+                    <label>Código de Barras (EAN-13)</label>
+
+                    <input
+                        type="text"
+                        id="codigoBarrasMP"
+                        readonly>
+
+                </div>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label>Nome da Matéria-Prima</label>
+
+                <input
+                    type="text"
+                    id="nomeMP"
+                    placeholder="Ex.: Leite Condensado Moça">
+
+            </div>
+
+
+            <div class="linha">
+
+                <div class="campo">
+
+                    <label>Categoria</label>
+
+                    <select id="categoriaMP">
+
+                        <option>Ingrediente</option>
+
+                        <option>Embalagem</option>
+
+                        <option>Rótulo</option>
+
+                        <option>Outros</option>
+
+                    </select>
+
+                </div>
+
+                <div class="campo">
+
+                    <label>Unidade</label>
+
+                    <select id="unidadeMP">
+
+                        <option>Unidade</option>
+
+                        <option>Kg</option>
+
+                        <option>g</option>
+
+                        <option>Litro</option>
+
+                        <option>ml</option>
+
+                        <option>Pacote</option>
+
+                        <option>Caixa</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="linha">
+
+                <div class="campo">
+
+                    <label>Quantidade Inicial</label>
+
+                    <input
+                        type="number"
+                        id="estoqueMP"
+                        value="0"
+                        min="0">
+
+                </div>
+
+                <div class="campo">
+
+                    <label>Custo de Compra (R$)</label>
+
+                    <input
+                        type="number"
+                        id="custoMP"
+                        step="0.01"
+                        min="0">
+
+                </div>
+
+            </div>
+
+
+            <div class="botoes-form">
+
+                <button
+                    type="button"
+                    class="btn-salvar"
+                    onclick="salvarMateriaPrima()">
+
+                    💾 Salvar Matéria-Prima
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-limpar"
+                    onclick="novaMateriaPrima()">
+
+                    ➕ Novo Cadastro
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📋 Estoque de Matéria-Prima</h2>
+
+        <input
+            type="text"
+            id="pesquisaMP"
+            placeholder="Pesquisar ingrediente..."
+            onkeyup="pesquisarMateriaPrima()">
+
+        <div class="tabela-responsiva">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Código</th>
+
+                        <th>Ingrediente</th>
+
+                        <th>Categoria</th>
+
+                        <th>Unidade</th>
+
+                        <th>Estoque</th>
+
+                        <th>Custo</th>
+
+                        <th>Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="listaMateriaPrima">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =====================================
+        ESTOQUE
+====================================== -->
+
+<section id="estoque" class="aba">
+
+    <div class="card">
+
+        <h2>📋 Movimentação de Estoque</h2>
+
+        <p class="subtitulo">
+
+            Utilize esta tela para registrar entradas e saídas de produtos e matérias-primas.
+
+        </p>
+
+        <div class="linha">
+
+            <div class="campo">
+
+                <label>Tipo</label>
+
+                <select id="tipoMovimentacao">
+
+                    <option value="produto">Produto Acabado</option>
+                    <option value="materiaPrima">Matéria-Prima</option>
+
+                </select>
+
+            </div>
+
+            <div class="campo">
+
+                <label>Operação</label>
+
+                <select id="operacaoEstoque">
+
+                    <option value="entrada">📥 Entrada</option>
+                    <option value="saida">📤 Saída</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="campo">
+
+            <label>Produto</label>
+
+            <select id="produtoMovimentacao">
+
+            </select>
+
+        </div>
+
+        <div class="linha">
+
+            <div class="campo">
+
+                <label>Quantidade</label>
+
+                <input
+                    type="number"
+                    id="quantidadeMovimentacao"
+                    min="1"
+                    value="1">
+
+            </div>
+
+            <div class="campo">
+
+                <label>Data</label>
+
+                <input
+                    type="date"
+                    id="dataMovimentacao">
+
+            </div>
+
+        </div>
+
+        <div class="campo">
+
+            <label>Observação</label>
+
+            <textarea
+                id="observacaoMovimentacao"
+                rows="3"
+                placeholder="Ex.: Compra no Atacadão, Produção, Perda, Venda..."></textarea>
+
+        </div>
+
+        <div class="botoes-form">
+
+            <button
+                type="button"
+                class="btn-salvar"
+                onclick="registrarMovimentacao()">
+
+                💾 Registrar Movimentação
+
+            </button>
+
+            <button
+                type="button"
+                class="btn-camera"
+                onclick="abrirCamera()">
+
+                📷 Ler Código de Barras
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📜 Histórico de Movimentações</h2>
+
+        <div class="tabela-responsiva">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Data</th>
+                        <th>Produto</th>
+                        <th>Tipo</th>
+                        <th>Quantidade</th>
+                        <th>Operação</th>
+                        <th>Observação</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="historicoMovimentacoes">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =====================================
+            PRODUÇÃO
+====================================== -->
+
+<section id="producao" class="aba">
+
+    <div class="card">
+
+        <h2>🏭 Produção</h2>
+
+        <p class="subtitulo">
+
+            Registre a produção diária da Carol's Gourmet.
+
+        </p>
+
+        <div class="linha">
+
+            <div class="campo">
+
+                <label>Produto</label>
+
+                <select id="produtoProducao">
+
+                </select>
+
+            </div>
+
+            <div class="campo">
+
+                <label>Quantidade Produzida</label>
+
+                <input
+                    type="number"
+                    id="quantidadeProduzida"
+                    min="1"
+                    value="1">
+
+            </div>
+
+        </div>
+
+        <div class="linha">
+
+            <div class="campo">
+
+                <label>Data da Fabricação</label>
+
+                <input
+                    type="date"
+                    id="dataFabricacao">
+
+            </div>
+
+            <div class="campo">
+
+                <label>Validade</label>
+
+                <input
+                    type="date"
+                    id="dataValidade">
+
+            </div>
+
+        </div>
+
+        <div class="campo">
+
+            <label>Observações</label>
+
+            <textarea
+                id="observacaoProducao"
+                rows="3"
+                placeholder="Ex.: Produção do período da manhã."></textarea>
+
+        </div>
+
+        <div class="botoes-form">
+
+            <button
+                type="button"
+                class="btn-salvar"
+                onclick="registrarProducao()">
+
+                🏭 Registrar Produção
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <h2>📋 Produções Registradas</h2>
+
+        <div class="tabela-responsiva">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Data</th>
+
+                        <th>Produto</th>
+
+                        <th>Quantidade</th>
+
+                        <th>Fabricação</th>
+
+                        <th>Validade</th>
+
+                        <th>Observação</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="listaProducoes">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =====================================
+            ETIQUETAS
+====================================== -->
+
+<section id="etiquetas" class="aba">
+
+    <div class="card">
+
+        <h2>🏷️ Impressão de Etiquetas</h2>
+
+        <p class="subtitulo">
+
+            Selecione um produto e gere as etiquetas para impressão.
+
+        </p>
+
+        <div class="linha">
+
+            <div class="campo">
+
+                <label>Produto</label>
+
+                <select id="produtoEtiqueta">
+
+                </select>
+
+            </div>
+
+            <div class="campo">
+
+                <label>Quantidade de Etiquetas</label>
+
+                <input
+                    type="number"
+                    id="qtdEtiquetas"
+                    value="1"
+                    min="1">
+
+            </div>
+
+        </div>
+
+        <div class="linha">
+
+            <div class="campo">
+
+                <label>Data de Fabricação</label>
+
+                <input
+                    type="date"
+                    id="fabricacaoEtiqueta">
+
+            </div>
+
+            <div class="campo">
+
+                <label>Data de Validade</label>
+
+                <input
+                    type="date"
+                    id="validadeEtiqueta">
+
+            </div>
+
+        </div>
+
+        <div class="botoes-form">
+
+            <button
+                type="button"
+                class="btn-salvar"
+                onclick="gerarEtiqueta()">
+
+                👁️ Visualizar
+
+            </button>
+
+            <button
+                type="button"
+                class="btn-camera"
+                onclick="imprimirEtiquetas()">
+
+                🖨️ Imprimir
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <h2>Pré-visualização</h2>
+
+        <div id="previewEtiqueta">
+
+            <div class="etiqueta-preview">
+
+                <h3 id="prevNomeProduto">
+
+                    Carol's Gourmet
+
+                </h3>
+
+                <div id="barcode">
+
+                </div>
+
+                <p>
+
+                    <strong>Código:</strong>
+
+                    <span id="prevCodigo">
+
+                        -----------
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    <strong>Fab:</strong>
+
+                    <span id="prevFabricacao">
+
+                        --/--/----
+
+                    </span>
+
+                </p>
+
+                <p>
+
+                    <strong>Val:</strong>
+
+                    <span id="prevValidade">
+
+                        --/--/----
+
+                    </span>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =====================================
+            CONFIGURAÇÕES
+====================================== -->
+
+<section id="configuracoes" class="aba">
+
+    <div class="card">
+
+        <h2>⚙️ Configurações do Sistema</h2>
+
+        <p class="subtitulo">
+
+            Área reservada para as configurações da Carol's Gourmet ERP.
+
+        </p>
+
+        <div class="config-grid">
+
+            <div class="config-item">
+
+                <h3>🏢 Empresa</h3>
+
+                <button class="btn-config"
+                        onclick="editarEmpresa()">
+
+                    Editar Dados da Empresa
+
+                </button>
+
+            </div>
+
+
+            <div class="config-item">
+
+                <h3>🖨️ Impressora</h3>
+
+                <button class="btn-config"
+                        onclick="configurarImpressora()">
+
+                    Configurar Etiquetas
+
+                </button>
+
+            </div>
+
+
+            <div class="config-item">
+
+                <h3>💾 Backup</h3>
+
+                <button class="btn-config"
+                        onclick="exportarBackup()">
+
+                    Exportar Backup
+
+                </button>
+
+            </div>
+
+
+            <div class="config-item">
+
+                <h3>📂 Restaurar</h3>
+
+                <button class="btn-config"
+                        onclick="importarBackup()">
+
+                    Restaurar Backup
+
+                </button>
+
+            </div>
+
+
+            <div class="config-item">
+
+                <h3>📷 Webcam</h3>
+
+                <button class="btn-config"
+                        onclick="testarCamera()">
+
+                    Testar Webcam
+
+                </button>
+
+            </div>
+
+
+            <div class="config-item">
+
+                <h3>ℹ️ Sistema</h3>
+
+                <p>
+
+                    Carol's Gourmet ERP
+
+                </p>
+
+                <small>
+
+                    Versão 4.0
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</main>
 
 </div>
+
+
+<footer class="rodape">
+
+    <p>
+
+        © 2026 Carol's Gourmet 
+
+    </p>
+
+</footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <script src="js/storage.js"></script>
 
 </body>
-
 </html>
