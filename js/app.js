@@ -1,221 +1,344 @@
 /*=========================================================
     CAROL'S GOURMET ERP
     APP.JS
-    Parte 1 - Base do Sistema
+    PARTE 1 - BASE DO SISTEMA
 =========================================================*/
 
 "use strict";
 
+
 /*=========================================================
-    BANCO DE DADOS EM MEMÓRIA
+    BANCO DE DADOS
 =========================================================*/
+
 
 let produtos = [];
+
 let materiasPrimas = [];
+
 let movimentacoes = [];
+
 let producoes = [];
+
+let precificacoes = [];
+
 
 
 /*=========================================================
-    INICIALIZAÇÃO
+    INICIALIZAÇÃO DO SISTEMA
 =========================================================*/
 
-document.addEventListener("DOMContentLoaded", iniciarSistema);
+
+document.addEventListener(
+    "DOMContentLoaded",
+    iniciarSistema
+);
+
+
 
 function iniciarSistema(){
 
-    console.log("====================================");
-    console.log("Carol's Gourmet ERP iniciado");
-    console.log("====================================");
+
+    console.log(
+        "Carol's Gourmet ERP iniciado"
+    );
+
 
     carregarBanco();
 
+
     configurarDatas();
 
+
     atualizarDashboard();
-    
-    atualizarSelectPrecificacao();
 
-    mostrarAba("dashboard");
 
-    configurarEventos();
+    mostrarAba(
+        "dashboard"
+    );
+
 
 }
 
 
-/*=========================================================
-    EVENTOS
-=========================================================*/
-
-function configurarEventos(){
-
-    const tipoMovimentacao =
-        document.getElementById("tipoMovimentacao");
-
-    if(tipoMovimentacao){
-
-        tipoMovimentacao.addEventListener("change", function(){
-
-            console.log("Tipo alterado.");
-
-        });
-
-    }
-
-}
 
 
 /*=========================================================
     BANCO LOCAL
 =========================================================*/
 
+
 function carregarBanco(){
 
+
     produtos =
-        JSON.parse(localStorage.getItem("produtos")) || [];
+        JSON.parse(
+            localStorage.getItem("produtos")
+        ) || [];
+
+
 
     materiasPrimas =
-        JSON.parse(localStorage.getItem("materiasPrimas")) || [];
+        JSON.parse(
+            localStorage.getItem("materiasPrimas")
+        ) || [];
+
+
 
     movimentacoes =
-        JSON.parse(localStorage.getItem("movimentacoes")) || [];
+        JSON.parse(
+            localStorage.getItem("movimentacoes")
+        ) || [];
+
+
 
     producoes =
-        JSON.parse(localStorage.getItem("producoes")) || [];
+        JSON.parse(
+            localStorage.getItem("producoes")
+        ) || [];
+
+
+
+    precificacoes =
+        JSON.parse(
+            localStorage.getItem("precificacoes")
+        ) || [];
+
+
 
 }
 
 
+
+
+
 function salvarBanco(){
+
 
     localStorage.setItem(
         "produtos",
         JSON.stringify(produtos)
     );
 
+
+
     localStorage.setItem(
         "materiasPrimas",
         JSON.stringify(materiasPrimas)
     );
+
+
 
     localStorage.setItem(
         "movimentacoes",
         JSON.stringify(movimentacoes)
     );
 
+
+
     localStorage.setItem(
         "producoes",
         JSON.stringify(producoes)
     );
 
+
+
+    localStorage.setItem(
+        "precificacoes",
+        JSON.stringify(precificacoes)
+    );
+
+
 }
+
 
 
 /*=========================================================
     MENU LATERAL
 =========================================================*/
 
+
 function toggleMenu(){
 
+
     const menu =
-        document.getElementById("menuLateral");
+        document.getElementById(
+            "menuLateral"
+        );
+
 
     if(menu){
 
-        menu.classList.toggle("fechado");
+        menu.classList.toggle(
+            "fechado"
+        );
 
     }
+
 
 }
 
 
+
 /*=========================================================
-    ABAS
+    CONTROLE DAS ABAS
 =========================================================*/
 
-function mostrarAba(id, botao=null){
+
+function mostrarAba(
+    id,
+    botao = null
+){
+
+
 
     const abas =
-        document.querySelectorAll(".aba");
+        document.querySelectorAll(
+            ".aba"
+        );
+
+
 
     abas.forEach(function(aba){
 
-        aba.classList.remove("ativa");
+
+        aba.classList.remove(
+            "ativa"
+        );
+
 
     });
 
 
+
+
+
     const selecionada =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
+
 
     if(selecionada){
 
-        selecionada.classList.add("ativa");
+
+        selecionada.classList.add(
+            "ativa"
+        );
+
 
     }
 
 
+
+
+
     const botoes =
-        document.querySelectorAll(".menu-item");
+        document.querySelectorAll(
+            ".menu-item"
+        );
+
+
 
     botoes.forEach(function(item){
 
-        item.classList.remove("ativo");
+
+        item.classList.remove(
+            "ativo"
+        );
+
 
     });
+
+
 
 
     if(botao){
 
-        botao.classList.add("ativo");
+
+        botao.classList.add(
+            "ativo"
+        );
+
 
     }
 
+
+
 }
+
 
 
 /*=========================================================
     DASHBOARD
 =========================================================*/
 
+
 function atualizarDashboard(){
 
+
     const totalProdutos =
-        document.getElementById("totalProdutos");
+        document.getElementById(
+            "totalProdutos"
+        );
+
+
 
     if(totalProdutos){
 
-        totalProdutos.textContent =
+
+        totalProdutos.innerText =
             produtos.length;
 
+
     }
+
+
+
 
 
     const ultima =
-        document.getElementById("ultimaAtualizacao");
+        document.getElementById(
+            "ultimaAtualizacao"
+        );
+
+
 
     if(ultima){
 
-        ultima.textContent =
-            new Date().toLocaleString("pt-BR");
+
+        ultima.innerText =
+            new Date()
+            .toLocaleString(
+                "pt-BR"
+            );
+
 
     }
+
 
 }
 
 
+
 /*=========================================================
-    DATAS
+    DATAS AUTOMÁTICAS
 =========================================================*/
 
+
 function configurarDatas(){
+
 
     const hoje =
         new Date()
         .toISOString()
         .split("T")[0];
 
+
+
     const campos = [
+
 
         "dataMovimentacao",
 
@@ -227,69 +350,137 @@ function configurarDatas(){
 
         "validadeEtiqueta"
 
+
     ];
+
+
 
     campos.forEach(function(id){
 
+
+
         const campo =
-            document.getElementById(id);
+            document.getElementById(
+                id
+            );
+
+
 
         if(campo){
 
-            campo.value = hoje;
+
+            campo.value =
+                hoje;
+
 
         }
 
+
     });
+
+
 
 }
 
 
+
 /*=========================================================
-    GERADORES
+    GERAR CÓDIGO INTERNO
 =========================================================*/
 
-function gerarCodigoInterno(prefixo){
+
+function gerarCodigoInterno(
+    prefixo
+){
+
 
     const numero =
         Date.now()
         .toString()
         .slice(-6);
 
+
+
     return prefixo + numero;
+
 
 }
 
 
+
+
+/*=========================================================
+    GERAR EAN-13
+=========================================================*/
+
+
 function gerarEAN13(){
 
-    let codigo = "789";
+
+
+    let codigo =
+        "789";
+
+
 
     while(codigo.length < 12){
 
+
         codigo +=
-            Math.floor(Math.random()*10);
+            Math.floor(
+                Math.random()*10
+            );
+
 
     }
+
+
+
 
     let soma = 0;
 
-    for(let i=0;i<12;i++){
 
-        const numero =
-            parseInt(codigo[i]);
+
+    for(
+        let i = 0;
+        i < 12;
+        i++
+    ){
+
+
+        let numero =
+            parseInt(
+                codigo[i]
+            );
+
+
 
         soma +=
             (i % 2 === 0)
-            ? numero
-            : numero * 3;
+            ?
+            numero
+            :
+            numero * 3;
+
 
     }
 
-    const digito =
-        (10 - (soma % 10)) % 10;
+
+
+
+    let digito =
+        (
+            10 -
+            (soma % 10)
+        )
+        %
+        10;
+
+
+
 
     return codigo + digito;
+
 
 }
 /*=========================================================
@@ -302,7 +493,7 @@ let produtoEditando = -1;
 
 
 /*=========================================================
-    INICIALIZAÇÃO DO FORMULÁRIO
+    NOVO CADASTRO DE PRODUTO
 =========================================================*/
 
 
@@ -310,37 +501,49 @@ function iniciarFormularioProduto(){
 
 
     const codigo =
-        document.getElementById("codigoInterno");
+        document.getElementById(
+            "codigoInterno"
+        );
 
 
     const barras =
-        document.getElementById("codigoBarras");
+        document.getElementById(
+            "codigoBarras"
+        );
 
 
     const nome =
-        document.getElementById("nomeProduto");
-
+        document.getElementById(
+            "nomeProduto"
+        );
 
 
     const categoria =
-        document.getElementById("categoriaProduto");
-
+        document.getElementById(
+            "categoriaProduto"
+        );
 
 
     const unidade =
-        document.getElementById("unidadeProduto");
-
+        document.getElementById(
+            "unidadeProduto"
+        );
 
 
     const status =
-        document.getElementById("statusProduto");
+        document.getElementById(
+            "statusProduto"
+        );
+
 
 
 
     if(codigo){
 
         codigo.value =
-            gerarCodigoInterno("PRD");
+            gerarCodigoInterno(
+                "PRD"
+            );
 
     }
 
@@ -365,7 +568,8 @@ function iniciarFormularioProduto(){
 
     if(categoria){
 
-        categoria.value = "Doce";
+        categoria.value =
+            "Doce";
 
     }
 
@@ -373,7 +577,8 @@ function iniciarFormularioProduto(){
 
     if(unidade){
 
-        unidade.value = "Unidade";
+        unidade.value =
+            "Unidade";
 
     }
 
@@ -381,7 +586,8 @@ function iniciarFormularioProduto(){
 
     if(status){
 
-        status.value = "Ativo";
+        status.value =
+            "Ativo";
 
     }
 
@@ -395,8 +601,6 @@ function iniciarFormularioProduto(){
 
 
 
-
-
 /*=========================================================
     SALVAR PRODUTO
 =========================================================*/
@@ -405,56 +609,70 @@ function iniciarFormularioProduto(){
 function salvarProduto(){
 
 
-    const codigo =
-        document
-        .getElementById("codigoInterno")
-        .value
-        .trim();
+    const produto = {
+
+
+        codigo:
+            document
+            .getElementById(
+                "codigoInterno"
+            )
+            .value,
+
+
+        codigoBarras:
+            document
+            .getElementById(
+                "codigoBarras"
+            )
+            .value,
+
+
+        nome:
+            document
+            .getElementById(
+                "nomeProduto"
+            )
+            .value
+            .trim(),
+
+
+        categoria:
+            document
+            .getElementById(
+                "categoriaProduto"
+            )
+            .value,
+
+
+        unidade:
+            document
+            .getElementById(
+                "unidadeProduto"
+            )
+            .value,
+
+
+        status:
+            document
+            .getElementById(
+                "statusProduto"
+            )
+            .value
+
+
+    };
 
 
 
-    const codigoBarras =
-        document
-        .getElementById("codigoBarras")
-        .value
-        .trim();
 
 
-
-    const nome =
-        document
-        .getElementById("nomeProduto")
-        .value
-        .trim();
+    if(produto.nome === ""){
 
 
-
-    const categoria =
-        document
-        .getElementById("categoriaProduto")
-        .value;
-
-
-
-    const unidade =
-        document
-        .getElementById("unidadeProduto")
-        .value;
-
-
-
-    const status =
-        document
-        .getElementById("statusProduto")
-        .value;
-
-
-
-
-    if(nome === ""){
-
-
-        alert("Informe o nome do produto.");
+        alert(
+            "Informe o nome do produto."
+        );
 
 
         return;
@@ -466,41 +684,23 @@ function salvarProduto(){
 
 
 
-    const produto = {
-
-
-        codigo,
-
-        codigoBarras,
-
-        nome,
-
-        categoria,
-
-        unidade,
-
-        status
-
-
-    };
-
-
-
-
-
-
 
     if(produtoEditando === -1){
 
 
-        produtos.push(produto);
+        produtos.push(
+            produto
+        );
 
 
+    }
+    else{
 
-    }else{
 
-
-        produtos[produtoEditando] = produto;
+        produtos[
+            produtoEditando
+        ] =
+            produto;
 
 
     }
@@ -509,33 +709,32 @@ function salvarProduto(){
 
 
 
-
-
     salvarBanco();
-
 
 
     atualizarTabelaProdutos();
 
 
-
-    atualizarDashboard();
-
-
-
     atualizarSelectProdutos();
 
+
+    atualizarDashboard();
 
 
     iniciarFormularioProduto();
 
 
 
-    alert("Produto salvo com sucesso!");
-
+    alert(
+        "Produto salvo com sucesso!"
+    );
 
 
 }
+
+
+
+
 
 /*=========================================================
     TABELA DE PRODUTOS
@@ -545,12 +744,17 @@ function salvarProduto(){
 function atualizarTabelaProdutos(){
 
 
+
     const tabela =
-        document.getElementById("listaProdutos");
+        document.getElementById(
+            "listaProdutos"
+        );
 
 
 
-    if(!tabela) return;
+    if(!tabela)
+        return;
+
 
 
 
@@ -560,89 +764,80 @@ function atualizarTabelaProdutos(){
 
 
 
-    produtos.forEach(function(produto, indice){
+    produtos.forEach(
+        function(produto, indice){
 
 
 
         tabela.innerHTML += `
 
+        <tr>
 
-            <tr>
-
-
-                <td>
-                    ${produto.codigo}
-                </td>
+            <td>
+                ${produto.codigo}
+            </td>
 
 
-
-                <td>
-                    ${produto.nome}
-                </td>
-
+            <td>
+                ${produto.nome}
+            </td>
 
 
-                <td>
-                    ${produto.categoria || "-"}
-                </td>
+            <td>
+                ${produto.codigoBarras}
+            </td>
 
 
-
-                <td>
-                    ${produto.codigoBarras}
-                </td>
-
+            <td>
+                ${produto.categoria}
+            </td>
 
 
-                <td>
-                    ${produto.unidade || "-"}
-                </td>
+            <td>
+                ${produto.unidade}
+            </td>
 
 
-
-                <td>
-                    ${produto.status || "Ativo"}
-                </td>
-
+            <td>
+                ${produto.status}
+            </td>
 
 
-                <td>
+            <td>
 
 
-                    <button 
-                    onclick="editarProduto(${indice})">
+                <button onclick="editarProduto(${indice})">
 
-                        ✏️
+                    ✏️
 
-                    </button>
+                </button>
 
 
 
-                    <button 
-                    onclick="excluirProduto(${indice})">
+                <button onclick="excluirProduto(${indice})">
 
-                        🗑️
+                    🗑️
 
-                    </button>
-
+                </button>
 
 
-                </td>
+            </td>
 
 
-
-            </tr>
-
+        </tr>
 
         `;
-
 
 
     });
 
 
-
 }
+
+
+
+
+
 /*=========================================================
     EDITAR PRODUTO
 =========================================================*/
@@ -651,211 +846,221 @@ function atualizarTabelaProdutos(){
 function editarProduto(indice){
 
 
-    const produto = produtos[indice];
 
-
-    produtoEditando = indice;
-
+    const produto =
+        produtos[indice];
 
 
 
-    document.getElementById("codigoInterno").value =
+    produtoEditando =
+        indice;
 
+
+
+    document.getElementById(
+        "codigoInterno"
+    ).value =
         produto.codigo;
 
 
 
-
-    document.getElementById("codigoBarras").value =
-
+    document.getElementById(
+        "codigoBarras"
+    ).value =
         produto.codigoBarras;
 
 
 
-
-    document.getElementById("nomeProduto").value =
-
+    document.getElementById(
+        "nomeProduto"
+    ).value =
         produto.nome;
 
 
 
-
-
-    document.getElementById("categoriaProduto").value =
-
-        produto.categoria || "Doce";
-
-
+    document.getElementById(
+        "categoriaProduto"
+    ).value =
+        produto.categoria;
 
 
 
-    document.getElementById("unidadeProduto").value =
-
-        produto.unidade || "Unidade";
-
-
-
+    document.getElementById(
+        "unidadeProduto"
+    ).value =
+        produto.unidade;
 
 
-    document.getElementById("statusProduto").value =
 
-        produto.status || "Ativo";
+    document.getElementById(
+        "statusProduto"
+    ).value =
+        produto.status;
 
 
 
 }
+
+
+
+
 
 
 /*=========================================================
     EXCLUIR PRODUTO
 =========================================================*/
 
+
 function excluirProduto(indice){
 
-    const confirmar =
-        confirm("Deseja excluir este produto?");
-
-    if(!confirmar) return;
 
 
-    produtos.splice(indice, 1);
+    if(
+        !confirm(
+            "Deseja excluir este produto?"
+        )
+    )
+    return;
+
+
+
+
+    produtos.splice(
+        indice,
+        1
+    );
+
+
 
     salvarBanco();
 
+
+
     atualizarTabelaProdutos();
+
+
 
     atualizarDashboard();
 
+
+
     atualizarSelectProdutos();
+
 
 }
 
 
+
+
+
+
 /*=========================================================
-    PESQUISAR PRODUTO
+    PESQUISA
 =========================================================*/
+
 
 function pesquisarProduto(){
 
+
+
     const texto =
         document
-        .getElementById("pesquisaProduto")
+        .getElementById(
+            "pesquisaProduto"
+        )
         .value
         .toLowerCase();
 
 
-    const linhas =
-        document.querySelectorAll("#listaProdutos tr");
 
 
-    linhas.forEach(function(linha){
+    document
+    .querySelectorAll(
+        "#listaProdutos tr"
+    )
+    .forEach(function(linha){
+
+
 
         linha.style.display =
-            linha.innerText
-                .toLowerCase()
-                .includes(texto)
-            ? ""
-            : "none";
+
+        linha.innerText
+        .toLowerCase()
+        .includes(texto)
+
+        ?
+
+        ""
+
+        :
+
+        "none";
+
+
 
     });
+
 
 }
 
 
+
+
+
 /*=========================================================
-    PREENCHER SELECTS
+    LISTAS DE PRODUTOS
 =========================================================*/
+
 
 function atualizarSelectProdutos(){
 
+
+
     const selects = [
+
 
         "produtoMovimentacao",
 
         "produtoProducao",
 
-        "produtoEtiqueta"
+        "produtoEtiqueta",
+
+        "produtoPreco"
+
 
     ];
 
 
+
+
     selects.forEach(function(id){
 
-        const select =
-            document.getElementById(id);
 
-        if(!select) return;
+
+        const select =
+            document.getElementById(
+                id
+            );
+
+
+
+        if(!select)
+            return;
+
+
+
 
         select.innerHTML = "";
 
 
+
+
+
         produtos.forEach(function(produto){
 
+
+
             select.innerHTML += `
-
-                <option value="${produto.codigo}">
-
-                    ${produto.nome}
-
-                </option>
-
-            `;
-
-        });
-
-    });
-
-}
-
-
-/*=========================================================
-    BOTÃO NOVO CADASTRO
-=========================================================*/
-
-function novoCadastro(){
-
-    iniciarFormularioProduto();
-
-}
-
-
-/*=========================================================
-    INICIAR MÓDULO AO ABRIR O SISTEMA
-=========================================================*/
-
-document.addEventListener("DOMContentLoaded", function(){
-
-    iniciarFormularioProduto();
-
-    atualizarTabelaProdutos();
-
-    atualizarSelectProdutos();
-
-});
-/*=========================================================
-    MÓDULO DE PRECIFICAÇÃO
-=========================================================*/
-
-
-function atualizarSelectPrecificacao(){
-
-
-    const select =
-        document.getElementById("produtoPreco");
-
-
-    if(!select) return;
-
-
-
-    select.innerHTML = "";
-
-
-
-    produtos.forEach(function(produto){
-
-
-        select.innerHTML += `
 
             <option value="${produto.codigo}">
 
@@ -863,10 +1068,15 @@ function atualizarSelectPrecificacao(){
 
             </option>
 
-        `;
+            `;
+
+
+        });
+
 
 
     });
+
 
 
 }
@@ -875,109 +1085,15 @@ function atualizarSelectPrecificacao(){
 
 
 
-
 /*=========================================================
-    CALCULAR PREÇO
+    BOTÃO NOVO
 =========================================================*/
 
 
-function calcularPreco(){
+function novoCadastro(){
 
 
-
-    const custoMateria =
-
-        parseFloat(
-            document.getElementById("custoMateria").value
-        ) || 0;
-
-
-
-    const custoEmbalagem =
-
-        parseFloat(
-            document.getElementById("custoEmbalagem").value
-        ) || 0;
-
-
-
-    const outrosCustos =
-
-        parseFloat(
-            document.getElementById("outrosCustos").value
-        ) || 0;
-
-
-
-
-    const margem =
-
-        parseFloat(
-            document.getElementById("margemDesejada").value
-        ) || 0;
-
-
-
-
-    const taxaIfood =
-
-        parseFloat(
-            document.getElementById("taxaIfood").value
-        ) || 0;
-
-
-
-
-
-    const custoTotal =
-
-        custoMateria +
-        custoEmbalagem +
-        outrosCustos;
-
-
-
-
-
-
-    const precoSugerido =
-
-        custoTotal /
-        (1 - (margem / 100));
-
-
-
-
-
-
-    const precoIfood =
-
-        precoSugerido /
-        (1 - (taxaIfood / 100));
-
-
-
-
-
-
-    document.getElementById("resultadoCusto").innerHTML =
-
-        "R$ " + custoTotal.toFixed(2);
-
-
-
-
-    document.getElementById("resultadoPreco").innerHTML =
-
-        "R$ " + precoSugerido.toFixed(2);
-
-
-
-
-    document.getElementById("resultadoIfood").innerHTML =
-
-        "R$ " + precoIfood.toFixed(2);
-
+    iniciarFormularioProduto();
 
 
 }
