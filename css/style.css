@@ -241,7 +241,6 @@ body {
 }
 
 
-
 /* =====================================================
    MENU LATERAL
 ===================================================== */
@@ -249,40 +248,25 @@ body {
 
 .sidebar {
 
+    width: var(--menu-width);
 
-    width:
-    var(--menu-width);
+    height: 100vh;
 
+    background: var(--marrom-escuro);
 
-    height:100vh;
+    color: var(--branco);
 
+    position: fixed;
 
-    background:
-    var(--marrom-escuro);
+    left: 0;
 
+    top: 0;
 
-    color:
-    var(--branco);
+    padding-top: 90px;
 
+    transition: 0.3s ease;
 
-    position:fixed;
-
-
-    left:0;
-
-
-    top:0;
-
-
-    padding-top:90px;
-
-
-    transition:
-    0.3s ease;
-
-
-    z-index:999;
-
+    z-index: 999;
 
 }
 
@@ -295,33 +279,29 @@ body {
 
 .menu-item {
 
+    display: flex;
 
-    display:flex;
+    align-items: center;
 
+    gap: 14px;
 
-    align-items:center;
+    padding: 16px 25px;
 
+    font-size: 16px;
 
-    gap:14px;
+    color: var(--branco);
 
+    background: transparent;
 
-    padding:16px 25px;
+    border: none;
 
+    width: 100%;
 
-    font-size:16px;
+    cursor: pointer;
 
+    transition: 0.25s;
 
-    color:
-    var(--branco);
-
-
-    transition:
-    0.25s;
-
-
-    border-left:
-    4px solid transparent;
-
+    border-left: 4px solid transparent;
 
 }
 
@@ -329,68 +309,100 @@ body {
 
 .menu-item:hover {
 
-
-    background:
-    rgba(255,255,255,0.08);
-
+    background: rgba(255,255,255,0.08);
 
 }
 
 
 
-.menu-item.active {
+.menu-item.ativo {
 
+    background: var(--dourado);
 
-    background:
-    var(--dourado);
+    color: var(--marrom-escuro);
 
+    border-left: 4px solid var(--branco);
 
-    color:
-    var(--marrom-escuro);
-
-
-    border-left:
-    4px solid var(--branco);
-
-
-    font-weight:700;
-
+    font-weight: 700;
 
 }
 
 
 
 /* =====================================================
-   CONTAINER PRINCIPAL
+   ÁREA PRINCIPAL DO SISTEMA
 ===================================================== */
 
 
-.main {
+.conteudo-principal {
 
+    margin-left: var(--menu-width);
 
-    margin-left:
-    var(--menu-width);
+    padding-top: 90px;
 
+    width: calc(100% - var(--menu-width));
 
-    padding-top:
-    90px;
+    min-height: 100vh;
 
+    padding-left: 30px;
 
-    width:
-    calc(100% - var(--menu-width));
-
-
-    min-height:100vh;
-
-
-    padding-left:30px;
-
-
-    padding-right:30px;
-
+    padding-right: 30px;
 
 }
 
+
+
+/* =====================================================
+   CONTAINER DAS PÁGINAS
+===================================================== */
+
+
+.container {
+
+    width: 100%;
+
+}
+
+
+
+/* =====================================================
+   ÁREA INTERNA
+===================================================== */
+
+
+.content {
+
+    width: 100%;
+
+    animation: aparecer 0.3s ease;
+
+}
+
+
+
+.page-title {
+
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: var(--marrom-escuro);
+
+    margin-bottom: 8px;
+
+}
+
+
+
+.page-subtitle {
+
+    color: var(--cinza);
+
+    font-size: 15px;
+
+    margin-bottom: 25px;
+
+}
 
 
 /* =====================================================
