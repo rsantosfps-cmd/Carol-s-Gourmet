@@ -80,7 +80,13 @@
 
     </button>
 
+<button class="menu-item"
+        onclick="mostrarAba('precificacao', this)">
 
+    💰
+    <span>Precificação</span>
+
+</button>
 
 
     <button class="menu-item"
@@ -556,6 +562,222 @@
 
 
     </div>
+
+
+
+</section>
+        <!-- =====================================
+            PRECIFICAÇÃO
+====================================== -->
+
+<section id="precificacao" class="aba">
+
+
+<div class="card">
+
+
+<h2>💰 Precificação de Produtos</h2>
+
+
+<p class="subtitulo">
+
+Calcule custo, margem e preço sugerido dos produtos.
+
+</p>
+
+
+
+
+<div class="campo">
+
+
+<label>Produto</label>
+
+
+<select id="produtoPreco">
+
+</select>
+
+
+</div>
+
+
+
+
+
+<div class="linha">
+
+
+<div class="campo">
+
+<label>Custo Matéria-Prima (R$)</label>
+
+<input
+type="number"
+id="custoMateria"
+step="0.01"
+min="0">
+
+</div>
+
+
+
+
+
+<div class="campo">
+
+<label>Custo Embalagem (R$)</label>
+
+<input
+type="number"
+id="custoEmbalagem"
+step="0.01"
+min="0">
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="campo">
+
+<label>Outros Custos (R$)</label>
+
+<input
+type="number"
+id="outrosCustos"
+step="0.01"
+min="0">
+
+</div>
+
+
+
+
+
+
+
+<div class="linha">
+
+
+<div class="campo">
+
+<label>Margem Desejada (%)</label>
+
+<input
+type="number"
+id="margemDesejada"
+value="50">
+
+</div>
+
+
+
+
+<div class="campo">
+
+<label>Taxa iFood (%)</label>
+
+<input
+type="number"
+id="taxaIfood"
+value="25">
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="botoes-form">
+
+
+<button
+class="btn-salvar"
+onclick="calcularPreco()">
+
+💰 Calcular
+
+
+</button>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<div class="card">
+
+
+<h2>📊 Resultado</h2>
+
+
+
+<div class="dashboard-info">
+
+
+<div class="info-box">
+
+<h3>Custo Total</h3>
+
+<span id="resultadoCusto">
+
+R$ 0,00
+
+</span>
+
+</div>
+
+
+
+<div class="info-box">
+
+<h3>Preço Sugerido</h3>
+
+<span id="resultadoPreco">
+
+R$ 0,00
+
+</span>
+
+</div>
+
+
+
+
+<div class="info-box">
+
+<h3>Preço iFood</h3>
+
+<span id="resultadoIfood">
+
+R$ 0,00
+
+</span>
+
+</div>
+
+
+</div>
+
+
+</div>
 
 
 
