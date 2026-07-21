@@ -26,16 +26,32 @@ function iniciarSistema(){
 
     console.clear();
 
-    console.log("========================================");
-    console.log("   CAROL'S GOURMET ERP 4.0");
-    console.log("   Sistema iniciado com sucesso");
-    console.log("========================================");
+    console.log("====================================");
+    console.log("Carol's Gourmet ERP 4.0");
+    console.log("Sistema iniciado");
+    console.log("====================================");
 
     carregarBanco();
 
     configurarDatas();
 
-    iniciarDashboard();
+    atualizarDashboard();
+
+    novoCadastro();
+
+    novaMateriaPrima();
+
+    atualizarTabelaProdutos();
+
+    atualizarTabelaMateriaPrima();
+
+    atualizarSelectProdutos();
+
+    atualizarSelectPrecificacao();
+
+    atualizarSelectEstoque();
+
+    atualizarHistoricoMovimentacoes();
 
     mostrarAba("dashboard");
 
@@ -94,7 +110,7 @@ function salvarBanco(){
 }
 
 /*=========================================================
-    MENU LATERAL
+    MENU
 =========================================================*/
 
 function toggleMenu(){
@@ -120,7 +136,7 @@ function mostrarAba(id, botao = null){
         .querySelectorAll(".aba")
         .forEach(function(aba){
 
-            aba.classList.remove("ativo");
+            aba.classList.remove("ativa");
 
         });
 
@@ -129,7 +145,7 @@ function mostrarAba(id, botao = null){
 
     if(aba){
 
-        aba.classList.add("ativo");
+        aba.classList.add("ativa");
 
     }
 
@@ -152,12 +168,6 @@ function mostrarAba(id, botao = null){
 /*=========================================================
     DASHBOARD
 =========================================================*/
-
-function iniciarDashboard(){
-
-    atualizarDashboard();
-
-}
 
 function atualizarDashboard(){
 
@@ -266,10 +276,11 @@ function gerarEAN13(){
 
 }
 /*=========================================================
-    PARTE 2 - MÓDULO DE PRODUTOS
+    PARTE 2 - PRODUTOS
 =========================================================*/
 
 let produtoEditando = -1;
+
 
 /*=========================================================
     NOVO CADASTRO
@@ -279,24 +290,46 @@ function novoCadastro(){
 
     produtoEditando = -1;
 
-    document.getElementById("codigoInterno").value =
-        gerarCodigoInterno("PRD");
+    const codigo =
+        document.getElementById("codigoInterno");
 
-    document.getElementById("codigoBarras").value =
-        gerarEAN13();
+    const barras =
+        document.getElementById("codigoBarras");
 
-    document.getElementById("nomeProduto").value = "";
+    const nome =
+        document.getElementById("nomeProduto");
 
-    document.getElementById("categoriaProduto").value =
-        "Doce";
+    const categoria =
+        document.getElementById("categoriaProduto");
 
-    document.getElementById("unidadeProduto").value =
-        "Unidade";
+    const unidade =
+        document.getElementById("unidadeProduto");
 
-    document.getElementById("statusProduto").value =
-        "Ativo";
+    const status =
+        document.getElementById("statusProduto");
+
+    if(codigo)
+        codigo.value =
+            gerarCodigoInterno("PRD");
+
+    if(barras)
+        barras.value =
+            gerarEAN13();
+
+    if(nome)
+        nome.value = "";
+
+    if(categoria)
+        categoria.value = "Doce";
+
+    if(unidade)
+        unidade.value = "Unidade";
+
+    if(status)
+        status.value = "Ativo";
 
 }
+
 
 /*=========================================================
     SALVAR PRODUTO
@@ -326,6 +359,7 @@ function salvarProduto(){
 
     };
 
+
     if(produto.nome === ""){
 
         alert("Informe o nome do produto.");
@@ -333,6 +367,7 @@ function salvarProduto(){
         return;
 
     }
+
 
     if(produtoEditando == -1){
 
@@ -344,6 +379,7 @@ function salvarProduto(){
 
     }
 
+
     salvarBanco();
 
     atualizarTabelaProdutos();
@@ -354,9 +390,10 @@ function salvarProduto(){
 
     novoCadastro();
 
-    alert("Produto salvo com sucesso.");
+    alert("Produto salvo.");
 
 }
+
 
 /*=========================================================
     TABELA
@@ -391,15 +428,13 @@ function atualizarTabelaProdutos(){
 
             <td>
 
-                <button
-                    onclick="editarProduto(${indice})">
+                <button onclick="editarProduto(${indice})">
 
                     ✏️
 
                 </button>
 
-                <button
-                    onclick="excluirProduto(${indice})">
+                <button onclick="excluirProduto(${indice})">
 
                     🗑️
 
@@ -414,6 +449,7 @@ function atualizarTabelaProdutos(){
     });
 
 }
+
 
 /*=========================================================
     EDITAR
@@ -445,13 +481,14 @@ function editarProduto(indice){
 
 }
 
+
 /*=========================================================
     EXCLUIR
 =========================================================*/
 
 function excluirProduto(indice){
 
-    if(!confirm("Excluir este produto?")){
+    if(!confirm("Excluir produto?")){
 
         return;
 
@@ -469,6 +506,7 @@ function excluirProduto(indice){
 
 }
 
+
 /*=========================================================
     PESQUISA
 =========================================================*/
@@ -482,17 +520,15 @@ function pesquisarProduto(){
         .toLowerCase();
 
     const linhas =
-        document.querySelectorAll(
-            "#listaProdutos tr"
-        );
+        document.querySelectorAll("#listaProdutos tr");
 
     linhas.forEach(function(linha){
 
         linha.style.display =
 
             linha.innerText
-                 .toLowerCase()
-                 .includes(texto)
+            .toLowerCase()
+            .includes(texto)
 
             ? ""
 
@@ -502,8 +538,9 @@ function pesquisarProduto(){
 
 }
 
+
 /*=========================================================
-    SELECTS
+    PREENCHER SELECTS
 =========================================================*/
 
 function atualizarSelectProdutos(){
@@ -533,11 +570,11 @@ function atualizarSelectProdutos(){
 
             select.innerHTML += `
 
-            <option value="${produto.codigo}">
+                <option value="${produto.codigo}">
 
-                ${produto.nome}
+                    ${produto.nome}
 
-            </option>
+                </option>
 
             `;
 
@@ -546,17 +583,867 @@ function atualizarSelectProdutos(){
     });
 
 }
-
 /*=========================================================
-    INICIALIZAÇÃO DO MÓDULO
+    PARTE 3 - PRECIFICAÇÃO
 =========================================================*/
 
-document.addEventListener("DOMContentLoaded", function(){
+/*=========================================================
+    ATUALIZAR SELECT
+=========================================================*/
 
-    novoCadastro();
+function atualizarSelectPrecificacao(){
+
+    const select =
+        document.getElementById("produtoPreco");
+
+    if(!select) return;
+
+    select.innerHTML = "";
+
+    produtos.forEach(function(produto){
+
+        select.innerHTML += `
+
+            <option value="${produto.codigo}">
+
+                ${produto.nome}
+
+            </option>
+
+        `;
+
+    });
+
+}
+
+
+/*=========================================================
+    CALCULAR PREÇO
+=========================================================*/
+
+function calcularPreco(){
+
+    const custoMateria =
+        parseFloat(
+            document.getElementById("custoMateria").value
+        ) || 0;
+
+    const custoEmbalagem =
+        parseFloat(
+            document.getElementById("custoEmbalagem").value
+        ) || 0;
+
+    const outrosCustos =
+        parseFloat(
+            document.getElementById("outrosCustos").value
+        ) || 0;
+
+    const margem =
+        parseFloat(
+            document.getElementById("margemDesejada").value
+        ) || 0;
+
+    const taxaIfood =
+        parseFloat(
+            document.getElementById("taxaIfood").value
+        ) || 0;
+
+
+    const custoTotal =
+
+        custoMateria +
+        custoEmbalagem +
+        outrosCustos;
+
+
+    let precoSugerido = 0;
+
+    if(margem < 100){
+
+        precoSugerido =
+            custoTotal /
+            (1 - margem / 100);
+
+    }
+
+
+    let precoIfood = precoSugerido;
+
+    if(taxaIfood < 100){
+
+        precoIfood =
+            precoSugerido /
+            (1 - taxaIfood / 100);
+
+    }
+
+
+    document.getElementById("resultadoCusto").textContent =
+
+        "R$ " + custoTotal.toFixed(2);
+
+    document.getElementById("resultadoPreco").textContent =
+
+        "R$ " + precoSugerido.toFixed(2);
+
+    document.getElementById("resultadoIfood").textContent =
+
+        "R$ " + precoIfood.toFixed(2);
+
+}
+
+
+/*=========================================================
+    SALVAR PRECIFICAÇÃO
+=========================================================*/
+
+function salvarPrecificacao(){
+
+    const precificacao = {
+
+        produto:
+            document.getElementById("produtoPreco").value,
+
+        custoMateria:
+            parseFloat(document.getElementById("custoMateria").value) || 0,
+
+        custoEmbalagem:
+            parseFloat(document.getElementById("custoEmbalagem").value) || 0,
+
+        outrosCustos:
+            parseFloat(document.getElementById("outrosCustos").value) || 0,
+
+        margem:
+            parseFloat(document.getElementById("margemDesejada").value) || 0,
+
+        taxaIfood:
+            parseFloat(document.getElementById("taxaIfood").value) || 0,
+
+        custoTotal:
+            document.getElementById("resultadoCusto").textContent,
+
+        precoVenda:
+            document.getElementById("resultadoPreco").textContent,
+
+        precoIfood:
+            document.getElementById("resultadoIfood").textContent
+
+    };
+
+    precificacoes.push(precificacao);
+
+    salvarBanco();
+
+    alert("Precificação salva com sucesso.");
+
+}
+/*=========================================================
+    PARTE 4 - MATÉRIA-PRIMA
+=========================================================*/
+
+let materiaPrimaEditando = -1;
+
+
+/*=========================================================
+    NOVO CADASTRO
+=========================================================*/
+
+function novaMateriaPrima(){
+
+    materiaPrimaEditando = -1;
+
+    document.getElementById("codigoMP").value =
+        gerarCodigoInterno("MAT");
+
+    document.getElementById("codigoBarrasMP").value =
+        gerarEAN13();
+
+    document.getElementById("nomeMP").value = "";
+
+    document.getElementById("categoriaMP").value =
+        "Ingrediente";
+
+    document.getElementById("unidadeMP").value =
+        "Unidade";
+
+    document.getElementById("estoqueMP").value = 0;
+
+    document.getElementById("custoMP").value = "";
+
+}
+
+
+/*=========================================================
+    SALVAR MATÉRIA-PRIMA
+=========================================================*/
+
+function salvarMateriaPrima(){
+
+    const materia = {
+
+        codigo:
+            document.getElementById("codigoMP").value,
+
+        codigoBarras:
+            document.getElementById("codigoBarrasMP").value,
+
+        nome:
+            document.getElementById("nomeMP").value.trim(),
+
+        categoria:
+            document.getElementById("categoriaMP").value,
+
+        unidade:
+            document.getElementById("unidadeMP").value,
+
+        estoque:
+            Number(
+                document.getElementById("estoqueMP").value
+            ),
+
+        custo:
+            Number(
+                document.getElementById("custoMP").value
+            )
+
+    };
+
+
+    if(materia.nome === ""){
+
+        alert("Informe o nome da matéria-prima.");
+
+        return;
+
+    }
+
+
+    if(materiaPrimaEditando == -1){
+
+        materiasPrimas.push(materia);
+
+    }else{
+
+        materiasPrimas[materiaPrimaEditando] = materia;
+
+    }
+
+
+    salvarBanco();
+
+    atualizarTabelaMateriaPrima();
+
+    novaMateriaPrima();
+
+    alert("Matéria-prima salva.");
+
+}
+
+
+/*=========================================================
+    TABELA
+=========================================================*/
+
+function atualizarTabelaMateriaPrima(){
+
+    const tabela =
+        document.getElementById("listaMateriaPrima");
+
+    if(!tabela) return;
+
+    tabela.innerHTML = "";
+
+
+    materiasPrimas.forEach(function(mp, indice){
+
+        tabela.innerHTML += `
+
+        <tr>
+
+            <td>${mp.codigo}</td>
+
+            <td>${mp.nome}</td>
+
+            <td>${mp.categoria}</td>
+
+            <td>${mp.unidade}</td>
+
+            <td>${mp.estoque}</td>
+
+            <td>R$ ${mp.custo.toFixed(2)}</td>
+
+            <td>
+
+                <button
+                    onclick="editarMateriaPrima(${indice})">
+
+                    ✏️
+
+                </button>
+
+                <button
+                    onclick="excluirMateriaPrima(${indice})">
+
+                    🗑️
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+
+/*=========================================================
+    EDITAR
+=========================================================*/
+
+function editarMateriaPrima(indice){
+
+    materiaPrimaEditando = indice;
+
+    const mp = materiasPrimas[indice];
+
+    document.getElementById("codigoMP").value =
+        mp.codigo;
+
+    document.getElementById("codigoBarrasMP").value =
+        mp.codigoBarras;
+
+    document.getElementById("nomeMP").value =
+        mp.nome;
+
+    document.getElementById("categoriaMP").value =
+        mp.categoria;
+
+    document.getElementById("unidadeMP").value =
+        mp.unidade;
+
+    document.getElementById("estoqueMP").value =
+        mp.estoque;
+
+    document.getElementById("custoMP").value =
+        mp.custo;
+
+}
+
+
+/*=========================================================
+    EXCLUIR
+=========================================================*/
+
+function excluirMateriaPrima(indice){
+
+    if(!confirm("Excluir matéria-prima?")){
+
+        return;
+
+    }
+
+    materiasPrimas.splice(indice,1);
+
+    salvarBanco();
+
+    atualizarTabelaMateriaPrima();
+
+}
+
+
+/*=========================================================
+    PESQUISA
+=========================================================*/
+
+function pesquisarMateriaPrima(){
+
+    const texto =
+        document
+        .getElementById("pesquisaMP")
+        .value
+        .toLowerCase();
+
+    const linhas =
+        document.querySelectorAll(
+            "#listaMateriaPrima tr"
+        );
+
+    linhas.forEach(function(linha){
+
+        linha.style.display =
+
+            linha.innerText
+            .toLowerCase()
+            .includes(texto)
+
+            ? ""
+
+            : "none";
+
+    });
+
+}
+/*=========================================================
+    PARTE 5 - ESTOQUE E MOVIMENTAÇÕES
+=========================================================*/
+
+
+/*=========================================================
+    ATUALIZAR SELEÇÃO DE ESTOQUE
+=========================================================*/
+
+function atualizarSelectEstoque(){
+
+    const tipo =
+        document.getElementById(
+            "tipoMovimentacao"
+        );
+
+    const select =
+        document.getElementById(
+            "produtoMovimentacao"
+        );
+
+    if(!tipo || !select) return;
+
+
+    select.innerHTML = "";
+
+
+    if(tipo.value === "produto"){
+
+        produtos.forEach(function(produto){
+
+            select.innerHTML += `
+
+                <option value="${produto.codigo}">
+
+                    ${produto.nome}
+
+                </option>
+
+            `;
+
+        });
+
+    }
+
+
+    if(tipo.value === "materiaPrima"){
+
+        materiasPrimas.forEach(function(mp){
+
+            select.innerHTML += `
+
+                <option value="${mp.codigo}">
+
+                    ${mp.nome}
+
+                </option>
+
+            `;
+
+        });
+
+    }
+
+}
+
+
+/*=========================================================
+    REGISTRAR MOVIMENTAÇÃO
+=========================================================*/
+
+function registrarMovimentacao(){
+
+    const tipo =
+        document.getElementById(
+            "tipoMovimentacao"
+        ).value;
+
+
+    const codigo =
+        document.getElementById(
+            "produtoMovimentacao"
+        ).value;
+
+
+    const operacao =
+        document.getElementById(
+            "operacaoEstoque"
+        ).value;
+
+
+    const quantidade =
+        Number(
+            document.getElementById(
+                "quantidadeMovimentacao"
+            ).value
+        );
+
+
+    const data =
+        document.getElementById(
+            "dataMovimentacao"
+        ).value;
+
+
+    const observacao =
+        document.getElementById(
+            "observacaoMovimentacao"
+        ).value.trim();
+
+
+    if(!codigo){
+
+        alert(
+            "Selecione um produto ou matéria-prima."
+        );
+
+        return;
+
+    }
+
+
+    if(quantidade <= 0){
+
+        alert(
+            "Informe uma quantidade válida."
+        );
+
+        return;
+
+    }
+
+
+    /*=====================================================
+        MOVIMENTAÇÃO DE PRODUTO
+    =====================================================*/
+
+    if(tipo === "produto"){
+
+        const produto =
+            produtos.find(function(item){
+
+                return item.codigo === codigo;
+
+            });
+
+
+        if(!produto){
+
+            alert(
+                "Produto não encontrado."
+            );
+
+            return;
+
+        }
+
+
+        /*-----------------------------------------------
+            CRIA ESTOQUE DO PRODUTO SE NÃO EXISTIR
+        -----------------------------------------------*/
+
+        if(produto.estoque === undefined){
+
+            produto.estoque = 0;
+
+        }
+
+
+        /*-----------------------------------------------
+            ENTRADA
+        -----------------------------------------------*/
+
+        if(operacao === "entrada"){
+
+            produto.estoque += quantidade;
+
+        }
+
+
+        /*-----------------------------------------------
+            SAÍDA
+        -----------------------------------------------*/
+
+        if(operacao === "saida"){
+
+            if(produto.estoque < quantidade){
+
+                alert(
+                    "Estoque insuficiente."
+                );
+
+                return;
+
+            }
+
+            produto.estoque -= quantidade;
+
+        }
+
+    }
+
+
+    /*=====================================================
+        MOVIMENTAÇÃO DE MATÉRIA-PRIMA
+    =====================================================*/
+
+    if(tipo === "materiaPrima"){
+
+        const mp =
+            materiasPrimas.find(function(item){
+
+                return item.codigo === codigo;
+
+            });
+
+
+        if(!mp){
+
+            alert(
+                "Matéria-prima não encontrada."
+            );
+
+            return;
+
+        }
+
+
+        /*-----------------------------------------------
+            ENTRADA
+        -----------------------------------------------*/
+
+        if(operacao === "entrada"){
+
+            mp.estoque += quantidade;
+
+        }
+
+
+        /*-----------------------------------------------
+            SAÍDA
+        -----------------------------------------------*/
+
+        if(operacao === "saida"){
+
+            if(mp.estoque < quantidade){
+
+                alert(
+                    "Estoque insuficiente."
+                );
+
+                return;
+
+            }
+
+            mp.estoque -= quantidade;
+
+        }
+
+    }
+
+
+    /*=====================================================
+        SALVAR HISTÓRICO
+    =====================================================*/
+
+    const movimentacao = {
+
+        data: data,
+
+        tipo: tipo,
+
+        codigo: codigo,
+
+        operacao: operacao,
+
+        quantidade: quantidade,
+
+        observacao: observacao
+
+    };
+
+
+    movimentacoes.push(
+        movimentacao
+    );
+
+
+    /*=====================================================
+        SALVAR BANCO
+    =====================================================*/
+
+    salvarBanco();
+
+
+    /*=====================================================
+        ATUALIZAR TELA
+    =====================================================*/
+
+    atualizarTabelaMateriaPrima();
 
     atualizarTabelaProdutos();
 
-    atualizarSelectProdutos();
+    atualizarHistoricoMovimentacoes();
 
-});
+
+    /*=====================================================
+        LIMPAR CAMPOS
+    =====================================================*/
+
+    document.getElementById(
+        "quantidadeMovimentacao"
+    ).value = 1;
+
+
+    document.getElementById(
+        "observacaoMovimentacao"
+    ).value = "";
+
+
+    alert(
+        "Movimentação registrada com sucesso."
+    );
+
+}
+
+
+/*=========================================================
+    HISTÓRICO DE MOVIMENTAÇÕES
+=========================================================*/
+
+function atualizarHistoricoMovimentacoes(){
+
+    const tabela =
+        document.getElementById(
+            "historicoMovimentacoes"
+        );
+
+
+    if(!tabela) return;
+
+
+    tabela.innerHTML = "";
+
+
+    movimentacoes.forEach(function(
+        movimentacao
+    ){
+
+
+        let nome = movimentacao.codigo;
+
+
+        /*-----------------------------------------------
+            PROCURAR PRODUTO
+        -----------------------------------------------*/
+
+        if(
+            movimentacao.tipo ===
+            "produto"
+        ){
+
+            const produto =
+                produtos.find(function(item){
+
+                    return item.codigo ===
+                        movimentacao.codigo;
+
+                });
+
+
+            if(produto){
+
+                nome =
+                    produto.nome;
+
+            }
+
+        }
+
+
+        /*-----------------------------------------------
+            PROCURAR MATÉRIA-PRIMA
+        -----------------------------------------------*/
+
+        if(
+            movimentacao.tipo ===
+            "materiaPrima"
+        ){
+
+            const mp =
+                materiasPrimas.find(function(item){
+
+                    return item.codigo ===
+                        movimentacao.codigo;
+
+                });
+
+
+            if(mp){
+
+                nome =
+                    mp.nome;
+
+            }
+
+        }
+
+
+        tabela.innerHTML += `
+
+            <tr>
+
+                <td>
+
+                    ${movimentacao.data}
+
+                </td>
+
+
+                <td>
+
+                    ${nome}
+
+                </td>
+
+
+                <td>
+
+                    ${movimentacao.tipo}
+
+                </td>
+
+
+                <td>
+
+                    ${movimentacao.quantidade}
+
+                </td>
+
+
+                <td>
+
+                    ${movimentacao.operacao}
+
+                </td>
+
+
+                <td>
+
+                    ${movimentacao.observacao || "-"}
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+}
