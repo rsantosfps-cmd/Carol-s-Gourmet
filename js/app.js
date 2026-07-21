@@ -44,23 +44,41 @@ function iniciarSistema(){
     );
 
 
+    // Carrega os dados salvos
     carregarBanco();
 
 
+    // Configura datas automáticas
     configurarDatas();
 
 
+    // Inicializa formulários
+    iniciarFormularioProduto();
+
+    novaMateriaPrima();
+
+
+    // Atualiza tabelas
+    atualizarTabelaProdutos();
+
+    atualizarTabelaMateriaPrima();
+
+
+    // Atualiza selects
+    atualizarSelectProdutos();
+
+    atualizarSelectPrecificacao();
+
+
+    // Atualiza Dashboard
     atualizarDashboard();
 
 
-    mostrarAba(
-        "dashboard"
-    );
+    // Abre a primeira tela
+    mostrarAba("dashboard");
 
 
 }
-
-
 
 
 /*=========================================================
@@ -1195,7 +1213,20 @@ function novaMateriaPrima(){
 function salvarMateriaPrima(){
 
 
-    const mp = {
+    const nome =
+    document.getElementById("nomeMP").value.trim();
+
+
+    if(nome === ""){
+
+        alert("Informe o nome da matéria-prima");
+
+        return;
+
+    }
+
+
+    const materia = {
 
 
         codigo:
@@ -1206,8 +1237,7 @@ function salvarMateriaPrima(){
         document.getElementById("codigoBarrasMP").value,
 
 
-        nome:
-        document.getElementById("nomeMP").value.trim(),
+        nome:nome,
 
 
         categoria:
@@ -1219,30 +1249,34 @@ function salvarMateriaPrima(){
 
 
         estoque:
-        Number(
-        document.getElementById("estoqueMP").value
-        ),
+        Number(document.getElementById("estoqueMP").value),
 
 
         custo:
-        Number(
-        document.getElementById("custoMP").value
-        )
+        Number(document.getElementById("custoMP").value)
 
 
     };
 
 
 
-    if(mp.nome===""){
+    materiasPrimas.push(materia);
 
 
-        alert("Informe o nome da matéria-prima");
+
+    salvarBanco();
 
 
-        return;
+
+    atualizarTabelaMateriaPrima();
 
 
+
+    alert("Matéria-prima salva!");
+
+
+
+}
     }
 
 
