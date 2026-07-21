@@ -1097,3 +1097,365 @@ function novoCadastro(){
 
 
 }
+/*=========================================================
+    PARTE 3 - MÓDULO DE MATÉRIA-PRIMA
+=========================================================*/
+
+
+let materiaPrimaEditando = -1;
+
+
+
+/*=========================================================
+    NOVA MATÉRIA-PRIMA
+=========================================================*/
+
+
+function novaMateriaPrima(){
+
+
+    const codigo =
+        document.getElementById("codigoMP");
+
+
+    const barras =
+        document.getElementById("codigoBarrasMP");
+
+
+    const nome =
+        document.getElementById("nomeMP");
+
+
+    const categoria =
+        document.getElementById("categoriaMP");
+
+
+    const unidade =
+        document.getElementById("unidadeMP");
+
+
+    const estoque =
+        document.getElementById("estoqueMP");
+
+
+    const custo =
+        document.getElementById("custoMP");
+
+
+
+    if(codigo){
+
+        codigo.value =
+            gerarCodigoInterno("MP");
+
+    }
+
+
+    if(barras){
+
+        barras.value =
+            gerarEAN13();
+
+    }
+
+
+    if(nome)
+        nome.value="";
+
+
+    if(categoria)
+        categoria.value="Ingrediente";
+
+
+    if(unidade)
+        unidade.value="Kg";
+
+
+    if(estoque)
+        estoque.value=0;
+
+
+    if(custo)
+        custo.value="";
+
+
+
+    materiaPrimaEditando=-1;
+
+
+}
+
+
+
+/*=========================================================
+    SALVAR MATÉRIA-PRIMA
+=========================================================*/
+
+
+function salvarMateriaPrima(){
+
+
+    const mp = {
+
+
+        codigo:
+        document.getElementById("codigoMP").value,
+
+
+        codigoBarras:
+        document.getElementById("codigoBarrasMP").value,
+
+
+        nome:
+        document.getElementById("nomeMP").value.trim(),
+
+
+        categoria:
+        document.getElementById("categoriaMP").value,
+
+
+        unidade:
+        document.getElementById("unidadeMP").value,
+
+
+        estoque:
+        Number(
+        document.getElementById("estoqueMP").value
+        ),
+
+
+        custo:
+        Number(
+        document.getElementById("custoMP").value
+        )
+
+
+    };
+
+
+
+    if(mp.nome===""){
+
+
+        alert("Informe o nome da matéria-prima");
+
+
+        return;
+
+
+    }
+
+
+
+
+    if(materiaPrimaEditando === -1){
+
+
+        materiasPrimas.push(mp);
+
+
+    }else{
+
+
+        materiasPrimas[materiaPrimaEditando]=mp;
+
+
+    }
+
+
+
+    salvarBanco();
+
+
+    atualizarTabelaMateriaPrima();
+
+
+    novaMateriaPrima();
+
+
+
+    alert("Matéria-prima cadastrada!");
+
+
+
+}
+
+
+
+
+
+/*=========================================================
+    TABELA MATÉRIA-PRIMA
+=========================================================*/
+
+
+function atualizarTabelaMateriaPrima(){
+
+
+    const tabela =
+    document.getElementById(
+        "listaMateriaPrima"
+    );
+
+
+
+    if(!tabela)
+        return;
+
+
+
+    tabela.innerHTML="";
+
+
+
+    materiasPrimas.forEach(
+        function(mp,index){
+
+
+        tabela.innerHTML += `
+
+
+        <tr>
+
+
+            <td>
+                ${mp.codigo}
+            </td>
+
+
+            <td>
+                ${mp.nome}
+            </td>
+
+
+            <td>
+                ${mp.categoria}
+            </td>
+
+
+            <td>
+                ${mp.unidade}
+            </td>
+
+
+            <td>
+                ${mp.estoque}
+            </td>
+
+
+            <td>
+
+                R$ ${mp.custo.toFixed(2)}
+
+            </td>
+
+
+            <td>
+
+
+                <button onclick="editarMateriaPrima(${index})">
+
+                ✏️
+
+                </button>
+
+
+
+                <button onclick="excluirMateriaPrima(${index})">
+
+                🗑️
+
+                </button>
+
+
+            </td>
+
+
+        </tr>
+
+
+        `;
+
+
+    });
+
+
+
+}
+
+
+
+/*=========================================================
+    EDITAR MATÉRIA-PRIMA
+=========================================================*/
+
+
+function editarMateriaPrima(index){
+
+
+    const mp =
+    materiasPrimas[index];
+
+
+
+    materiaPrimaEditando=index;
+
+
+
+    document.getElementById("codigoMP").value =
+    mp.codigo;
+
+
+    document.getElementById("codigoBarrasMP").value =
+    mp.codigoBarras;
+
+
+    document.getElementById("nomeMP").value =
+    mp.nome;
+
+
+    document.getElementById("categoriaMP").value =
+    mp.categoria;
+
+
+    document.getElementById("unidadeMP").value =
+    mp.unidade;
+
+
+    document.getElementById("estoqueMP").value =
+    mp.estoque;
+
+
+    document.getElementById("custoMP").value =
+    mp.custo;
+
+
+
+}
+
+
+
+/*=========================================================
+    EXCLUIR MATÉRIA-PRIMA
+=========================================================*/
+
+
+function excluirMateriaPrima(index){
+
+
+    if(!confirm("Excluir matéria-prima?"))
+        return;
+
+
+
+    materiasPrimas.splice(index,1);
+
+
+
+    salvarBanco();
+
+
+    atualizarTabelaMateriaPrima();
+
+
+}
