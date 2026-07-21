@@ -294,203 +294,412 @@ function gerarEAN13(){
     PARTE 2 - MÓDULO DE PRODUTOS
 =========================================================*/
 
+
 let produtoEditando = -1;
+
 
 
 /*=========================================================
     INICIALIZAÇÃO DO FORMULÁRIO
 =========================================================*/
 
+
 function iniciarFormularioProduto(){
+
 
     const codigo =
         document.getElementById("codigoInterno");
 
+
     const barras =
         document.getElementById("codigoBarras");
+
 
     const nome =
         document.getElementById("nomeProduto");
 
-    const preco =
-        document.getElementById("precoProduto");
 
-    const estoque =
-        document.getElementById("estoqueInicial");
 
-    if(codigo) codigo.value =
-        gerarCodigoInterno("PRD");
+    const categoria =
+        document.getElementById("categoriaProduto");
 
-    if(barras) barras.value =
-        gerarEAN13();
 
-    if(nome) nome.value = "";
 
-    if(preco) preco.value = "";
+    const unidade =
+        document.getElementById("unidadeProduto");
 
-    if(estoque) estoque.value = 0;
+
+
+    const status =
+        document.getElementById("statusProduto");
+
+
+
+    if(codigo){
+
+        codigo.value =
+            gerarCodigoInterno("PRD");
+
+    }
+
+
+
+    if(barras){
+
+        barras.value =
+            gerarEAN13();
+
+    }
+
+
+
+    if(nome){
+
+        nome.value = "";
+
+    }
+
+
+
+    if(categoria){
+
+        categoria.value = "Doce";
+
+    }
+
+
+
+    if(unidade){
+
+        unidade.value = "Unidade";
+
+    }
+
+
+
+    if(status){
+
+        status.value = "Ativo";
+
+    }
+
+
 
     produtoEditando = -1;
 
+
 }
+
+
+
+
 
 
 /*=========================================================
     SALVAR PRODUTO
 =========================================================*/
 
+
 function salvarProduto(){
 
+
     const codigo =
-        document.getElementById("codigoInterno").value.trim();
+        document
+        .getElementById("codigoInterno")
+        .value
+        .trim();
+
+
 
     const codigoBarras =
-        document.getElementById("codigoBarras").value.trim();
+        document
+        .getElementById("codigoBarras")
+        .value
+        .trim();
+
+
 
     const nome =
-        document.getElementById("nomeProduto").value.trim();
+        document
+        .getElementById("nomeProduto")
+        .value
+        .trim();
 
-    const preco =
-        parseFloat(
-            document.getElementById("precoProduto").value
-        );
 
-    const estoque =
-        parseInt(
-            document.getElementById("estoqueInicial").value
-        );
+
+    const categoria =
+        document
+        .getElementById("categoriaProduto")
+        .value;
+
+
+
+    const unidade =
+        document
+        .getElementById("unidadeProduto")
+        .value;
+
+
+
+    const status =
+        document
+        .getElementById("statusProduto")
+        .value;
+
+
 
 
     if(nome === ""){
 
+
         alert("Informe o nome do produto.");
 
+
         return;
+
 
     }
 
 
-    if(isNaN(preco)){
 
-        alert("Informe o preço de venda.");
-
-        return;
-
-    }
 
 
     const produto = {
 
+
         codigo,
+
         codigoBarras,
+
         nome,
-        preco,
-        estoque
+
+        categoria,
+
+        unidade,
+
+        status
+
 
     };
 
 
+
+
+
+
+
     if(produtoEditando === -1){
+
 
         produtos.push(produto);
 
+
+
     }else{
 
+
         produtos[produtoEditando] = produto;
+
 
     }
 
 
+
+
+
+
+
     salvarBanco();
+
+
 
     atualizarTabelaProdutos();
 
+
+
     atualizarDashboard();
+
+
 
     atualizarSelectProdutos();
 
+
+
     iniciarFormularioProduto();
 
-}
 
+
+    alert("Produto salvo com sucesso!");
+
+
+
+}
 
 /*=========================================================
     TABELA DE PRODUTOS
 =========================================================*/
 
+
 function atualizarTabelaProdutos(){
+
 
     const tabela =
         document.getElementById("listaProdutos");
 
+
+
     if(!tabela) return;
+
+
 
     tabela.innerHTML = "";
 
 
+
+
+
     produtos.forEach(function(produto, indice){
+
+
 
         tabela.innerHTML += `
 
+
             <tr>
 
-                <td>${produto.codigo}</td>
-
-                <td>${produto.nome}</td>
 
                 <td>
-                    R$ ${produto.preco.toFixed(2)}
+                    ${produto.codigo}
                 </td>
 
+
+
                 <td>
-                    ${produto.estoque}
+                    ${produto.nome}
                 </td>
 
+
+
+                <td>
+                    ${produto.categoria || "-"}
+                </td>
+
+
+
+                <td>
+                    ${produto.codigoBarras}
+                </td>
+
+
+
+                <td>
+                    ${produto.unidade || "-"}
+                </td>
+
+
+
+                <td>
+                    ${produto.status || "Ativo"}
+                </td>
+
+
+
                 <td>
 
-                    <button onclick="editarProduto(${indice})">
+
+                    <button 
+                    onclick="editarProduto(${indice})">
+
                         ✏️
+
                     </button>
 
-                    <button onclick="excluirProduto(${indice})">
+
+
+                    <button 
+                    onclick="excluirProduto(${indice})">
+
                         🗑️
+
                     </button>
+
+
 
                 </td>
+
+
 
             </tr>
 
+
         `;
+
+
 
     });
 
+
+
 }
-
-
 /*=========================================================
     EDITAR PRODUTO
 =========================================================*/
 
+
 function editarProduto(indice){
+
 
     const produto = produtos[indice];
 
+
     produtoEditando = indice;
 
+
+
+
     document.getElementById("codigoInterno").value =
+
         produto.codigo;
 
+
+
+
     document.getElementById("codigoBarras").value =
+
         produto.codigoBarras;
 
+
+
+
     document.getElementById("nomeProduto").value =
+
         produto.nome;
 
-    document.getElementById("precoProduto").value =
-        produto.preco;
 
-    document.getElementById("estoqueInicial").value =
-        produto.estoque;
+
+
+
+    document.getElementById("categoriaProduto").value =
+
+        produto.categoria || "Doce";
+
+
+
+
+
+    document.getElementById("unidadeProduto").value =
+
+        produto.unidade || "Unidade";
+
+
+
+
+
+    document.getElementById("statusProduto").value =
+
+        produto.status || "Ativo";
+
+
 
 }
 
