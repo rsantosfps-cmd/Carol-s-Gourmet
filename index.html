@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Carol's Gourmet</title>
+    <title>Carol's Gourmet ERP</title>
 
     <link rel="stylesheet" href="css/style.css">
 
@@ -19,86 +19,12 @@
 
 </head>
 
+
 <body>
 
-<header class="topo">
-
-    <div class="logo-area">
-
-        <div class="logo-icone">🍰</div>
-
-        <div>
-
-            <h1>Carol's Gourmet</h1>
-
-            <span>Central de Produção</span>
-
-        </div>
-
-    </div>
-
-</header>
-
-
-
-    <button class="menu-btn ativo"
-        onclick="abrirAba('dashboard')">
-
-        🏠 Dashboard
-
-    </button>
-
-    <button class="menu-btn"
-        onclick="abrirAba('produtos')">
-
-        📦 Produtos
-
-    </button>
-
-    <button class="menu-btn"
-        onclick="abrirAba('materiaPrima')">
-
-        🥫 Matéria-Prima
-
-    </button>
-
-    <button class="menu-btn"
-        onclick="abrirAba('estoque')">
-
-        📋 Estoque
-
-    </button>
-
-    <button class="menu-btn"
-        onclick="abrirAba('producao')">
-
-        🏭 Produção
-
-    </button>
-
-    <button class="menu-btn"
-        onclick="abrirAba('etiquetas')">
-
-        🏷️ Etiquetas
-
-    </button>
-
-    <button class="menu-btn"
-        onclick="abrirAba('configuracoes')">
-
-        ⚙️ Configurações
-
-    </button>
-
-</nav>
-
-<main class="container">
-    <!-- ==========================
-     MENU PRINCIPAL
-========================== -->
 
 <!-- ==========================
-    MENU LATERAL
+        BOTÃO MENU MOBILE
 ========================== -->
 
 <button id="btnMenu" class="btn-menu" onclick="toggleMenu()">
@@ -108,19 +34,31 @@
 </button>
 
 
+
+<!-- ==========================
+        MENU LATERAL
+========================== -->
+
 <div id="menuLateral" class="sidebar">
 
+
     <div class="logo-sidebar">
+
 
         <img src="img/logo.png"
              alt="Carol's Gourmet"
              class="logo-menu">
 
+
         <h2>Carol's Gourmet</h2>
+
 
         <span>ERP 4.0</span>
 
+
     </div>
+
+
 
 
     <button class="menu-item ativo"
@@ -132,6 +70,8 @@
     </button>
 
 
+
+
     <button class="menu-item"
             onclick="mostrarAba('produtos', this)">
 
@@ -139,6 +79,8 @@
         <span>Produtos</span>
 
     </button>
+
+
 
 
     <button class="menu-item"
@@ -150,6 +92,8 @@
     </button>
 
 
+
+
     <button class="menu-item"
             onclick="mostrarAba('estoque', this)">
 
@@ -157,6 +101,8 @@
         <span>Estoque</span>
 
     </button>
+
+
 
 
     <button class="menu-item"
@@ -168,6 +114,8 @@
     </button>
 
 
+
+
     <button class="menu-item"
             onclick="mostrarAba('etiquetas', this)">
 
@@ -175,6 +123,8 @@
         <span>Etiquetas</span>
 
     </button>
+
+
 
 
     <button class="menu-item"
@@ -186,18 +136,28 @@
     </button>
 
 
+
 </div>
+
+
+
+
+
+<!-- ==========================
+        ÁREA PRINCIPAL
+========================== -->
 
 
 <div class="conteudo-principal">
 
-<main class="container">
+
+    <main class="container">
 
 
-<!-- =====================================
-            DASHBOARD
-====================================== -->
 
+        <!-- ==========================
+                DASHBOARD
+        ========================== -->
 <section id="dashboard" class="aba ativa">
 
     <div class="card">
