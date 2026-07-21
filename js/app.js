@@ -33,6 +33,8 @@ function iniciarSistema(){
     configurarDatas();
 
     atualizarDashboard();
+    
+    atualizarSelectPrecificacao();
 
     mostrarAba("dashboard");
 
@@ -830,3 +832,152 @@ document.addEventListener("DOMContentLoaded", function(){
     atualizarSelectProdutos();
 
 });
+/*=========================================================
+    MÓDULO DE PRECIFICAÇÃO
+=========================================================*/
+
+
+function atualizarSelectPrecificacao(){
+
+
+    const select =
+        document.getElementById("produtoPreco");
+
+
+    if(!select) return;
+
+
+
+    select.innerHTML = "";
+
+
+
+    produtos.forEach(function(produto){
+
+
+        select.innerHTML += `
+
+            <option value="${produto.codigo}">
+
+                ${produto.nome}
+
+            </option>
+
+        `;
+
+
+    });
+
+
+}
+
+
+
+
+
+
+/*=========================================================
+    CALCULAR PREÇO
+=========================================================*/
+
+
+function calcularPreco(){
+
+
+
+    const custoMateria =
+
+        parseFloat(
+            document.getElementById("custoMateria").value
+        ) || 0;
+
+
+
+    const custoEmbalagem =
+
+        parseFloat(
+            document.getElementById("custoEmbalagem").value
+        ) || 0;
+
+
+
+    const outrosCustos =
+
+        parseFloat(
+            document.getElementById("outrosCustos").value
+        ) || 0;
+
+
+
+
+    const margem =
+
+        parseFloat(
+            document.getElementById("margemDesejada").value
+        ) || 0;
+
+
+
+
+    const taxaIfood =
+
+        parseFloat(
+            document.getElementById("taxaIfood").value
+        ) || 0;
+
+
+
+
+
+    const custoTotal =
+
+        custoMateria +
+        custoEmbalagem +
+        outrosCustos;
+
+
+
+
+
+
+    const precoSugerido =
+
+        custoTotal /
+        (1 - (margem / 100));
+
+
+
+
+
+
+    const precoIfood =
+
+        precoSugerido /
+        (1 - (taxaIfood / 100));
+
+
+
+
+
+
+    document.getElementById("resultadoCusto").innerHTML =
+
+        "R$ " + custoTotal.toFixed(2);
+
+
+
+
+    document.getElementById("resultadoPreco").innerHTML =
+
+        "R$ " + precoSugerido.toFixed(2);
+
+
+
+
+    document.getElementById("resultadoIfood").innerHTML =
+
+        "R$ " + precoIfood.toFixed(2);
+
+
+
+}
