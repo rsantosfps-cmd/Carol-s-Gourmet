@@ -1447,3 +1447,672 @@ function atualizarHistoricoMovimentacoes(){
     });
 
 }
+/*=========================================================
+PARTE 5 - MÓDULO DE PRECIFICAÇÃO
+=========================================================*/
+
+/*=========================================================
+ATUALIZAR LISTA DE PRODUTOS
+=========================================================*/
+
+function atualizarSelectPrecificacao(){
+
+```
+const select =
+    document.getElementById("produtoPreco");
+
+if(!select) return;
+
+select.innerHTML = "";
+
+produtos.forEach(function(produto){
+
+    const option =
+        document.createElement("option");
+
+    option.value =
+        produto.codigo;
+
+    option.textContent =
+        produto.nome;
+
+    select.appendChild(option);
+
+});
+```
+
+}
+
+/*=========================================================
+CALCULAR PREÇO DE VENDA
+=========================================================*/
+
+function calcularPreco(){
+
+```
+const custoMateria =
+    parseFloat(
+        document.getElementById("custoMateria").value
+    ) || 0;
+
+
+const custoEmbalagem =
+    parseFloat(
+        document.getElementById("custoEmbalagem").value
+    ) || 0;
+
+
+const outrosCustos =
+    parseFloat(
+        document.getElementById("outrosCustos").value
+    ) || 0;
+
+
+const margem =
+    parseFloat(
+        document.getElementById("margemDesejada").value
+    ) || 0;
+
+
+const taxaIfood =
+    parseFloat(
+        document.getElementById("taxaIfood").value
+    ) || 0;
+
+
+/*=====================================================
+    VALIDAÇÃO DA MARGEM
+=====================================================*/
+
+if(margem >= 100){
+
+    alert(
+        "A margem desejada deve ser menor que 100%."
+    );
+
+    return;
+
+}
+
+
+/*=====================================================
+    CUSTO TOTAL
+=====================================================*/
+
+const custoTotal =
+
+    custoMateria +
+    custoEmbalagem +
+    outrosCustos;
+
+
+/*=====================================================
+    PREÇO SUGERIDO
+=====================================================*/
+
+const precoSugerido =
+
+    custoTotal /
+    (1 - margem / 100);
+
+
+/*=====================================================
+    PREÇO PARA IFOOD
+=====================================================*/
+
+let precoIfood = precoSugerido;
+
+
+if(taxaIfood < 100){
+
+    precoIfood =
+
+        precoSugerido /
+        (1 - taxaIfood / 100);
+
+}
+
+
+/*=====================================================
+    MOSTRAR RESULTADOS
+=====================================================*/
+
+const resultadoCusto =
+    document.getElementById(
+        "resultadoCusto"
+    );
+
+
+const resultadoPreco =
+    document.getElementById(
+        "resultadoPreco"
+    );
+
+
+const resultadoIfood =
+    document.getElementById(
+        "resultadoIfood"
+    );
+
+
+if(resultadoCusto){
+
+    resultadoCusto.textContent =
+
+        "R$ " +
+        custoTotal.toFixed(2)
+        .replace(".", ",");
+
+}
+
+
+if(resultadoPreco){
+
+    resultadoPreco.textContent =
+
+        "R$ " +
+        precoSugerido.toFixed(2)
+        .replace(".", ",");
+
+}
+
+
+if(resultadoIfood){
+
+    resultadoIfood.textContent =
+
+        "R$ " +
+        precoIfood.toFixed(2)
+        .replace(".", ",");
+
+}
+```
+
+}
+/*=========================================================
+PARTE 6 - MÓDULO DE MATÉRIA-PRIMA
+=========================================================*/
+
+/*=========================================================
+VARIÁVEL DE EDIÇÃO
+=========================================================*/
+
+let materiaPrimaEditando = -1;
+
+/*=========================================================
+NOVO CADASTRO DE MATÉRIA-PRIMA
+=========================================================*/
+
+function novaMateriaPrima(){
+
+```
+materiaPrimaEditando = -1;
+
+
+const codigo =
+    document.getElementById("codigoMP");
+
+const barras =
+    document.getElementById("codigoBarrasMP");
+
+const nome =
+    document.getElementById("nomeMP");
+
+const categoria =
+    document.getElementById("categoriaMP");
+
+const unidade =
+    document.getElementById("unidadeMP");
+
+const estoque =
+    document.getElementById("estoqueMP");
+
+const custo =
+    document.getElementById("custoMP");
+
+
+if(codigo){
+
+    codigo.value =
+        gerarCodigoInterno("MP");
+
+}
+
+
+if(barras){
+
+    barras.value =
+        gerarEAN13();
+
+}
+
+
+if(nome){
+
+    nome.value = "";
+
+}
+
+
+if(categoria){
+
+    categoria.selectedIndex = 0;
+
+}
+
+
+if(unidade){
+
+    unidade.selectedIndex = 0;
+
+}
+
+
+if(estoque){
+
+    estoque.value = 0;
+
+}
+
+
+if(custo){
+
+    custo.value = "";
+
+}
+```
+
+}
+
+/*=========================================================
+SALVAR MATÉRIA-PRIMA
+=========================================================*/
+
+function salvarMateriaPrima(){
+
+```
+const codigo =
+    document
+    .getElementById("codigoMP")
+    .value
+    .trim();
+
+
+const codigoBarras =
+    document
+    .getElementById("codigoBarrasMP")
+    .value
+    .trim();
+
+
+const nome =
+    document
+    .getElementById("nomeMP")
+    .value
+    .trim();
+
+
+const categoria =
+    document
+    .getElementById("categoriaMP")
+    .value;
+
+
+const unidade =
+    document
+    .getElementById("unidadeMP")
+    .value;
+
+
+const estoque =
+    parseFloat(
+        document
+        .getElementById("estoqueMP")
+        .value
+    ) || 0;
+
+
+const custo =
+    parseFloat(
+        document
+        .getElementById("custoMP")
+        .value
+    ) || 0;
+
+
+/*=====================================================
+    VALIDAÇÃO
+=====================================================*/
+
+if(nome === ""){
+
+    alert(
+        "Informe o nome da matéria-prima."
+    );
+
+    return;
+
+}
+
+
+/*=====================================================
+    OBJETO DA MATÉRIA-PRIMA
+=====================================================*/
+
+const materiaPrima = {
+
+    codigo:
+        codigo,
+
+    codigoBarras:
+        codigoBarras,
+
+    nome:
+        nome,
+
+    categoria:
+        categoria,
+
+    unidade:
+        unidade,
+
+    estoque:
+        estoque,
+
+    custo:
+        custo
+
+};
+
+
+/*=====================================================
+    NOVO OU EDIÇÃO
+=====================================================*/
+
+if(materiaPrimaEditando === -1){
+
+    materiasPrimas.push(
+        materiaPrima
+    );
+
+}else{
+
+    materiasPrimas[
+        materiaPrimaEditando
+    ] =
+        materiaPrima;
+
+}
+
+
+/*=====================================================
+    SALVAR NO LOCALSTORAGE
+=====================================================*/
+
+salvarBanco();
+
+
+/*=====================================================
+    ATUALIZAR TABELA
+=====================================================*/
+
+atualizarTabelaMateriaPrima();
+
+
+/*=====================================================
+    LIMPAR FORMULÁRIO
+=====================================================*/
+
+novaMateriaPrima();
+
+
+alert(
+    "Matéria-prima salva com sucesso."
+);
+```
+
+}
+
+/*=========================================================
+TABELA DE MATÉRIA-PRIMA
+=========================================================*/
+
+function atualizarTabelaMateriaPrima(){
+
+```
+const tabela =
+    document.getElementById(
+        "listaMateriaPrima"
+    );
+
+
+if(!tabela) return;
+
+
+tabela.innerHTML = "";
+
+
+materiasPrimas.forEach(
+    function(materiaPrima, indice){
+
+
+    tabela.innerHTML += `
+
+    <tr>
+
+        <td>
+            ${materiaPrima.codigo}
+        </td>
+
+        <td>
+            ${materiaPrima.nome}
+        </td>
+
+        <td>
+            ${materiaPrima.categoria}
+        </td>
+
+        <td>
+            ${materiaPrima.unidade}
+        </td>
+
+        <td>
+            ${materiaPrima.estoque}
+        </td>
+
+        <td>
+            R$ ${Number(
+                materiaPrima.custo
+            ).toFixed(2).replace(".", ",")}
+        </td>
+
+        <td>
+
+            <button
+                onclick="editarMateriaPrima(${indice})">
+
+                ✏️
+
+            </button>
+
+            <button
+                onclick="excluirMateriaPrima(${indice})">
+
+                🗑️
+
+            </button>
+
+        </td>
+
+    </tr>
+
+    `;
+
+
+});
+```
+
+}
+
+/*=========================================================
+EDITAR MATÉRIA-PRIMA
+=========================================================*/
+
+function editarMateriaPrima(indice){
+
+```
+const materiaPrima =
+    materiasPrimas[indice];
+
+
+if(!materiaPrima) return;
+
+
+materiaPrimaEditando =
+    indice;
+
+
+document.getElementById(
+    "codigoMP"
+).value =
+    materiaPrima.codigo;
+
+
+document.getElementById(
+    "codigoBarrasMP"
+).value =
+    materiaPrima.codigoBarras;
+
+
+document.getElementById(
+    "nomeMP"
+).value =
+    materiaPrima.nome;
+
+
+document.getElementById(
+    "categoriaMP"
+).value =
+    materiaPrima.categoria;
+
+
+document.getElementById(
+    "unidadeMP"
+).value =
+    materiaPrima.unidade;
+
+
+document.getElementById(
+    "estoqueMP"
+).value =
+    materiaPrima.estoque;
+
+
+document.getElementById(
+    "custoMP"
+).value =
+    materiaPrima.custo;
+```
+
+}
+
+/*=========================================================
+EXCLUIR MATÉRIA-PRIMA
+=========================================================*/
+
+function excluirMateriaPrima(indice){
+
+```
+if(
+    !confirm(
+        "Deseja excluir esta matéria-prima?"
+    )
+){
+
+    return;
+
+}
+
+
+materiasPrimas.splice(
+    indice,
+    1
+);
+
+
+salvarBanco();
+
+
+atualizarTabelaMateriaPrima();
+
+
+novaMateriaPrima();
+```
+
+}
+
+/*=========================================================
+PESQUISAR MATÉRIA-PRIMA
+=========================================================*/
+
+function pesquisarMateriaPrima(){
+
+```
+const campo =
+    document.getElementById(
+        "pesquisaMP"
+    );
+
+
+if(!campo) return;
+
+
+const texto =
+    campo.value
+    .toLowerCase();
+
+
+const linhas =
+    document.querySelectorAll(
+        "#listaMateriaPrima tr"
+    );
+
+
+linhas.forEach(
+    function(linha){
+
+
+    linha.style.display =
+
+        linha.innerText
+        .toLowerCase()
+        .includes(texto)
+
+        ? ""
+
+        : "none";
+
+
+});
+```
+
+}
+
+/*=========================================================
+INICIALIZAÇÃO DA MATÉRIA-PRIMA
+=========================================================*/
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+```
+    novaMateriaPrima();
+
+    atualizarTabelaMateriaPrima();
+
+}
+```
+
+);
+
