@@ -533,3 +533,617 @@ alert(
 
 
 }
+/* =====================================================
+   MÓDULO PRODUTOS
+===================================================== */
+
+
+let produtoEditando = null;
+
+
+
+
+
+/* =====================================================
+   NOVO PRODUTO
+===================================================== */
+
+
+function novoProduto(){
+
+
+produtoEditando = null;
+
+
+
+const codigo =
+document.getElementById(
+"codigoProduto"
+);
+
+
+
+const ean =
+document.getElementById(
+"eanProduto"
+);
+
+
+
+if(codigo){
+
+codigo.value =
+gerarCodigo();
+
+}
+
+
+
+if(ean){
+
+ean.value =
+gerarEAN();
+
+}
+
+
+
+document.getElementById(
+"nomeProduto"
+).value = "";
+
+
+
+document.getElementById(
+"categoriaProduto"
+).value = "Doce";
+
+
+
+document.getElementById(
+"unidadeProduto"
+).value = "Unidade";
+
+
+
+document.getElementById(
+"statusProduto"
+).value = "Ativo";
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+   GERAR EAN-13
+===================================================== */
+
+
+function gerarEAN(){
+
+
+let codigo = "789";
+
+
+
+while(
+codigo.length < 12
+){
+
+
+codigo +=
+Math.floor(
+Math.random()*10
+);
+
+
+
+}
+
+
+
+
+let soma = 0;
+
+
+
+for(
+let i=0;
+i<12;
+i++
+){
+
+
+
+let numero =
+parseInt(
+codigo[i]
+);
+
+
+
+if(i % 2 === 0){
+
+soma += numero;
+
+}else{
+
+soma += numero * 3;
+
+}
+
+
+
+}
+
+
+
+let digito =
+(10 - (soma % 10)) % 10;
+
+
+
+return codigo + digito;
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   SALVAR PRODUTO
+===================================================== */
+
+
+function salvarProduto(){
+
+
+
+let produto = {
+
+
+
+codigo:
+
+document.getElementById(
+"codigoProduto"
+).value,
+
+
+
+ean:
+
+document.getElementById(
+"eanProduto"
+).value,
+
+
+
+nome:
+
+document.getElementById(
+"nomeProduto"
+).value.trim(),
+
+
+
+categoria:
+
+document.getElementById(
+"categoriaProduto"
+).value,
+
+
+
+unidade:
+
+document.getElementById(
+"unidadeProduto"
+).value,
+
+
+
+status:
+
+document.getElementById(
+"statusProduto"
+).value
+
+
+
+};
+
+
+
+
+
+
+
+if(produto.nome === ""){
+
+
+alert(
+"Digite o nome do produto."
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+if(produtoEditando === null){
+
+
+
+produtos.push(
+produto
+);
+
+
+
+}else{
+
+
+
+produtos[
+produtoEditando
+] =
+produto;
+
+
+
+}
+
+
+
+
+
+salvarBanco();
+
+
+
+mostrarProdutos();
+
+
+
+atualizarDashboard();
+
+
+
+novoProduto();
+
+
+
+alert(
+"Produto salvo com sucesso."
+);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   LISTAR PRODUTOS
+===================================================== */
+
+
+function mostrarProdutos(){
+
+
+
+const tabela =
+document.getElementById(
+"listaProdutos"
+);
+
+
+
+if(!tabela){
+
+return;
+
+}
+
+
+
+tabela.innerHTML = "";
+
+
+
+
+
+produtos.forEach(
+function(produto,index){
+
+
+
+tabela.innerHTML += `
+
+
+
+<tr>
+
+
+
+<td>
+
+${produto.codigo}
+
+</td>
+
+
+
+<td>
+
+${produto.nome}
+
+</td>
+
+
+
+<td>
+
+${produto.ean}
+
+</td>
+
+
+
+<td>
+
+${produto.categoria}
+
+</td>
+
+
+
+<td>
+
+${produto.unidade}
+
+</td>
+
+
+
+<td>
+
+${produto.status}
+
+</td>
+
+
+
+<td>
+
+
+
+<button
+class="btn btn-primary btn-sm"
+onclick="editarProduto(${index})">
+
+✏️
+
+</button>
+
+
+
+
+<button
+class="btn btn-delete btn-sm"
+onclick="excluirProduto(${index})">
+
+🗑️
+
+</button>
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+`;
+
+
+
+}
+
+);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   EDITAR PRODUTO
+===================================================== */
+
+
+function editarProduto(index){
+
+
+
+produtoEditando =
+index;
+
+
+
+let produto =
+produtos[index];
+
+
+
+
+document.getElementById(
+"codigoProduto"
+).value =
+produto.codigo;
+
+
+
+
+document.getElementById(
+"eanProduto"
+).value =
+produto.ean;
+
+
+
+
+document.getElementById(
+"nomeProduto"
+).value =
+produto.nome;
+
+
+
+
+document.getElementById(
+"categoriaProduto"
+).value =
+produto.categoria;
+
+
+
+
+document.getElementById(
+"unidadeProduto"
+).value =
+produto.unidade;
+
+
+
+
+document.getElementById(
+"statusProduto"
+).value =
+produto.status;
+
+
+
+
+mostrarAba(
+"produtos"
+);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   EXCLUIR PRODUTO
+===================================================== */
+
+
+function excluirProduto(index){
+
+
+
+if(
+confirm(
+"Excluir este produto?"
+)
+
+){
+
+
+
+produtos.splice(
+index,
+1
+);
+
+
+
+salvarBanco();
+
+
+
+mostrarProdutos();
+
+
+
+atualizarDashboard();
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+/* =====================================================
+   INICIALIZAÇÃO PRODUTOS
+===================================================== */
+
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+
+
+mostrarProdutos();
+
+
+
+novoProduto();
+
+
+
+});
