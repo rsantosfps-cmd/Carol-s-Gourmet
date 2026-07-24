@@ -1132,3 +1132,546 @@ function(){
 
 
 });
+/* =====================================================
+   MÓDULO MATÉRIA-PRIMA
+===================================================== */
+
+
+let materiaPrimaEditando = -1;
+
+
+
+
+/* =====================================================
+   NOVA MATÉRIA-PRIMA
+===================================================== */
+
+
+function novaMateriaPrima(){
+
+
+    materiaPrimaEditando = -1;
+
+
+
+    const codigo =
+    document.getElementById(
+        "codigoMP"
+    );
+
+
+
+    if(codigo){
+
+        codigo.value =
+        gerarCodigo();
+
+    }
+
+
+
+    document.getElementById(
+        "nomeMP"
+    ).value = "";
+
+
+
+    document.getElementById(
+        "categoriaMP"
+    ).value = "Ingrediente";
+
+
+
+    document.getElementById(
+        "unidadeMP"
+    ).value = "Kg";
+
+
+
+    document.getElementById(
+        "estoqueMP"
+    ).value = "0";
+
+
+
+    document.getElementById(
+        "custoMP"
+    ).value = "";
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   SALVAR MATÉRIA-PRIMA
+===================================================== */
+
+
+function salvarMateriaPrima(){
+
+
+
+    const materiaPrima = {
+
+
+        codigo:
+
+        document.getElementById(
+            "codigoMP"
+        ).value,
+
+
+
+        nome:
+
+        document.getElementById(
+            "nomeMP"
+        ).value.trim(),
+
+
+
+        categoria:
+
+        document.getElementById(
+            "categoriaMP"
+        ).value,
+
+
+
+        unidade:
+
+        document.getElementById(
+            "unidadeMP"
+        ).value,
+
+
+
+        estoque:
+
+        parseFloat(
+            document.getElementById(
+                "estoqueMP"
+            ).value
+        ) || 0,
+
+
+
+        custo:
+
+        parseFloat(
+            document.getElementById(
+                "custoMP"
+            ).value
+        ) || 0
+
+
+
+    };
+
+
+
+
+
+
+
+    /* ==========================
+       VALIDAÇÃO
+    ========================== */
+
+
+    if(
+        materiaPrima.nome === ""
+    ){
+
+
+        alert(
+            "Informe o nome da matéria-prima."
+        );
+
+
+        return;
+
+
+    }
+
+
+
+
+
+
+
+    /* ==========================
+       NOVO OU EDIÇÃO
+    ========================== */
+
+
+    if(
+        materiaPrimaEditando === -1
+    ){
+
+
+        materiasPrimas.push(
+            materiaPrima
+        );
+
+
+    }else{
+
+
+        materiasPrimas[
+            materiaPrimaEditando
+        ] =
+        materiaPrima;
+
+
+    }
+
+
+
+
+
+
+
+    /* ==========================
+       SALVAR
+    ========================== */
+
+
+    salvarBanco();
+
+
+
+    mostrarMateriasPrimas();
+
+
+
+    atualizarDashboard();
+
+
+
+    novaMateriaPrima();
+
+
+
+    alert(
+        "Matéria-prima salva com sucesso."
+    );
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   MOSTRAR MATÉRIAS-PRIMAS
+===================================================== */
+
+
+function mostrarMateriasPrimas(){
+
+
+
+    const tabela =
+    document.getElementById(
+        "listaMateriaPrima"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+    tabela.innerHTML = "";
+
+
+
+
+
+
+
+    materiasPrimas.forEach(
+    function(
+        materiaPrima,
+        index
+    ){
+
+
+
+        tabela.innerHTML += `
+
+
+        <tr>
+
+
+            <td>
+
+                ${materiaPrima.codigo || ""}
+
+            </td>
+
+
+
+            <td>
+
+                ${materiaPrima.nome || ""}
+
+            </td>
+
+
+
+            <td>
+
+                ${materiaPrima.categoria || ""}
+
+            </td>
+
+
+
+            <td>
+
+                ${materiaPrima.unidade || ""}
+
+            </td>
+
+
+
+            <td>
+
+                ${materiaPrima.estoque || 0}
+
+            </td>
+
+
+
+            <td>
+
+                R$ ${Number(
+                    materiaPrima.custo || 0
+                ).toFixed(2)}
+
+            </td>
+
+
+
+            <td>
+
+
+
+                <button
+                class="btn btn-primary btn-sm"
+                onclick="editarMateriaPrima(${index})">
+
+                ✏️
+
+                </button>
+
+
+
+                <button
+                class="btn btn-delete btn-sm"
+                onclick="excluirMateriaPrima(${index})">
+
+                🗑️
+
+                </button>
+
+
+
+            </td>
+
+
+        </tr>
+
+
+        `;
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   EDITAR MATÉRIA-PRIMA
+===================================================== */
+
+
+function editarMateriaPrima(index){
+
+
+
+    materiaPrimaEditando =
+    index;
+
+
+
+    const materiaPrima =
+    materiasPrimas[index];
+
+
+
+
+
+    document.getElementById(
+        "codigoMP"
+    ).value =
+    materiaPrima.codigo;
+
+
+
+
+
+    document.getElementById(
+        "nomeMP"
+    ).value =
+    materiaPrima.nome;
+
+
+
+
+
+    document.getElementById(
+        "categoriaMP"
+    ).value =
+    materiaPrima.categoria;
+
+
+
+
+
+    document.getElementById(
+        "unidadeMP"
+    ).value =
+    materiaPrima.unidade;
+
+
+
+
+
+    document.getElementById(
+        "estoqueMP"
+    ).value =
+    materiaPrima.estoque;
+
+
+
+
+
+    document.getElementById(
+        "custoMP"
+    ).value =
+    materiaPrima.custo;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   EXCLUIR MATÉRIA-PRIMA
+===================================================== */
+
+
+function excluirMateriaPrima(index){
+
+
+
+    if(
+        !confirm(
+            "Excluir esta matéria-prima?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+
+
+
+    materiasPrimas.splice(
+        index,
+        1
+    );
+
+
+
+
+
+    salvarBanco();
+
+
+
+    mostrarMateriasPrimas();
+
+
+
+    atualizarDashboard();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   INICIALIZAÇÃO MATÉRIA-PRIMA
+===================================================== */
+
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+
+    mostrarMateriasPrimas();
+
+
+    novaMateriaPrima();
+
+
+});
