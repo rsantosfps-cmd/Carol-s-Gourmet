@@ -538,81 +538,83 @@ alert(
 ===================================================== */
 
 
-let produtoEditando = null;
-
+let produtoEditando = -1;
 
 
 
 
 /* =====================================================
-   NOVO PRODUTO
+   NOVO CADASTRO
 ===================================================== */
 
 
 function novoProduto(){
 
 
-produtoEditando = null;
+    produtoEditando = -1;
 
 
 
-const codigo =
-document.getElementById(
-"codigoProduto"
-);
+    const codigo =
+    document.getElementById(
+        "codigoInterno"
+    );
 
 
 
-const ean =
-document.getElementById(
-"eanProduto"
-);
+    const barras =
+    document.getElementById(
+        "codigoBarras"
+    );
 
 
 
-if(codigo){
+    if(codigo){
 
-codigo.value =
-gerarCodigo();
+        codigo.value =
+        gerarCodigo();
+
+    }
+
+
+
+    if(barras){
+
+        barras.value =
+        gerarEAN();
+
+    }
+
+
+
+
+    document.getElementById(
+        "nomeProduto"
+    ).value = "";
+
+
+
+    document.getElementById(
+        "categoriaProduto"
+    ).value = "Doce";
+
+
+
+    document.getElementById(
+        "unidadeProduto"
+    ).value = "Unidade";
+
+
+
+    document.getElementById(
+        "statusProduto"
+    ).value = "Ativo";
+
+
 
 }
 
 
-
-if(ean){
-
-ean.value =
-gerarEAN();
-
-}
-
-
-
-document.getElementById(
-"nomeProduto"
-).value = "";
-
-
-
-document.getElementById(
-"categoriaProduto"
-).value = "Doce";
-
-
-
-document.getElementById(
-"unidadeProduto"
-).value = "Unidade";
-
-
-
-document.getElementById(
-"statusProduto"
-).value = "Ativo";
-
-
-
-}
 
 
 
@@ -621,75 +623,71 @@ document.getElementById(
 
 
 /* =====================================================
-   GERAR EAN-13
+   GERAR EAN 13
 ===================================================== */
 
 
 function gerarEAN(){
 
 
-let codigo = "789";
+    let codigo = "789";
 
 
 
-while(
-codigo.length < 12
-){
+    while(codigo.length < 12){
 
 
-codigo +=
-Math.floor(
-Math.random()*10
-);
+        codigo +=
+        Math.floor(
+            Math.random()*10
+        );
 
 
-
-}
+    }
 
 
 
-
-let soma = 0;
-
-
-
-for(
-let i=0;
-i<12;
-i++
-){
+    let soma = 0;
 
 
 
-let numero =
-parseInt(
-codigo[i]
-);
+    for(
+        let i = 0;
+        i < 12;
+        i++
+    ){
 
 
 
-if(i % 2 === 0){
-
-soma += numero;
-
-}else{
-
-soma += numero * 3;
-
-}
+        let numero =
+        parseInt(
+            codigo[i]
+        );
 
 
 
-}
+        if(i % 2 === 0){
+
+            soma += numero;
+
+        }else{
+
+            soma += numero * 3;
+
+        }
 
 
 
-let digito =
-(10 - (soma % 10)) % 10;
+    }
 
 
 
-return codigo + digito;
+    let digito =
+    (10 - (soma % 10)) % 10;
+
+
+
+    return codigo + digito;
 
 
 }
@@ -711,59 +709,59 @@ function salvarProduto(){
 
 
 
-let produto = {
+    const produto = {
 
 
 
-codigo:
+        codigo:
 
-document.getElementById(
-"codigoProduto"
-).value,
+        document.getElementById(
+            "codigoInterno"
+        ).value,
 
 
 
-ean:
+        codigoBarras:
 
-document.getElementById(
-"eanProduto"
-).value,
+        document.getElementById(
+            "codigoBarras"
+        ).value,
 
 
 
-nome:
+        nome:
 
-document.getElementById(
-"nomeProduto"
-).value.trim(),
+        document.getElementById(
+            "nomeProduto"
+        ).value.trim(),
 
 
 
-categoria:
+        categoria:
 
-document.getElementById(
-"categoriaProduto"
-).value,
+        document.getElementById(
+            "categoriaProduto"
+        ).value,
 
 
 
-unidade:
+        unidade:
 
-document.getElementById(
-"unidadeProduto"
-).value,
+        document.getElementById(
+            "unidadeProduto"
+        ).value,
 
 
 
-status:
+        status:
 
-document.getElementById(
-"statusProduto"
-).value
+        document.getElementById(
+            "statusProduto"
+        ).value
 
 
 
-};
+    };
 
 
 
@@ -771,18 +769,18 @@ document.getElementById(
 
 
 
-if(produto.nome === ""){
+    if(produto.nome === ""){
 
 
-alert(
-"Digite o nome do produto."
-);
+        alert(
+            "Informe o nome do produto."
+        );
 
 
-return;
+        return;
 
 
-}
+    }
 
 
 
@@ -790,52 +788,50 @@ return;
 
 
 
-if(produtoEditando === null){
+    if(produtoEditando === -1){
 
 
+        produtos.push(
+            produto
+        );
 
-produtos.push(
-produto
-);
 
+    }else{
 
 
-}else{
+        produtos[
+            produtoEditando
+        ] =
+        produto;
 
 
+    }
 
-produtos[
-produtoEditando
-] =
-produto;
 
 
 
-}
 
 
 
+    salvarBanco();
 
 
-salvarBanco();
 
+    mostrarProdutos();
 
 
-mostrarProdutos();
 
+    atualizarDashboard();
 
 
-atualizarDashboard();
 
+    alert(
+        "Produto salvo com sucesso."
+    );
 
 
-novoProduto();
 
-
-
-alert(
-"Produto salvo com sucesso."
-);
+    novoProduto();
 
 
 
@@ -858,128 +854,122 @@ function mostrarProdutos(){
 
 
 
-const tabela =
-document.getElementById(
-"listaProdutos"
-);
+    const tabela =
+    document.getElementById(
+        "listaProdutos"
+    );
 
 
 
-if(!tabela){
+    if(!tabela){
 
-return;
+        return;
 
-}
+    }
 
 
 
-tabela.innerHTML = "";
 
+    tabela.innerHTML = "";
 
 
 
 
-produtos.forEach(
-function(produto,index){
 
+    produtos.forEach(
+    function(produto,index){
 
 
-tabela.innerHTML += `
 
+        tabela.innerHTML += `
 
 
-<tr>
 
+        <tr>
 
 
-<td>
+            <td>
 
-${produto.codigo}
+            ${produto.codigo || ""}
 
-</td>
+            </td>
 
 
 
-<td>
+            <td>
 
-${produto.nome}
+            ${produto.nome || ""}
 
-</td>
+            </td>
 
 
 
-<td>
+            <td>
 
-${produto.ean}
+            ${produto.codigoBarras || ""}
 
-</td>
+            </td>
 
 
 
-<td>
+            <td>
 
-${produto.categoria}
+            ${produto.categoria || ""}
 
-</td>
+            </td>
 
 
 
-<td>
+            <td>
 
-${produto.unidade}
+            ${produto.unidade || ""}
 
-</td>
+            </td>
 
 
 
-<td>
+            <td>
 
-${produto.status}
+            ${produto.status || ""}
 
-</td>
+            </td>
 
 
 
-<td>
+            <td>
 
 
+            <button
+            class="btn btn-primary btn-sm"
+            onclick="editarProduto(${index})">
 
-<button
-class="btn btn-primary btn-sm"
-onclick="editarProduto(${index})">
+            ✏️
 
-✏️
+            </button>
 
-</button>
 
 
+            <button
+            class="btn btn-delete btn-sm"
+            onclick="excluirProduto(${index})">
 
+            🗑️
 
-<button
-class="btn btn-delete btn-sm"
-onclick="excluirProduto(${index})">
+            </button>
 
-🗑️
 
-</button>
+            </td>
 
 
 
-</td>
+        </tr>
 
 
+        `;
 
-</tr>
 
 
-
-`;
-
-
-
-}
-
-);
+    });
 
 
 
@@ -1002,68 +992,67 @@ function editarProduto(index){
 
 
 
-produtoEditando =
-index;
+    produtoEditando =
+    index;
 
 
 
-let produto =
-produtos[index];
-
-
-
-
-document.getElementById(
-"codigoProduto"
-).value =
-produto.codigo;
+    const produto =
+    produtos[index];
 
 
 
 
-document.getElementById(
-"eanProduto"
-).value =
-produto.ean;
+
+    document.getElementById(
+        "codigoInterno"
+    ).value =
+    produto.codigo;
 
 
 
 
-document.getElementById(
-"nomeProduto"
-).value =
-produto.nome;
+
+    document.getElementById(
+        "codigoBarras"
+    ).value =
+    produto.codigoBarras;
 
 
 
 
-document.getElementById(
-"categoriaProduto"
-).value =
-produto.categoria;
+
+    document.getElementById(
+        "nomeProduto"
+    ).value =
+    produto.nome;
 
 
 
 
-document.getElementById(
-"unidadeProduto"
-).value =
-produto.unidade;
+
+    document.getElementById(
+        "categoriaProduto"
+    ).value =
+    produto.categoria;
 
 
 
 
-document.getElementById(
-"statusProduto"
-).value =
-produto.status;
+
+    document.getElementById(
+        "unidadeProduto"
+    ).value =
+    produto.unidade;
 
 
 
 
-mostrarAba(
-"produtos"
-);
+
+    document.getElementById(
+        "statusProduto"
+    ).value =
+    produto.status;
 
 
 
@@ -1086,39 +1075,38 @@ function excluirProduto(index){
 
 
 
-if(
-confirm(
-"Excluir este produto?"
-)
-
-){
-
-
-
-produtos.splice(
-index,
-1
-);
+    if(
+        confirm(
+            "Excluir este produto?"
+        )
+    ){
 
 
 
-salvarBanco();
+        produtos.splice(
+            index,
+            1
+        );
 
 
 
-mostrarProdutos();
+        salvarBanco();
 
 
 
-atualizarDashboard();
+        mostrarProdutos();
 
 
 
-}
+        atualizarDashboard();
 
+
+
+    }
 
 
 }
+
 
 
 
@@ -1128,7 +1116,7 @@ atualizarDashboard();
 
 
 /* =====================================================
-   INICIALIZAÇÃO PRODUTOS
+   INICIALIZA PRODUTOS
 ===================================================== */
 
 
@@ -1137,13 +1125,10 @@ document.addEventListener(
 function(){
 
 
-
-mostrarProdutos();
-
+    mostrarProdutos();
 
 
-novoProduto();
-
+    novoProduto();
 
 
 });
