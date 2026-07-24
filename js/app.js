@@ -596,7 +596,7 @@ function novoProduto(){
 
     document.getElementById(
         "categoriaProduto"
-    ).value = "Doce";
+    ).value = "";
 
 
 
