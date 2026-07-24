@@ -1136,536 +1136,272 @@ function(){
    MÓDULO MATÉRIA-PRIMA
 ===================================================== */
 
-
 let materiaPrimaEditando = -1;
-
-
 
 
 /* =====================================================
    NOVA MATÉRIA-PRIMA
 ===================================================== */
 
-
-function novaMateriaPrima(){
-
+function novaMateriaPrima() {
 
     materiaPrimaEditando = -1;
 
+    const codigo = document.getElementById("codigoMP");
 
-
-    const codigo =
-    document.getElementById(
-        "codigoMP"
-    );
-
-
-
-    if(codigo){
-
-        codigo.value =
-        gerarCodigo();
-
+    if (codigo) {
+        codigo.value = gerarCodigo();
     }
 
+    const nome = document.getElementById("nomeMP");
+    if (nome) nome.value = "";
 
+    const categoria = document.getElementById("categoriaMP");
+    if (categoria) categoria.value = "Ingrediente";
 
-    document.getElementById(
-        "nomeMP"
-    ).value = "";
+    const unidade = document.getElementById("unidadeMP");
+    if (unidade) unidade.value = "Kg";
 
+    const estoque = document.getElementById("estoqueMP");
+    if (estoque) estoque.value = "0";
 
-
-    document.getElementById(
-        "categoriaMP"
-    ).value = "Ingrediente";
-
-
-
-    document.getElementById(
-        "unidadeMP"
-    ).value = "Kg";
-
-
-
-    document.getElementById(
-        "estoqueMP"
-    ).value = "0";
-
-
-
-    document.getElementById(
-        "custoMP"
-    ).value = "";
-
-
+    const custo = document.getElementById("custoMP");
+    if (custo) custo.value = "";
 
 }
-
-
-
-
-
-
-
 
 
 /* =====================================================
    SALVAR MATÉRIA-PRIMA
 ===================================================== */
 
+function salvarMateriaPrima() {
 
-function salvarMateriaPrima(){
-
-
-
-    const materiaPrima = {
-
-
-        codigo:
-
-        document.getElementById(
-            "codigoMP"
-        ).value,
+    const codigo = document.getElementById("codigoMP");
+    const nome = document.getElementById("nomeMP");
+    const categoria = document.getElementById("categoriaMP");
+    const unidade = document.getElementById("unidadeMP");
+    const estoque = document.getElementById("estoqueMP");
+    const custo = document.getElementById("custoMP");
 
 
+    if (!codigo || !nome || !categoria || !unidade || !estoque || !custo) {
 
-        nome:
+        alert(
+            "Erro: algum campo da matéria-prima não foi encontrado."
+        );
 
-        document.getElementById(
-            "nomeMP"
-        ).value.trim(),
+        return;
 
-
-
-        categoria:
-
-        document.getElementById(
-            "categoriaMP"
-        ).value,
+    }
 
 
-
-        unidade:
-
-        document.getElementById(
-            "unidadeMP"
-        ).value,
-
-
-
-        estoque:
-
-        parseFloat(
-            document.getElementById(
-                "estoqueMP"
-            ).value
-        ) || 0,
-
-
-
-        custo:
-
-        parseFloat(
-            document.getElementById(
-                "custoMP"
-            ).value
-        ) || 0
-
-
-
-    };
-
-
-
-
-
-
-
-    /* ==========================
-       VALIDAÇÃO
-    ========================== */
-
-
-    if(
-        materiaPrima.nome === ""
-    ){
-
+    if (nome.value.trim() === "") {
 
         alert(
             "Informe o nome da matéria-prima."
         );
 
+        nome.focus();
 
         return;
 
-
     }
 
 
+    const materiaPrima = {
+
+        codigo: codigo.value,
+
+        nome: nome.value.trim(),
+
+        categoria: categoria.value,
+
+        unidade: unidade.value,
+
+        estoque: Number(estoque.value) || 0,
+
+        custo: Number(custo.value) || 0
+
+    };
 
 
+    if (materiaPrimaEditando === -1) {
 
+        materiasPrimas.push(materiaPrima);
 
+    } else {
 
-    /* ==========================
-       NOVO OU EDIÇÃO
-    ========================== */
-
-
-    if(
-        materiaPrimaEditando === -1
-    ){
-
-
-        materiasPrimas.push(
-            materiaPrima
-        );
-
-
-    }else{
-
-
-        materiasPrimas[
-            materiaPrimaEditando
-        ] =
-        materiaPrima;
-
+        materiasPrimas[materiaPrimaEditando] = materiaPrima;
 
     }
-
-
-
-
-
-
-
-    /* ==========================
-       SALVAR
-    ========================== */
 
 
     salvarBanco();
 
-
-
     mostrarMateriasPrimas();
-
-
-
-    atualizarDashboard();
-
-
 
     novaMateriaPrima();
 
 
-
     alert(
-        "Matéria-prima salva com sucesso."
+        "Matéria-prima salva com sucesso!"
     );
 
-
-
 }
-
-
-
-
-
-
-
 
 
 /* =====================================================
    MOSTRAR MATÉRIAS-PRIMAS
 ===================================================== */
 
-
-function mostrarMateriasPrimas(){
-
-
+function mostrarMateriasPrimas() {
 
     const tabela =
-    document.getElementById(
-        "listaMateriaPrima"
-    );
+        document.getElementById("listaMateriaPrima");
 
 
-
-    if(!tabela){
+    if (!tabela) {
 
         return;
 
     }
 
 
-
     tabela.innerHTML = "";
 
 
-
-
-
-
-
     materiasPrimas.forEach(
-    function(
-        materiaPrima,
-        index
-    ){
+        function (materiaPrima, index) {
+
+            tabela.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        ${materiaPrima.codigo || ""}
+                    </td>
+
+                    <td>
+                        ${materiaPrima.nome || ""}
+                    </td>
+
+                    <td>
+                        ${materiaPrima.categoria || ""}
+                    </td>
+
+                    <td>
+                        ${materiaPrima.unidade || ""}
+                    </td>
+
+                    <td>
+                        ${materiaPrima.estoque || 0}
+                    </td>
+
+                    <td>
+                        R$ ${Number(
+                            materiaPrima.custo || 0
+                        ).toFixed(2)}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="btn btn-primary btn-sm"
+                            onclick="editarMateriaPrima(${index})">
+
+                            ✏️
+
+                        </button>
 
 
+                        <button
+                            class="btn btn-delete btn-sm"
+                            onclick="excluirMateriaPrima(${index})">
 
-        tabela.innerHTML += `
+                            🗑️
 
+                        </button>
 
-        <tr>
+                    </td>
 
+                </tr>
 
-            <td>
+            `;
 
-                ${materiaPrima.codigo || ""}
-
-            </td>
-
-
-
-            <td>
-
-                ${materiaPrima.nome || ""}
-
-            </td>
-
-
-
-            <td>
-
-                ${materiaPrima.categoria || ""}
-
-            </td>
-
-
-
-            <td>
-
-                ${materiaPrima.unidade || ""}
-
-            </td>
-
-
-
-            <td>
-
-                ${materiaPrima.estoque || 0}
-
-            </td>
-
-
-
-            <td>
-
-                R$ ${Number(
-                    materiaPrima.custo || 0
-                ).toFixed(2)}
-
-            </td>
-
-
-
-            <td>
-
-
-
-                <button
-                class="btn btn-primary btn-sm"
-                onclick="editarMateriaPrima(${index})">
-
-                ✏️
-
-                </button>
-
-
-
-                <button
-                class="btn btn-delete btn-sm"
-                onclick="excluirMateriaPrima(${index})">
-
-                🗑️
-
-                </button>
-
-
-
-            </td>
-
-
-        </tr>
-
-
-        `;
-
-
-
-    });
-
-
+        }
+    );
 
 }
-
-
-
-
-
-
-
 
 
 /* =====================================================
    EDITAR MATÉRIA-PRIMA
 ===================================================== */
 
-
-function editarMateriaPrima(index){
-
-
-
-    materiaPrimaEditando =
-    index;
-
-
+function editarMateriaPrima(index) {
 
     const materiaPrima =
-    materiasPrimas[index];
+        materiasPrimas[index];
 
 
-
-
-
-    document.getElementById(
-        "codigoMP"
-    ).value =
-    materiaPrima.codigo;
-
-
-
-
-
-    document.getElementById(
-        "nomeMP"
-    ).value =
-    materiaPrima.nome;
-
-
-
-
-
-    document.getElementById(
-        "categoriaMP"
-    ).value =
-    materiaPrima.categoria;
-
-
-
-
-
-    document.getElementById(
-        "unidadeMP"
-    ).value =
-    materiaPrima.unidade;
-
-
-
-
-
-    document.getElementById(
-        "estoqueMP"
-    ).value =
-    materiaPrima.estoque;
-
-
-
-
-
-    document.getElementById(
-        "custoMP"
-    ).value =
-    materiaPrima.custo;
-
-
-
-}
-
-
-
-
-
-
-
-
-
-/* =====================================================
-   EXCLUIR MATÉRIA-PRIMA
-===================================================== */
-
-
-function excluirMateriaPrima(index){
-
-
-
-    if(
-        !confirm(
-            "Excluir esta matéria-prima?"
-        )
-    ){
+    if (!materiaPrima) {
 
         return;
 
     }
 
 
+    materiaPrimaEditando = index;
 
 
-
-    materiasPrimas.splice(
-        index,
-        1
-    );
+    document.getElementById("codigoMP").value =
+        materiaPrima.codigo || "";
 
 
+    document.getElementById("nomeMP").value =
+        materiaPrima.nome || "";
 
 
-
-    salvarBanco();
-
-
-
-    mostrarMateriasPrimas();
+    document.getElementById("categoriaMP").value =
+        materiaPrima.categoria || "Ingrediente";
 
 
+    document.getElementById("unidadeMP").value =
+        materiaPrima.unidade || "Kg";
 
-    atualizarDashboard();
+
+    document.getElementById("estoqueMP").value =
+        materiaPrima.estoque || 0;
 
 
+    document.getElementById("custoMP").value =
+        materiaPrima.custo || 0;
 
 }
 
 
-
-
-
-
-
-
-
 /* =====================================================
-   INICIALIZAÇÃO MATÉRIA-PRIMA
+   EXCLUIR MATÉRIA-PRIMA
 ===================================================== */
 
+function excluirMateriaPrima(index) {
 
-document.addEventListener(
-"DOMContentLoaded",
-function(){
+    if (
+        !confirm(
+            "Excluir esta matéria-prima?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    materiasPrimas.splice(index, 1);
+
+
+    salvarBanco();
 
 
     mostrarMateriasPrimas();
@@ -1673,5 +1409,20 @@ function(){
 
     novaMateriaPrima();
 
+}
 
-});
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        mostrarMateriasPrimas();
+
+        novaMateriaPrima();
+
+    }
+);
