@@ -7,24 +7,59 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Carol's Gourmet ERP</title>
+
+<title>
+Carol's Gourmet 
+</title>
 
 
 <link rel="stylesheet" href="css/style.css">
 
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-
 </head>
+
 
 
 <body>
 
 
+<!-- ==========================
+        CABEÇALHO
+========================== -->
+
+
+<header class="header">
+
+
+<div class="logo">
+
+
+<div class="logo-icon">
+
+🍰
+
+</div>
+
+
+<div>
+
+Carol's
+
+<span>
+Gourmet
+</span>
+
+
+</div>
+
+
+</div>
+
+
+
+
 <button 
-id="btnMenu"
-class="btn-menu"
+class="menu-toggle"
 onclick="toggleMenu()">
 
 ☰
@@ -32,25 +67,24 @@ onclick="toggleMenu()">
 </button>
 
 
-
-<aside id="menuLateral" class="sidebar">
-
-
-<div class="logo-sidebar">
-
-<img src="img/logo.png"
-class="logo-menu">
-
-<h2>Carol's Gourmet</h2>
-
-<span>ERP 5.0</span>
-
-</div>
+</header>
 
 
 
-<button class="menu-item ativo"
-onclick="mostrarAba('dashboard',this)">
+
+
+
+<!-- ==========================
+        MENU LATERAL
+========================== -->
+
+
+<nav class="sidebar" id="sidebar">
+
+
+<button 
+class="menu-item ativo"
+onclick="mostrarAba('dashboard', this)">
 
 🏠 Dashboard
 
@@ -58,8 +92,10 @@ onclick="mostrarAba('dashboard',this)">
 
 
 
-<button class="menu-item"
-onclick="mostrarAba('produtos',this)">
+
+<button 
+class="menu-item"
+onclick="mostrarAba('produtos', this)">
 
 📦 Produtos
 
@@ -67,8 +103,10 @@ onclick="mostrarAba('produtos',this)">
 
 
 
-<button class="menu-item"
-onclick="mostrarAba('materiaPrima',this)">
+
+<button 
+class="menu-item"
+onclick="mostrarAba('materiaPrima', this)">
 
 🥫 Matéria-Prima
 
@@ -76,8 +114,11 @@ onclick="mostrarAba('materiaPrima',this)">
 
 
 
-<button class="menu-item"
-onclick="mostrarAba('estoque',this)">
+
+
+<button 
+class="menu-item"
+onclick="mostrarAba('estoque', this)">
 
 📋 Estoque
 
@@ -85,8 +126,11 @@ onclick="mostrarAba('estoque',this)">
 
 
 
-<button class="menu-item"
-onclick="mostrarAba('producao',this)">
+
+
+<button 
+class="menu-item"
+onclick="mostrarAba('producao', this)">
 
 🏭 Produção
 
@@ -94,17 +138,11 @@ onclick="mostrarAba('producao',this)">
 
 
 
-<button class="menu-item"
-onclick="mostrarAba('precificacao',this)">
-
-💰 Precificação
-
-</button>
 
 
-
-<button class="menu-item"
-onclick="mostrarAba('etiquetas',this)">
+<button 
+class="menu-item"
+onclick="mostrarAba('etiquetas', this)">
 
 🏷️ Etiquetas
 
@@ -112,8 +150,11 @@ onclick="mostrarAba('etiquetas',this)">
 
 
 
-<button class="menu-item"
-onclick="mostrarAba('configuracoes',this)">
+
+
+<button 
+class="menu-item"
+onclick="mostrarAba('configuracoes', this)">
 
 ⚙️ Configurações
 
@@ -121,75 +162,146 @@ onclick="mostrarAba('configuracoes',this)">
 
 
 
-</aside>
+</nav>
 
 
 
 
 
-<main class="conteudo">
 
 
+<!-- ==========================
+        CONTEÚDO
+========================== -->
 
-<section id="dashboard" class="aba ativa">
+
+<div class="conteudo-principal">
+
+
+<main class="container">
+<!-- ==========================
+        DASHBOARD
+========================== -->
+
+
+<section 
+id="dashboard" 
+class="aba ativa">
 
 
 <div class="card">
 
 
-<h2>
-🍰 Carol's Gourmet ERP
+<h2 class="section-title">
+
+🍰 Bem-vindo à Carol's Gourmet
+
 </h2>
 
 
-<p>
-Sistema de controle de produção, estoque e etiquetas.
+
+<p class="page-subtitle">
+
+Controle de produtos, produção, estoque e etiquetas.
+
 </p>
 
 
 
-<div class="dashboard-info">
+
+<div class="cards">
 
 
-<div class="info-box">
 
-<h3>
-Produtos
-</h3>
+<div class="card gold">
 
-<span id="totalProdutos">
+
+<div class="card-icon">
+
+📦
+
+</div>
+
+
+<div class="card-title">
+
+Produtos cadastrados
+
+</div>
+
+
+<div class="card-value"
+id="totalProdutos">
+
 0
-</span>
+
+</div>
+
 
 </div>
 
 
 
-<div class="info-box">
 
-<h3>
-Matéria-Prima
-</h3>
 
-<span id="totalMateriaPrima">
+<div class="card green">
+
+
+<div class="card-icon">
+
+🥫
+
+</div>
+
+
+<div class="card-title">
+
+Matérias-primas
+
+</div>
+
+
+<div class="card-value"
+id="totalMateriaPrima">
+
 0
-</span>
+
+</div>
+
 
 </div>
 
 
 
-<div class="info-box">
 
-<h3>
+
+<div class="card">
+
+
+<div class="card-icon">
+
+🕒
+
+</div>
+
+
+<div class="card-title">
+
 Última atualização
-</h3>
-
-<span id="ultimaAtualizacao">
---
-</span>
 
 </div>
+
+
+<div class="card-value"
+id="ultimaAtualizacao">
+
+--
+
+</div>
+
+
+</div>
+
 
 
 </div>
@@ -199,52 +311,93 @@ Matéria-Prima
 
 
 </section>
-<!-- =====================================
-            PRODUTOS
-===================================== -->
 
 
-<section id="produtos" class="aba">
 
 
-<div class="card">
 
 
-<h2>
+
+
+
+<!-- ==========================
+        PRODUTOS
+========================== -->
+
+
+<section 
+id="produtos" 
+class="aba">
+
+
+
+<div class="section">
+
+
+
+<div class="section-header">
+
+
+<h2 class="section-title">
+
 📦 Cadastro de Produtos
+
 </h2>
 
 
+</div>
 
-<div class="linha">
 
 
-<div class="campo">
+
+
+
+<div class="form-box">
+
+
+
+<div class="form-grid">
+
+
+
+
+
+<div class="form-group">
+
 
 <label>
+
 Código Interno
+
 </label>
+
 
 <input 
 id="codigoProduto"
 readonly>
 
+
 </div>
 
 
 
-<div class="campo">
+
+
+
+<div class="form-group">
+
 
 <label>
-EAN-13
+
+Código de Barras
+
 </label>
 
-<input
+
+<input 
 id="eanProduto"
 readonly>
 
-</div>
-
 
 </div>
 
@@ -252,16 +405,20 @@ readonly>
 
 
 
-<div class="campo">
+
+<div class="form-group full">
+
 
 <label>
+
 Nome do Produto
+
 </label>
 
 
 <input
 id="nomeProduto"
-placeholder="Ex: Palha Italiana Tradicional">
+placeholder="Ex: Palha Italiana">
 
 
 </div>
@@ -270,41 +427,52 @@ placeholder="Ex: Palha Italiana Tradicional">
 
 
 
-<div class="linha">
 
+<div class="form-group">
 
-<div class="campo">
 
 <label>
+
 Categoria
+
 </label>
 
 
 <select id="categoriaProduto">
 
 
-<option value="Doce">
+<option>
+
 Doce
+
 </option>
 
 
-<option value="Brownie">
+<option>
+
 Brownie
+
 </option>
 
 
-<option value="Bolo">
+<option>
+
 Bolo
+
 </option>
 
 
-<option value="Bolo de Pote">
+<option>
+
 Bolo de Pote
+
 </option>
 
 
-<option value="Outro">
+<option>
+
 Outro
+
 </option>
 
 
@@ -316,10 +484,15 @@ Outro
 
 
 
-<div class="campo">
+
+
+<div class="form-group">
+
 
 <label>
+
 Unidade
+
 </label>
 
 
@@ -327,22 +500,30 @@ Unidade
 
 
 <option>
+
 Unidade
+
 </option>
 
 
 <option>
+
 Kg
+
 </option>
 
 
 <option>
+
 Pote
+
 </option>
 
 
 <option>
+
 Caixa
+
 </option>
 
 
@@ -352,17 +533,18 @@ Caixa
 </div>
 
 
-</div>
 
 
 
 
 
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Status
+
 </label>
 
 
@@ -370,12 +552,16 @@ Status
 
 
 <option>
+
 Ativo
+
 </option>
 
 
 <option>
+
 Inativo
+
 </option>
 
 
@@ -386,13 +572,19 @@ Inativo
 
 
 
+</div>
 
 
-<div class="botoes-form">
+
+
+
+
+
+<div class="btn-group">
 
 
 <button
-class="btn-salvar"
+class="btn btn-primary"
 onclick="salvarProduto()">
 
 💾 Salvar Produto
@@ -401,8 +593,9 @@ onclick="salvarProduto()">
 
 
 
+
 <button
-class="btn-limpar"
+class="btn btn-cancel"
 onclick="novoProduto()">
 
 ➕ Novo
@@ -410,6 +603,11 @@ onclick="novoProduto()">
 </button>
 
 
+
+</div>
+
+
+
 </div>
 
 
@@ -422,20 +620,20 @@ onclick="novoProduto()">
 
 
 
-<div class="card">
+<div class="section">
 
 
-<h2>
+
+<h2 class="section-title">
+
 📋 Produtos Cadastrados
+
 </h2>
 
 
-<input
-id="pesquisaProduto"
-placeholder="Pesquisar produto..."
-onkeyup="pesquisarProduto()">
 
 
+<div class="table-container">
 
 
 
@@ -444,32 +642,37 @@ onkeyup="pesquisarProduto()">
 
 <thead>
 
-
 <tr>
 
 <th>
 Código
 </th>
 
+
 <th>
 Produto
 </th>
+
 
 <th>
 EAN
 </th>
 
+
 <th>
 Categoria
 </th>
+
 
 <th>
 Unidade
 </th>
 
+
 <th>
 Status
 </th>
+
 
 <th>
 Ações
@@ -483,6 +686,7 @@ Ações
 
 
 
+
 <tbody id="listaProdutos">
 
 
@@ -492,47 +696,61 @@ Ações
 </table>
 
 
+
 </div>
 
 
+
+</div>
+
+
+
 </section>
+<!-- ==========================
+        MATÉRIA-PRIMA
+========================== -->
 
 
+<section 
+id="materiaPrima" 
+class="aba">
 
 
+<div class="section">
 
 
-<!-- =====================================
-        MATÉRIA PRIMA
-===================================== -->
+<div class="section-header">
 
 
-<section id="materiaPrima" class="aba">
+<h2 class="section-title">
 
-
-
-<div class="card">
-
-
-<h2>
 🥫 Cadastro de Matéria-Prima
+
 </h2>
 
 
-
-<p>
-Ingredientes e materiais usados na produção.
-</p>
+</div>
 
 
 
 
 
-<div class="campo">
+<div class="form-box">
+
+
+<div class="form-grid">
+
+
+
+
+
+<div class="form-group">
 
 
 <label>
+
 Código Interno
+
 </label>
 
 
@@ -548,11 +766,13 @@ readonly>
 
 
 
-<div class="campo">
+<div class="form-group full">
 
 
 <label>
+
 Nome da Matéria-Prima
+
 </label>
 
 
@@ -567,14 +787,14 @@ placeholder="Ex: Leite condensado">
 
 
 
-<div class="linha">
 
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Categoria
+
 </label>
 
 
@@ -582,22 +802,30 @@ Categoria
 
 
 <option>
+
 Ingrediente
+
 </option>
 
 
 <option>
+
 Embalagem
+
 </option>
 
 
 <option>
+
 Rótulo
+
 </option>
 
 
 <option>
+
 Outro
+
 </option>
 
 
@@ -610,11 +838,14 @@ Outro
 
 
 
-<div class="campo">
+
+<div class="form-group">
 
 
 <label>
+
 Unidade
+
 </label>
 
 
@@ -622,22 +853,30 @@ Unidade
 
 
 <option>
+
 Kg
+
 </option>
 
 
 <option>
+
 g
+
 </option>
 
 
 <option>
+
 Litro
+
 </option>
 
 
 <option>
+
 Unidade
+
 </option>
 
 
@@ -647,21 +886,18 @@ Unidade
 </div>
 
 
-</div>
 
 
 
 
 
-
-<div class="linha">
-
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
-Estoque Inicial
+
+Quantidade Inicial
+
 </label>
 
 
@@ -677,11 +913,14 @@ value="0">
 
 
 
-<div class="campo">
+
+<div class="form-group">
 
 
 <label>
-Custo Compra
+
+Custo de Compra
+
 </label>
 
 
@@ -694,17 +933,31 @@ step="0.01">
 </div>
 
 
+
 </div>
 
 
 
 
 
+<div class="btn-group">
+
+
 <button
-class="btn-salvar"
+class="btn btn-primary"
 onclick="salvarMateriaPrima()">
 
 💾 Salvar Matéria-Prima
+
+</button>
+
+
+
+<button
+class="btn btn-cancel"
+onclick="novaMateriaPrima()">
+
+➕ Novo
 
 </button>
 
@@ -714,23 +967,30 @@ onclick="salvarMateriaPrima()">
 
 
 
+</div>
 
 
-<div class="card">
+</div>
 
 
-<h2>
+
+
+
+
+
+
+<div class="section">
+
+
+<h2 class="section-title">
+
 📋 Estoque de Matéria-Prima
+
 </h2>
 
 
-<input
-id="pesquisaMP"
-placeholder="Pesquisar..."
-onkeyup="pesquisarMateriaPrima()">
 
-
-
+<div class="table-container">
 
 
 <table>
@@ -794,39 +1054,60 @@ Ações
 </div>
 
 
+</div>
+
+
 
 </section>
-<!-- =====================================
-            ESTOQUE
-===================================== -->
 
 
-<section id="estoque" class="aba">
 
 
-<div class="card">
 
 
-<h2>
+
+
+
+<!-- ==========================
+        ESTOQUE
+========================== -->
+
+
+<section 
+id="estoque" 
+class="aba">
+
+
+
+<div class="section">
+
+
+<h2 class="section-title">
+
 📋 Controle de Estoque
+
 </h2>
 
 
-<p>
-Registre entradas e saídas.
-</p>
+
+
+
+<div class="form-box">
+
+
+<div class="form-grid">
 
 
 
 
-<div class="linha">
 
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Tipo
+
 </label>
 
 
@@ -834,12 +1115,16 @@ Tipo
 
 
 <option value="produto">
+
 Produto Acabado
+
 </option>
 
 
 <option value="materia">
+
 Matéria-Prima
+
 </option>
 
 
@@ -851,11 +1136,16 @@ Matéria-Prima
 
 
 
-<div class="campo">
+
+
+
+<div class="form-group">
 
 
 <label>
+
 Operação
+
 </label>
 
 
@@ -863,12 +1153,16 @@ Operação
 
 
 <option value="entrada">
+
 Entrada
+
 </option>
 
 
 <option value="saida">
+
 Saída
+
 </option>
 
 
@@ -878,17 +1172,17 @@ Saída
 </div>
 
 
-</div>
 
 
 
 
-
-<div class="campo">
+<div class="form-group full">
 
 
 <label>
+
 Item
+
 </label>
 
 
@@ -904,14 +1198,14 @@ Item
 
 
 
-<div class="linha">
 
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Quantidade
+
 </label>
 
 
@@ -926,11 +1220,16 @@ value="1">
 
 
 
-<div class="campo">
+
+
+
+<div class="form-group">
 
 
 <label>
+
 Data
+
 </label>
 
 
@@ -942,17 +1241,16 @@ id="dataEstoque">
 </div>
 
 
-</div>
 
 
 
-
-
-<div class="campo">
+<div class="form-group full">
 
 
 <label>
+
 Observação
+
 </label>
 
 
@@ -964,18 +1262,27 @@ id="observacaoEstoque"></textarea>
 
 
 
+</div>
+
+
+
+
+<div class="btn-group">
 
 
 <button
-class="btn-salvar"
+class="btn btn-save"
 onclick="registrarEstoque()">
-
 
 💾 Registrar
 
-
 </button>
 
+
+</div>
+
+
+</div>
 
 
 </div>
@@ -983,16 +1290,18 @@ onclick="registrarEstoque()">
 
 
 
+<div class="section">
 
 
+<h2 class="section-title">
 
-<div class="card">
+📜 Histórico de Movimentações
 
-
-<h2>
-📜 Histórico
 </h2>
 
+
+
+<div class="table-container">
 
 
 <table>
@@ -1007,27 +1316,31 @@ onclick="registrarEstoque()">
 Data
 </th>
 
+
 <th>
 Item
 </th>
+
 
 <th>
 Tipo
 </th>
 
+
 <th>
 Operação
 </th>
+
 
 <th>
 Quantidade
 </th>
 
+
 </tr>
 
 
 </thead>
-
 
 
 <tbody id="listaEstoque">
@@ -1037,6 +1350,9 @@ Quantidade
 
 
 </table>
+
+
+</div>
 
 
 </div>
@@ -1052,29 +1368,46 @@ Quantidade
 
 
 
-<!-- =====================================
-            PRODUÇÃO
-===================================== -->
+
+<!-- ==========================
+        PRODUÇÃO
+========================== -->
 
 
-<section id="producao" class="aba">
+<section 
+id="producao" 
+class="aba">
 
 
-<div class="card">
+
+<div class="section">
 
 
-<h2>
+<h2 class="section-title">
+
 🏭 Produção
+
 </h2>
 
 
 
 
-<div class="campo">
+<div class="form-box">
+
+
+<div class="form-grid">
+
+
+
+
+
+<div class="form-group full">
 
 
 <label>
+
 Produto
+
 </label>
 
 
@@ -1090,14 +1423,15 @@ Produto
 
 
 
-<div class="linha">
 
 
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Quantidade Produzida
+
 </label>
 
 
@@ -1112,11 +1446,16 @@ value="1">
 
 
 
-<div class="campo">
+
+
+
+<div class="form-group">
 
 
 <label>
+
 Data Fabricação
+
 </label>
 
 
@@ -1128,17 +1467,18 @@ id="fabricacaoProducao">
 </div>
 
 
-</div>
 
 
 
 
 
-<div class="campo">
+<div class="form-group">
 
 
 <label>
-Validade Automática
+
+Validade
+
 </label>
 
 
@@ -1154,11 +1494,15 @@ readonly>
 
 
 
-<div class="campo">
+
+
+<div class="form-group full">
 
 
 <label>
+
 Observação
+
 </label>
 
 
@@ -1170,10 +1514,18 @@ id="observacaoProducao"></textarea>
 
 
 
+</div>
+
+
+
+
+
+
+<div class="btn-group">
 
 
 <button
-class="btn-salvar"
+class="btn btn-primary"
 onclick="registrarProducao()">
 
 
@@ -1188,15 +1540,28 @@ onclick="registrarProducao()">
 
 
 
+</div>
+
+
+</div>
 
 
 
-<div class="card">
 
 
-<h2>
-📋 Produções
+<div class="section">
+
+
+<h2 class="section-title">
+
+📋 Produções Registradas
+
 </h2>
+
+
+
+
+<div class="table-container">
 
 
 <table>
@@ -1234,7 +1599,6 @@ Validade
 </thead>
 
 
-
 <tbody id="listaProducao">
 
 
@@ -1248,39 +1612,47 @@ Validade
 
 
 
-</section>
+</div>
 
 
 
+</section> 
+<!-- ==========================
+        PRECIFICAÇÃO
+========================== -->
+
+
+<section 
+id="precificacao" 
+class="aba">
 
 
 
+<div class="section">
 
 
+<h2 class="section-title">
 
-<!-- =====================================
-            PRECIFICAÇÃO
-===================================== -->
-
-
-<section id="precificacao" class="aba">
-
-
-<div class="card">
-
-
-<h2>
 💰 Precificação
+
 </h2>
 
 
 
+<div class="form-box">
 
-<div class="campo">
+
+<div class="form-grid">
+
+
+
+<div class="form-group full">
 
 
 <label>
+
 Produto
+
 </label>
 
 
@@ -1296,59 +1668,64 @@ Produto
 
 
 
-<div class="linha">
-
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Custo Matéria-Prima
+
 </label>
 
 
 <input
 type="number"
-id="custoMateria">
+id="custoMateria"
+step="0.01">
 
 
 </div>
 
 
 
-<div class="campo">
+
+
+<div class="form-group">
 
 
 <label>
+
 Embalagem
+
 </label>
 
 
 <input
 type="number"
-id="custoEmbalagem">
+id="custoEmbalagem"
+step="0.01">
 
 
 </div>
 
 
-</div>
 
 
 
-
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Outros Custos
+
 </label>
 
 
 <input
 type="number"
-id="outrosCustos">
+id="outrosCustos"
+step="0.01">
 
 
 </div>
@@ -1357,14 +1734,13 @@ id="outrosCustos">
 
 
 
-<div class="linha">
-
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
-Margem %
+
+Margem (%)
+
 </label>
 
 
@@ -1378,23 +1754,6 @@ value="50">
 
 
 
-<div class="campo">
-
-
-<label>
-Taxa iFood %
-</label>
-
-
-<input
-type="number"
-id="taxaIfood"
-value="25">
-
-
-</div>
-
-
 </div>
 
 
@@ -1402,7 +1761,7 @@ value="25">
 
 
 <button
-class="btn-salvar"
+class="btn btn-primary"
 onclick="calcularPreco()">
 
 
@@ -1416,41 +1775,57 @@ onclick="calcularPreco()">
 </div>
 
 
+</div>
 
+
+
+
+
+
+<div class="section">
+
+
+<h2 class="section-title">
+
+Resultado
+
+</h2>
+
+
+<div class="cards">
 
 
 <div class="card">
 
+Custo Total
 
-<h2>
-Resultado
-</h2>
+<strong
+id="resultadoCusto">
 
-
-
-<p>
-Custo:
-<strong id="resultadoCusto">
 R$ 0,00
+
 </strong>
-</p>
+
+</div>
 
 
-<p>
-Venda:
-<strong id="resultadoVenda">
+
+<div class="card gold">
+
+Preço Venda
+
+<strong
+id="resultadoVenda">
+
 R$ 0,00
+
 </strong>
-</p>
+
+</div>
 
 
-<p>
-iFood:
-<strong id="resultadoIfood">
-R$ 0,00
-</strong>
-</p>
 
+</div>
 
 
 </div>
@@ -1458,34 +1833,54 @@ R$ 0,00
 
 
 </section>
-<!-- =====================================
-            ETIQUETAS
-===================================== -->
 
 
-<section id="etiquetas" class="aba">
 
 
-<div class="card">
 
 
-<h2>
-🏷️ Gerador de Etiquetas
+
+
+
+<!-- ==========================
+        ETIQUETAS
+========================== -->
+
+
+<section 
+id="etiquetas" 
+class="aba">
+
+
+
+<div class="section">
+
+
+<h2 class="section-title">
+
+🏷️ Gerar Etiqueta
+
 </h2>
 
 
-<p>
-Gere a etiqueta como imagem para colocar no Word junto com a tarjeta.
-</p>
+
+
+<div class="form-box">
+
+
+<div class="form-grid">
 
 
 
 
-<div class="campo">
+
+<div class="form-group full">
 
 
 <label>
+
 Produto
+
 </label>
 
 
@@ -1501,14 +1896,14 @@ Produto
 
 
 
-<div class="linha">
 
-
-<div class="campo">
+<div class="form-group">
 
 
 <label>
+
 Data Fabricação
+
 </label>
 
 
@@ -1522,38 +1917,46 @@ id="fabricacaoEtiqueta">
 
 
 
-<div class="campo">
+
+
+
+<div class="form-group">
 
 
 <label>
-Quantidade
+
+Validade
+
 </label>
 
 
 <input
-type="number"
-id="quantidadeEtiqueta"
-value="1">
+type="date"
+id="validadeEtiqueta"
+readonly>
 
 
 </div>
 
 
+
+
+
 </div>
 
 
 
 
 
-<div class="botoes-form">
+<div class="btn-group">
 
 
 <button
-class="btn-salvar"
+class="btn btn-primary"
 onclick="gerarEtiqueta()">
 
 
-👁️ Gerar Etiqueta
+👁️ Gerar Visualização
 
 
 </button>
@@ -1562,11 +1965,11 @@ onclick="gerarEtiqueta()">
 
 
 <button
-class="btn-camera"
-onclick="baixarEtiqueta()">
+class="btn btn-print"
+onclick="salvarEtiquetaPNG()">
 
 
-🖼️ Salvar PNG
+🖼️ Gerar Imagem
 
 
 </button>
@@ -1579,39 +1982,55 @@ onclick="baixarEtiqueta()">
 </div>
 
 
+</div>
 
 
 
 
 
 
-<div class="card">
 
 
-<h2>
+
+<div class="section">
+
+
+<h2 class="section-title">
+
 Pré-visualização
+
 </h2>
 
 
 
 
-<div id="areaEtiqueta">
 
-
-<div class="etiqueta">
+<div class="print-area">
 
 
 
-<h3 id="etiquetaNome">
+<div 
+id="etiquetaGerada"
+class="etiqueta">
+
+
+
+
+
+<div class="etiqueta-logo">
 
 Carol's Gourmet
 
-</h3>
+</div>
 
 
 
 
-<div id="codigoBarrasEtiqueta">
+
+
+<div 
+id="codigoBarrasEtiqueta"
+class="codigo-barras">
 
 
 </div>
@@ -1620,51 +2039,55 @@ Carol's Gourmet
 
 
 
-<p>
 
-<strong>
+<div class="etiqueta-info">
+
+
+<span>
+
 Fab:
-</strong>
 
-<span id="etiquetaFabricacao">
+<span id="mostrarFabricacao">
 
 --/--/----
 
 </span>
 
-</p>
+</span>
 
 
 
 
 
-<p>
+<span>
 
-<strong>
 Val:
-</strong>
 
-<span id="etiquetaValidade">
+<span id="mostrarValidade">
 
 --/--/----
 
 </span>
 
-</p>
+</span>
+
+
+</div>
 
 
 
 
-<hr>
 
 
+<div 
+class="etiqueta-produto"
+id="mostrarProduto">
 
-
-<h3 id="etiquetaNomeInferior">
 
 Produto
 
-</h3>
+</div>
+
 
 
 
@@ -1673,7 +2096,6 @@ Produto
 
 
 </div>
-
 
 
 </div>
@@ -1689,52 +2111,102 @@ Produto
 
 
 
-<!-- =====================================
-            CONFIGURAÇÕES
-===================================== -->
+
+<!-- ==========================
+        CONFIGURAÇÕES
+========================== -->
 
 
-<section id="configuracoes" class="aba">
+<section 
+id="configuracoes" 
+class="aba">
+
+
+
+<div class="section">
+
+
+<h2 class="section-title">
+
+⚙️ Configurações
+
+</h2>
+
+
+
+<div class="cards">
+
 
 
 <div class="card">
 
 
-<h2>
-⚙️ Configurações
-</h2>
+<div class="card-icon">
+
+💾
+
+</div>
 
 
+<h3>
 
-<p>
-Configurações do sistema Carol's Gourmet ERP.
-</p>
+Backup
 
-
+</h3>
 
 
 <button
-class="btn-config"
+class="btn btn-primary"
 onclick="exportarBackup()">
 
 
-💾 Exportar Backup
+Exportar
 
 
 </button>
 
+
+</div>
+
+
+
+
+
+
+<div class="card">
+
+
+<div class="card-icon">
+
+📂
+
+</div>
+
+
+<h3>
+
+Restaurar
+
+</h3>
 
 
 <button
-class="btn-config"
+class="btn btn-primary"
 onclick="importarBackup()">
 
 
-📂 Restaurar Backup
+Importar
 
 
 </button>
 
+
+</div>
+
+
+
+
+</div>
 
 
 </div>
@@ -1742,6 +2214,9 @@ onclick="importarBackup()">
 
 
 </section>
+
+
+
 
 
 
@@ -1750,15 +2225,22 @@ onclick="importarBackup()">
 </main>
 
 
+</div>
 
 
 
-<footer class="rodape">
+
+
+
+
+
+
+<footer class="footer">
 
 
 <p>
 
-© 2026 Carol's Gourmet ERP
+© 2026 Carol's Gourmet
 
 </p>
 
@@ -1769,7 +2251,13 @@ onclick="importarBackup()">
 
 
 
-<!-- BIBLIOTECAS -->
+
+
+
+
+<!-- ==========================
+        BIBLIOTECAS
+========================== -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
@@ -1781,29 +2269,18 @@ onclick="importarBackup()">
 
 
 
-<!-- SISTEMA -->
 
 
-<script src="js/banco.js"></script>
 
-<script src="js/produtos.js"></script>
+<!-- ==========================
+        JAVASCRIPT
+========================== -->
 
-<script src="js/materia-prima.js"></script>
-
-<script src="js/estoque.js"></script>
-
-<script src="js/producao.js"></script>
-
-<script src="js/precificacao.js"></script>
-
-<script src="js/etiquetas.js"></script>
-
-<script src="js/backup.js"></script>
 
 <script src="js/app.js"></script>
 
 
-
 </body>
 
-</html>
+
+</html>            
