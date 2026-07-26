@@ -1562,7 +1562,8 @@ document.addEventListener(
     }
 );
 /* =====================================================
-   MÓDULO ESTOQUE
+   CAROL'S GOURMET ERP 4.0
+   MÓDULO COMPLETO DE ESTOQUE
 ===================================================== */
 
 
@@ -1572,25 +1573,31 @@ document.addEventListener(
 
 function mostrarEstoque() {
 
+    const tipoEstoque =
+        document.getElementById("tipoEstoque");
 
-    const tipo =
-        document.getElementById(
-            "tipoEstoque"
-        );
-
+    const cabecalho =
+        document.getElementById("cabecalhoEstoque");
 
     const tabela =
-        document.getElementById(
-            "listaEstoque"
-        );
+        document.getElementById("listaEstoque");
 
-
-    if (!tipo || !tabela) {
+    if (
+        !tipoEstoque ||
+        !cabecalho ||
+        !tabela
+    ) {
 
         return;
 
     }
 
+
+    const tipo =
+        tipoEstoque.value;
+
+
+    cabecalho.innerHTML = "";
 
     tabela.innerHTML = "";
 
@@ -1599,14 +1606,50 @@ function mostrarEstoque() {
        ESTOQUE DE MATÉRIA-PRIMA
     ================================================= */
 
-
     if (
-        tipo.value ===
-        "materiaPrima"
+        tipo === "materiaPrima"
     ) {
 
 
+        cabecalho.innerHTML = `
+
+            <tr>
+
+                <th>
+                    Código
+                </th>
+
+                <th>
+                    Nome
+                </th>
+
+                <th>
+                    Categoria
+                </th>
+
+                <th>
+                    Unidade
+                </th>
+
+                <th>
+                    Estoque
+                </th>
+
+                <th>
+                    Custo Unitário
+                </th>
+
+                <th>
+                    Valor Total
+                </th>
+
+            </tr>
+
+        `;
+
+
         if (
+            !materiasPrimas ||
             materiasPrimas.length === 0
         ) {
 
@@ -1629,15 +1672,15 @@ function mostrarEstoque() {
             `;
 
 
+            atualizarItensMovimentacao();
+
             return;
 
         }
 
 
         materiasPrimas.forEach(
-            function(
-                materiaPrima
-            ) {
+            function(materiaPrima) {
 
 
                 const estoque =
@@ -1661,55 +1704,37 @@ function mostrarEstoque() {
 
                     <tr>
 
-
                         <td>
-
                             ${materiaPrima.codigo || ""}
-
                         </td>
 
-
                         <td>
-
                             ${materiaPrima.nome || ""}
-
                         </td>
 
-
                         <td>
-
                             ${materiaPrima.categoria || ""}
-
                         </td>
 
-
                         <td>
-
                             ${materiaPrima.unidade || ""}
-
                         </td>
 
-
                         <td>
-
                             ${estoque}
-
                         </td>
-
 
                         <td>
-
-                            R$ ${custoUnitario.toFixed(2)}
-
+                            R$ ${custoUnitario
+                                .toFixed(2)
+                                .replace(".", ",")}
                         </td>
-
 
                         <td>
-
-                            R$ ${valorTotal.toFixed(2)}
-
+                            R$ ${valorTotal
+                                .toFixed(2)
+                                .replace(".", ",")}
                         </td>
-
 
                     </tr>
 
@@ -1717,6 +1742,9 @@ function mostrarEstoque() {
 
             }
         );
+
+
+        atualizarItensMovimentacao();
 
 
         return;
@@ -1728,14 +1756,42 @@ function mostrarEstoque() {
        ESTOQUE DE PRODUTO ACABADO
     ================================================= */
 
-
     if (
-        tipo.value ===
-        "produtoAcabado"
+        tipo === "produtoAcabado"
     ) {
 
 
+        cabecalho.innerHTML = `
+
+            <tr>
+
+                <th>
+                    Código
+                </th>
+
+                <th>
+                    Nome
+                </th>
+
+                <th>
+                    Categoria
+                </th>
+
+                <th>
+                    Estoque
+                </th>
+
+                <th>
+                    Status
+                </th>
+
+            </tr>
+
+        `;
+
+
         if (
+            !produtos ||
             produtos.length === 0
         ) {
 
@@ -1745,7 +1801,7 @@ function mostrarEstoque() {
                 <tr>
 
                     <td
-                        colspan="6"
+                        colspan="5"
                         class="text-center"
                     >
 
@@ -1758,25 +1814,15 @@ function mostrarEstoque() {
             `;
 
 
+            atualizarItensMovimentacao();
+
             return;
 
         }
 
 
         produtos.forEach(
-            function(
-                produto
-            ) {
-
-
-                /*
-                 * O estoque do produto acabado
-                 * será atualizado automaticamente
-                 * quando registrarmos a produção.
-                 *
-                 * Para produtos antigos que ainda
-                 * não possuem estoque, usamos zero.
-                 */
+            function(produto) {
 
 
                 const estoque =
@@ -1785,55 +1831,43 @@ function mostrarEstoque() {
                     ) || 0;
 
 
+                let status =
+                    "Disponível";
+
+
+                if (
+                    estoque <= 0
+                ) {
+
+                    status =
+                        "Sem estoque";
+
+                }
+
+
                 tabela.innerHTML += `
 
                     <tr>
 
-
                         <td>
-
                             ${produto.codigo || ""}
-
                         </td>
 
-
                         <td>
-
                             ${produto.nome || ""}
-
                         </td>
 
-
                         <td>
-
                             ${produto.categoria || ""}
-
                         </td>
 
-
                         <td>
-
-                            ${produto.unidade || ""}
-
-                        </td>
-
-
-                        <td>
-
                             ${estoque}
-
                         </td>
-
 
                         <td>
-
-                            ${
-                                produto.status ||
-                                "Ativo"
-                            }
-
+                            ${status}
                         </td>
-
 
                     </tr>
 
@@ -1841,6 +1875,9 @@ function mostrarEstoque() {
 
             }
         );
+
+
+        atualizarItensMovimentacao();
 
 
     }
@@ -1860,38 +1897,891 @@ function alterarTipoEstoque() {
 
 
 /* =====================================================
-   INICIALIZAÇÃO DO ESTOQUE
+   ATUALIZAR ITENS PARA MOVIMENTAÇÃO
+===================================================== */
+
+function atualizarItensMovimentacao() {
+
+
+    const tipoEstoque =
+        document.getElementById(
+            "tipoEstoque"
+        );
+
+
+    const select =
+        document.getElementById(
+            "itemMovimentacao"
+        );
+
+
+    if (
+        !tipoEstoque ||
+        !select
+    ) {
+
+        return;
+
+    }
+
+
+    const tipo =
+        tipoEstoque.value;
+
+
+    select.innerHTML = "";
+
+
+    /* =================================================
+       MATÉRIA-PRIMA
+    ================================================= */
+
+    if (
+        tipo === "materiaPrima"
+    ) {
+
+
+        if (
+            !materiasPrimas ||
+            materiasPrimas.length === 0
+        ) {
+
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value = "";
+
+
+            option.textContent =
+                "Nenhuma matéria-prima cadastrada";
+
+
+            select.appendChild(
+                option
+            );
+
+
+            return;
+
+        }
+
+
+        materiasPrimas.forEach(
+            function(materiaPrima) {
+
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    materiaPrima.codigo;
+
+
+                option.textContent =
+                    materiaPrima.codigo +
+                    " - " +
+                    materiaPrima.nome;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       PRODUTO ACABADO
+    ================================================= */
+
+    if (
+        tipo === "produtoAcabado"
+    ) {
+
+
+        if (
+            !produtos ||
+            produtos.length === 0
+        ) {
+
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value = "";
+
+
+            option.textContent =
+                "Nenhum produto cadastrado";
+
+
+            select.appendChild(
+                option
+            );
+
+
+            return;
+
+        }
+
+
+        produtos.forEach(
+            function(produto) {
+
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    produto.codigo;
+
+
+                option.textContent =
+                    produto.codigo +
+                    " - " +
+                    produto.nome;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+    }
+
+}
+
+
+/* =====================================================
+   REGISTRAR MOVIMENTAÇÃO
+===================================================== */
+
+function registrarMovimentacao() {
+
+
+    const tipoEstoque =
+        document.getElementById(
+            "tipoEstoque"
+        );
+
+
+    const tipoMovimentacao =
+        document.getElementById(
+            "tipoMovimentacao"
+        );
+
+
+    const itemMovimentacao =
+        document.getElementById(
+            "itemMovimentacao"
+        );
+
+
+    const quantidadeCampo =
+        document.getElementById(
+            "quantidadeMovimentacao"
+        );
+
+
+    const dataCampo =
+        document.getElementById(
+            "dataMovimentacao"
+        );
+
+
+    const observacaoCampo =
+        document.getElementById(
+            "observacaoMovimentacao"
+        );
+
+
+    if (
+        !tipoEstoque ||
+        !tipoMovimentacao ||
+        !itemMovimentacao ||
+        !quantidadeCampo ||
+        !dataCampo
+    ) {
+
+        alert(
+            "Não foi possível localizar os campos de movimentação."
+        );
+
+        return;
+
+    }
+
+
+    const tipo =
+        tipoEstoque.value;
+
+
+    const operacao =
+        tipoMovimentacao.value;
+
+
+    const codigo =
+        itemMovimentacao.value;
+
+
+    const quantidade =
+        Number(
+            quantidadeCampo.value
+        );
+
+
+    const data =
+        dataCampo.value ||
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+    const observacao =
+        observacaoCampo
+            ? observacaoCampo.value.trim()
+            : "";
+
+
+    /* =================================================
+       VALIDAR QUANTIDADE
+    ================================================= */
+
+    if (
+        !quantidade ||
+        quantidade <= 0
+    ) {
+
+
+        alert(
+            "Informe uma quantidade válida."
+        );
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       VALIDAR ITEM
+    ================================================= */
+
+    if (
+        !codigo
+    ) {
+
+
+        alert(
+            "Selecione um item."
+        );
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       MOVIMENTAR PRODUTO ACABADO
+    ================================================= */
+
+    if (
+        tipo === "produtoAcabado"
+    ) {
+
+
+        const produto =
+            produtos.find(
+                function(item) {
+
+                    return (
+                        item.codigo ===
+                        codigo
+                    );
+
+                }
+            );
+
+
+        if (
+            !produto
+        ) {
+
+
+            alert(
+                "Produto não encontrado."
+            );
+
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           GARANTIR ESTOQUE
+        --------------------------------------------- */
+
+        if (
+            produto.estoque === undefined
+        ) {
+
+            produto.estoque = 0;
+
+        }
+
+
+        /* ---------------------------------------------
+           ENTRADA
+        --------------------------------------------- */
+
+        if (
+            operacao === "entrada"
+        ) {
+
+            produto.estoque +=
+                quantidade;
+
+        }
+
+
+        /* ---------------------------------------------
+           SAÍDA
+        --------------------------------------------- */
+
+        if (
+            operacao === "saida"
+        ) {
+
+
+            if (
+                produto.estoque <
+                quantidade
+            ) {
+
+
+                alert(
+                    "Estoque insuficiente para realizar esta saída."
+                );
+
+
+                return;
+
+            }
+
+
+            produto.estoque -=
+                quantidade;
+
+        }
+
+    }
+
+
+    /* =================================================
+       MOVIMENTAR MATÉRIA-PRIMA
+    ================================================= */
+
+    if (
+        tipo === "materiaPrima"
+    ) {
+
+
+        const materiaPrima =
+            materiasPrimas.find(
+                function(item) {
+
+                    return (
+                        item.codigo ===
+                        codigo
+                    );
+
+                }
+            );
+
+
+        if (
+            !materiaPrima
+        ) {
+
+
+            alert(
+                "Matéria-prima não encontrada."
+            );
+
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           GARANTIR ESTOQUE
+        --------------------------------------------- */
+
+        if (
+            materiaPrima.estoque === undefined
+        ) {
+
+            materiaPrima.estoque = 0;
+
+        }
+
+
+        /* ---------------------------------------------
+           ENTRADA
+        --------------------------------------------- */
+
+        if (
+            operacao === "entrada"
+        ) {
+
+            materiaPrima.estoque +=
+                quantidade;
+
+        }
+
+
+        /* ---------------------------------------------
+           SAÍDA
+        --------------------------------------------- */
+
+        if (
+            operacao === "saida"
+        ) {
+
+
+            if (
+                materiaPrima.estoque <
+                quantidade
+            ) {
+
+
+                alert(
+                    "Estoque insuficiente para realizar esta saída."
+                );
+
+
+                return;
+
+            }
+
+
+            materiaPrima.estoque -=
+                quantidade;
+
+        }
+
+    }
+
+
+    /* =================================================
+       CRIAR REGISTRO DO HISTÓRICO
+    ================================================= */
+
+    const movimentacao = {
+
+        id:
+            Date.now(),
+
+        data:
+            data,
+
+        tipo:
+            tipo,
+
+        codigo:
+            codigo,
+
+        operacao:
+            operacao,
+
+        quantidade:
+            quantidade,
+
+        observacao:
+            observacao
+
+    };
+
+
+    /* =================================================
+       GARANTIR ARRAY DE MOVIMENTAÇÕES
+    ================================================= */
+
+    if (
+        !Array.isArray(
+            movimentacoes
+        )
+    ) {
+
+        movimentacoes = [];
+
+    }
+
+
+    movimentacoes.push(
+        movimentacao
+    );
+
+
+    /* =================================================
+       SALVAR BANCO
+    ================================================= */
+
+    salvarBanco();
+
+
+    /* =================================================
+       ATUALIZAR ESTOQUE NA TELA
+    ================================================= */
+
+    mostrarEstoque();
+
+
+    /* =================================================
+       ATUALIZAR HISTÓRICO
+    ================================================= */
+
+    atualizarHistoricoMovimentacoes();
+
+
+    /* =================================================
+       LIMPAR CAMPOS
+    ================================================= */
+
+    quantidadeCampo.value =
+        "";
+
+
+    if (
+        observacaoCampo
+    ) {
+
+        observacaoCampo.value =
+            "";
+
+    }
+
+
+    /* =================================================
+       MENSAGEM
+    ================================================= */
+
+    alert(
+        "Movimentação registrada com sucesso."
+    );
+
+}
+
+
+/* =====================================================
+   HISTÓRICO DE MOVIMENTAÇÕES
+===================================================== */
+
+function atualizarHistoricoMovimentacoes() {
+
+
+    const tabela =
+        document.getElementById(
+            "historicoMovimentacoes"
+        );
+
+
+    if (
+        !tabela
+    ) {
+
+        return;
+
+    }
+
+
+    tabela.innerHTML =
+        "";
+
+
+    if (
+        !movimentacoes ||
+        movimentacoes.length === 0
+    ) {
+
+
+        tabela.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    class="text-center"
+                >
+
+                    Nenhuma movimentação registrada.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    movimentacoes
+        .slice()
+        .reverse()
+        .forEach(
+            function(movimentacao) {
+
+
+                let nome =
+                    movimentacao.codigo;
+
+
+                /* -----------------------------------------
+                   PROCURAR PRODUTO
+                ----------------------------------------- */
+
+                if (
+                    movimentacao.tipo ===
+                    "produtoAcabado"
+                    ||
+                    movimentacao.tipo ===
+                    "produto"
+                ) {
+
+
+                    const produto =
+                        produtos.find(
+                            function(item) {
+
+                                return (
+                                    item.codigo ===
+                                    movimentacao.codigo
+                                );
+
+                            }
+                        );
+
+
+                    if (
+                        produto
+                    ) {
+
+                        nome =
+                            produto.nome;
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   PROCURAR MATÉRIA-PRIMA
+                ----------------------------------------- */
+
+                if (
+                    movimentacao.tipo ===
+                    "materiaPrima"
+                ) {
+
+
+                    const materiaPrima =
+                        materiasPrimas.find(
+                            function(item) {
+
+                                return (
+                                    item.codigo ===
+                                    movimentacao.codigo
+                                );
+
+                            }
+                        );
+
+
+                    if (
+                        materiaPrima
+                    ) {
+
+                        nome =
+                            materiaPrima.nome;
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   TEXTO DO TIPO
+                ----------------------------------------- */
+
+                let tipoTexto =
+                    "Produto Acabado";
+
+
+                if (
+                    movimentacao.tipo ===
+                    "materiaPrima"
+                ) {
+
+                    tipoTexto =
+                        "Matéria-Prima";
+
+                }
+
+
+                /* -----------------------------------------
+                   TEXTO DA OPERAÇÃO
+                ----------------------------------------- */
+
+                let operacaoTexto =
+                    "Entrada";
+
+
+                if (
+                    movimentacao.operacao ===
+                    "saida"
+                ) {
+
+                    operacaoTexto =
+                        "Saída";
+
+                }
+
+
+                tabela.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            ${movimentacao.data || "-"}
+                        </td>
+
+                        <td>
+                            ${tipoTexto}
+                        </td>
+
+                        <td>
+                            ${nome}
+                        </td>
+
+                        <td>
+                            ${movimentacao.quantidade}
+                        </td>
+
+                        <td>
+                            ${operacaoTexto}
+                        </td>
+
+                        <td>
+                            ${movimentacao.observacao || "-"}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   INICIALIZAR MÓDULO ESTOQUE
+===================================================== */
+
+function inicializarEstoque() {
+
+
+    const tipoEstoque =
+        document.getElementById(
+            "tipoEstoque"
+        );
+
+
+    const dataMovimentacao =
+        document.getElementById(
+            "dataMovimentacao"
+        );
+
+
+    /* =================================================
+       DATA ATUAL
+    ================================================= */
+
+    if (
+        dataMovimentacao &&
+        !dataMovimentacao.value
+    ) {
+
+
+        dataMovimentacao.value =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+
+    }
+
+
+    /* =================================================
+       MOSTRAR ESTOQUE
+    ================================================= */
+
+    mostrarEstoque();
+
+
+    /* =================================================
+       CARREGAR ITENS
+    ================================================= */
+
+    atualizarItensMovimentacao();
+
+
+    /* =================================================
+       CARREGAR HISTÓRICO
+    ================================================= */
+
+    atualizarHistoricoMovimentacoes();
+
+}
+
+
+/* =====================================================
+   INICIALIZAÇÃO AUTOMÁTICA
 ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
-
-        const tipo =
-            document.getElementById(
-                "tipoEstoque"
-            );
-
-
-        if (tipo) {
-
-
-            tipo.addEventListener(
-                "change",
-                function() {
-
-                    mostrarEstoque();
-
-                }
-            );
-
-
-        }
-
-
-        mostrarEstoque();
-
+        inicializarEstoque();
 
     }
 );
