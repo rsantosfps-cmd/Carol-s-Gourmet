@@ -3417,6 +3417,254 @@ document.addEventListener(
 );
 
 /* =====================================================
+   MÓDULO DE ETIQUETAS
+   CAROL'S GOURMET ERP 4.0
+===================================================== */
+
+
+/* =====================================================
+   ATUALIZAR PRODUTOS NO SELECT
+===================================================== */
+
+function atualizarProdutosEtiquetas() {
+
+    const select =
+        document.getElementById("produtoEtiqueta");
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = "";
+
+    if (
+        !Array.isArray(produtos) ||
+        produtos.length === 0
+    ) {
+
+        const opcao =
+            document.createElement("option");
+
+        opcao.value = "";
+
+        opcao.textContent =
+            "Nenhum produto cadastrado";
+
+        select.appendChild(opcao);
+
+        return;
+    }
+
+
+    const opcaoInicial =
+        document.createElement("option");
+
+    opcaoInicial.value = "";
+
+    opcaoInicial.textContent =
+        "Selecione um produto";
+
+    select.appendChild(opcaoInicial);
+
+
+    produtos.forEach(function(produto) {
+
+        const opcao =
+            document.createElement("option");
+
+        opcao.value =
+            produto.codigo || "";
+
+        opcao.textContent =
+            (produto.nome || "Produto sem nome") +
+            " - " +
+            (produto.codigoBarras || "");
+
+        select.appendChild(opcao);
+
+    });
+
+}
+
+
+/* =====================================================
+   CALCULAR VALIDADE DA ETIQUETA
+===================================================== */
+
+function calcularValidadeEtiqueta() {
+
+    const produtoCampo =
+        document.getElementById("produtoEtiqueta");
+
+    const fabricacaoCampo =
+        document.getElementById("fabricacaoEtiqueta");
+
+    const validadeCampo =
+        document.getElementById("validadeEtiqueta");
+
+
+    if (
+        !produtoCampo ||
+        !fabricacaoCampo ||
+        !validadeCampo
+    ) {
+
+        return;
+    }
+
+
+    const produto =
+        Array.isArray(produtos)
+            ? produtos.find(function(item) {
+
+                return (
+                    item.codigo ===
+                    produtoCampo.value
+                );
+
+            })
+            : null;
+
+
+    if (!produto) {
+
+        validadeCampo.value = "";
+
+        validadeCampo.readOnly = true;
+
+        return;
+    }
+
+
+    const nome =
+        String(
+            produto.nome || ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+    let diasValidade = null;
+
+
+    /* =================================================
+       PALHA ITALIANA
+    ================================================= */
+
+    if (
+        nome.includes("palha italiana")
+    ) {
+
+        diasValidade = 20;
+    }
+
+
+    /* =================================================
+       BROWNIE
+    ================================================= */
+
+    else if (
+        nome.includes("brownie")
+    ) {
+
+        diasValidade = 20;
+    }
+
+
+    /* =================================================
+       BOLO DE POTE
+    ================================================= */
+
+    else if (
+        nome.includes("bolo de pote")
+    ) {
+
+        diasValidade = 7;
+    }
+
+
+    /* =================================================
+       OUTROS PRODUTOS
+       VALIDADE MANUAL
+    ================================================= */
+
+    if (
+        diasValidade === null
+    ) {
+
+        validadeCampo.readOnly = false;
+
+        return;
+    }
+
+
+    validadeCampo.readOnly = true;
+
+
+    if (
+        !fabricacaoCampo.value
+    ) {
+
+        validadeCampo.value = "";
+
+        return;
+    }
+
+
+    const data =
+        new Date(
+            fabricacaoCampo.value +
+            "T00:00:00"
+        );
+
+
+    if (
+        isNaN(
+            data.getTime()
+        )
+    ) {
+
+        validadeCampo.value = "";
+
+        return;
+    }
+
+
+    data.setDate(
+        data.getDate() +
+        diasValidade
+    );
+
+
+    const ano =
+        data.getFullYear();
+
+
+    const mes =
+        String(
+            data.getMonth() + 1
+        )
+        .padStart(2, "0");
+
+
+    const dia =
+        String(
+            data.getDate()
+        )
+        .padStart(2, "0");
+
+
+    validadeCampo.value =
+        ano +
+        "-" +
+        mes +
+        "-" +
+        dia;
+
+}
+
+
+/* =====================================================
    GERAR ETIQUETA
 ===================================================== */
 
@@ -3431,6 +3679,7 @@ function gerarEtiqueta() {
     const validadeCampo =
         document.getElementById("validadeEtiqueta");
 
+
     const produtoNome =
         document.getElementById("mostrarProduto");
 
@@ -3443,10 +3692,6 @@ function gerarEtiqueta() {
     const codigoBarras =
         document.getElementById("codigoBarrasEtiqueta");
 
-
-    /* =================================================
-       VERIFICAR CAMPOS
-    ================================================= */
 
     if (
         !produtoCampo ||
@@ -3463,23 +3708,20 @@ function gerarEtiqueta() {
         );
 
         return;
-
     }
 
 
-    /* =================================================
-       LOCALIZAR PRODUTO
-    ================================================= */
-
     const produto =
-        produtos.find(function(item) {
+        Array.isArray(produtos)
+            ? produtos.find(function(item) {
 
-            return (
-                item.codigo ===
-                produtoCampo.value
-            );
+                return (
+                    item.codigo ===
+                    produtoCampo.value
+                );
 
-        });
+            })
+            : null;
 
 
     if (!produto) {
@@ -3489,13 +3731,8 @@ function gerarEtiqueta() {
         );
 
         return;
-
     }
 
-
-    /* =================================================
-       VALIDAR DATA DE FABRICAÇÃO
-    ================================================= */
 
     if (
         !fabricacaoCampo.value
@@ -3506,13 +3743,8 @@ function gerarEtiqueta() {
         );
 
         return;
-
     }
 
-
-    /* =================================================
-       VALIDAR VALIDADE
-    ================================================= */
 
     if (
         !validadeCampo.value
@@ -3523,22 +3755,17 @@ function gerarEtiqueta() {
         );
 
         return;
-
     }
 
 
     /* =================================================
-       NOME DO PRODUTO
+       PREENCHER INFORMAÇÕES
     ================================================= */
 
     produtoNome.textContent =
         produto.nome ||
         "Produto";
 
-
-    /* =================================================
-       DATAS
-    ================================================= */
 
     mostrarFabricacao.textContent =
         formatarDataEtiqueta(
@@ -3556,18 +3783,16 @@ function gerarEtiqueta() {
        LIMPAR CÓDIGO ANTERIOR
     ================================================= */
 
-    codigoBarras.innerHTML =
-        "";
+    codigoBarras.innerHTML = "";
 
 
     /* =================================================
-       PEGAR EAN-13
+       CÓDIGO EAN-13 DO PRODUTO
     ================================================= */
 
     const codigo =
         String(
-            produto.codigoBarras ||
-            ""
+            produto.codigoBarras || ""
         )
         .replace(
             /\D/g,
@@ -3575,21 +3800,55 @@ function gerarEtiqueta() {
         );
 
 
-    /* =================================================
-       VALIDAR EAN
-    ================================================= */
-
     if (
         codigo.length !== 13
     ) {
 
         alert(
-            "O código de barras do produto precisa possuir 13 dígitos."
+            "O produto precisa possuir um código EAN-13 válido para gerar a etiqueta."
         );
 
         return;
-
     }
+
+
+    /* =================================================
+       ÁREA CENTRAL DO CÓDIGO DE BARRAS
+       
+       O SVG FICA DENTRO DE UM CONTAINER
+       PARA IMPEDIR QUE O CÓDIGO ULTRAPASSE
+       A ÁREA DA ETIQUETA.
+    ================================================= */
+
+    const areaCodigo =
+        document.createElement("div");
+
+
+    areaCodigo.style.width =
+        "100%";
+
+    areaCodigo.style.height =
+        "58px";
+
+    areaCodigo.style.display =
+        "flex";
+
+    areaCodigo.style.justifyContent =
+        "center";
+
+    areaCodigo.style.alignItems =
+        "center";
+
+    areaCodigo.style.overflow =
+        "hidden";
+
+    areaCodigo.style.boxSizing =
+        "border-box";
+
+
+    codigoBarras.appendChild(
+        areaCodigo
+    );
 
 
     /* =================================================
@@ -3607,33 +3866,27 @@ function gerarEtiqueta() {
         "barcodeGerado";
 
 
-   /* ================================================
-   CRIAR SVG DO CÓDIGO DE BARRAS
-   EAN-13 VISUAL PADRÃO
-================================================ */
-
-const svg =
-    document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
+    areaCodigo.appendChild(
+        svg
     );
 
-svg.id =
-    "barcodeGerado";
 
-codigoBarras.appendChild(
-    svg
-);
+    /* =================================================
+       GERAR EAN-13
+    ================================================= */
 
+    if (
+        typeof JsBarcode !==
+        "function"
+    ) {
 
-/* ================================================
-   GERAR EAN-13
-================================================ */
+        alert(
+            "A biblioteca JsBarcode não foi carregada."
+        );
 
-if (
-    typeof JsBarcode ===
-    "function"
-) {
+        return;
+    }
+
 
     JsBarcode(
         svg,
@@ -3644,22 +3897,28 @@ if (
                 "EAN13",
 
             width:
-                2,
+                1.5,
 
             height:
-                55,
+                48,
 
             displayValue:
                 true,
 
             fontSize:
-                11,
+                10,
 
             fontOptions:
-                "bold",
+                "normal",
 
-            text:
-                codigo,
+            textAlign:
+                "center",
+
+            textPosition:
+                "bottom",
+
+            textMargin:
+                1,
 
             margin:
                 0,
@@ -3676,9 +3935,6 @@ if (
             marginRight:
                 0,
 
-            textMargin:
-                2,
-
             flat:
                 true
 
@@ -3686,3 +3942,192 @@ if (
     );
 
 }
+
+
+/* =====================================================
+   FORMATAR DATA
+===================================================== */
+
+function formatarDataEtiqueta(data) {
+
+    if (!data) {
+
+        return "--/--/----";
+    }
+
+
+    const partes =
+        String(data).split("-");
+
+
+    if (
+        partes.length !== 3
+    ) {
+
+        return data;
+    }
+
+
+    return (
+        partes[2] +
+        "/" +
+        partes[1] +
+        "/" +
+        partes[0]
+    );
+
+}
+
+
+/* =====================================================
+   SALVAR ETIQUETA COMO PNG
+===================================================== */
+
+function salvarEtiquetaPNG() {
+
+    const etiqueta =
+        document.getElementById(
+            "etiquetaGerada"
+        );
+
+
+    if (!etiqueta) {
+
+        alert(
+            "Não foi possível localizar a etiqueta."
+        );
+
+        return;
+    }
+
+
+    if (
+        typeof html2canvas !==
+        "function"
+    ) {
+
+        alert(
+            "A biblioteca para gerar imagem não foi carregada."
+        );
+
+        return;
+    }
+
+
+    html2canvas(
+        etiqueta,
+        {
+
+            scale:
+                3,
+
+            backgroundColor:
+                "#ffffff",
+
+            useCORS:
+                true
+
+        }
+    )
+    .then(function(canvas) {
+
+        const link =
+            document.createElement("a");
+
+
+        link.download =
+            "etiqueta-carols-gourmet.png";
+
+
+        link.href =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+
+        link.click();
+
+    })
+    .catch(function(erro) {
+
+        console.error(
+            "Erro ao gerar etiqueta:",
+            erro
+        );
+
+        alert(
+            "Não foi possível gerar a imagem da etiqueta."
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   INICIALIZAR ETIQUETAS
+===================================================== */
+
+function inicializarEtiquetas() {
+
+    atualizarProdutosEtiquetas();
+
+
+    const fabricacao =
+        document.getElementById(
+            "fabricacaoEtiqueta"
+        );
+
+
+    if (
+        fabricacao &&
+        !fabricacao.value
+    ) {
+
+        fabricacao.value =
+            new Date()
+            .toISOString()
+            .split("T")[0];
+
+    }
+
+
+    calcularValidadeEtiqueta();
+
+}
+
+
+/* =====================================================
+   ATUALIZAR ETIQUETAS QUANDO PRODUTOS MUDAM
+===================================================== */
+
+function atualizarModuloEtiquetas() {
+
+    atualizarProdutosEtiquetas();
+
+    calcularValidadeEtiqueta();
+
+}
+
+
+/* =====================================================
+   EXPORTAR FUNÇÕES PARA O HTML
+===================================================== */
+
+window.atualizarProdutosEtiquetas =
+    atualizarProdutosEtiquetas;
+
+window.calcularValidadeEtiqueta =
+    calcularValidadeEtiqueta;
+
+window.gerarEtiqueta =
+    gerarEtiqueta;
+
+window.salvarEtiquetaPNG =
+    salvarEtiquetaPNG;
+
+window.inicializarEtiquetas =
+    inicializarEtiquetas;
+
+window.atualizarModuloEtiquetas =
+    atualizarModuloEtiquetas;
