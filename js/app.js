@@ -3416,76 +3416,240 @@ document.addEventListener(
     }
 );
 /* =====================================================
-   CAROL'S GOURMET
    MÓDULO DE PRODUÇÃO
+   CAROL'S GOURMET ERP 4.0
 ===================================================== */
 
 
 /* =====================================================
-   MOSTRAR PRODUTOS NA PRODUÇÃO
+   CALCULAR VALIDADE AUTOMÁTICA
 ===================================================== */
 
-function atualizarProdutosProducao() {
+function calcularValidadeProducao() {
 
-    const selectProduto =
-        document.getElementById(
-            "produtoProducao"
-        );
+    const produtoCampo =
+        document.getElementById("produtoProducao");
+
+    const fabricacaoCampo =
+        document.getElementById("fabricacaoProducao");
+
+    const validadeCampo =
+        document.getElementById("validadeProducao");
 
 
-    if (!selectProduto) {
+    if (
+        !produtoCampo ||
+        !fabricacaoCampo ||
+        !validadeCampo
+    ) {
 
         return;
 
     }
 
 
-    selectProduto.innerHTML = "";
+    const produtoSelecionado =
+        produtos.find(function(produto) {
+
+            return (
+                produto.codigo ===
+                produtoCampo.value
+            );
+
+        });
 
 
-    const primeiraOpcao =
-        document.createElement(
-            "option"
-        );
+    if (!produtoSelecionado) {
+
+        validadeCampo.value = "";
+
+        validadeCampo.readOnly = true;
+
+        return;
+
+    }
 
 
-    primeiraOpcao.value = "";
-
-
-    primeiraOpcao.textContent =
-        "Selecione um produto";
-
-
-    selectProduto.appendChild(
-        primeiraOpcao
-    );
+    const nomeProduto =
+        (
+            produtoSelecionado.nome ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
 
 
     /* =================================================
-       VERIFICAR PRODUTOS
+       DEFINIR PRAZO DE VALIDADE
     ================================================= */
+
+    let diasValidade = null;
+
+
+    if (
+        nomeProduto.includes("palha italiana")
+    ) {
+
+        diasValidade = 20;
+
+    }
+
+
+    else if (
+        nomeProduto.includes("brownie")
+    ) {
+
+        diasValidade = 20;
+
+    }
+
+
+    else if (
+        nomeProduto.includes("bolo de pote")
+    ) {
+
+        diasValidade = 7;
+
+    }
+
+
+    /* =================================================
+       PRODUTOS COM VALIDADE MANUAL
+    ================================================= */
+
+    if (
+        diasValidade === null
+    ) {
+
+        validadeCampo.readOnly = false;
+
+        validadeCampo.value = "";
+
+        return;
+
+    }
+
+
+    /* =================================================
+       VALIDADE AUTOMÁTICA
+    ================================================= */
+
+    validadeCampo.readOnly = true;
+
+
+    if (
+        !fabricacaoCampo.value
+    ) {
+
+        validadeCampo.value = "";
+
+        return;
+
+    }
+
+
+    const dataFabricacao =
+        new Date(
+            fabricacaoCampo.value +
+            "T00:00:00"
+        );
+
+
+    if (
+        isNaN(
+            dataFabricacao.getTime()
+        )
+    ) {
+
+        validadeCampo.value = "";
+
+        return;
+
+    }
+
+
+    dataFabricacao.setDate(
+        dataFabricacao.getDate() +
+        diasValidade
+    );
+
+
+    const ano =
+        dataFabricacao.getFullYear();
+
+
+    const mes =
+        String(
+            dataFabricacao.getMonth() + 1
+        )
+        .padStart(
+            2,
+            "0"
+        );
+
+
+    const dia =
+        String(
+            dataFabricacao.getDate()
+        )
+        .padStart(
+            2,
+            "0"
+        );
+
+
+    validadeCampo.value =
+        ano +
+        "-" +
+        mes +
+        "-" +
+        dia;
+
+}
+
+
+/* =====================================================
+   ATUALIZAR PRODUTOS NO SELECT DE PRODUÇÃO
+===================================================== */
+
+function atualizarProdutosProducao() {
+
+    const select =
+        document.getElementById(
+            "produtoProducao"
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    select.innerHTML = "";
+
 
     if (
         !Array.isArray(produtos) ||
         produtos.length === 0
     ) {
 
-
-        const opcao =
+        const option =
             document.createElement(
                 "option"
             );
 
 
-        opcao.value = "";
+        option.value = "";
 
 
-        opcao.textContent =
+        option.textContent =
             "Nenhum produto cadastrado";
 
 
-        selectProduto.appendChild(
-            opcao
+        select.appendChild(
+            option
         );
 
 
@@ -3494,32 +3658,55 @@ function atualizarProdutosProducao() {
     }
 
 
-    /* =================================================
-       CARREGAR PRODUTOS
-    ================================================= */
+    const opcaoInicial =
+        document.createElement(
+            "option"
+        );
+
+
+    opcaoInicial.value =
+        "";
+
+
+    opcaoInicial.textContent =
+        "Selecione um produto";
+
+
+    select.appendChild(
+        opcaoInicial
+    );
+
 
     produtos.forEach(
-        function(produto) {
+        function(
+            produto
+        ) {
 
-
-            const opcao =
+            const option =
                 document.createElement(
                     "option"
                 );
 
 
-            opcao.value =
-                produto.codigo;
+            option.value =
+                produto.codigo ||
+                "";
 
 
-            opcao.textContent =
-                produto.codigo +
+            option.textContent =
+                (
+                    produto.codigo ||
+                    ""
+                ) +
                 " - " +
-                produto.nome;
+                (
+                    produto.nome ||
+                    "Produto sem nome"
+                );
 
 
-            selectProduto.appendChild(
-                opcao
+            select.appendChild(
+                option
             );
 
         }
@@ -3553,13 +3740,13 @@ function registrarProducao() {
 
     const fabricacaoCampo =
         document.getElementById(
-            "dataFabricacao"
+            "fabricacaoProducao"
         );
 
 
     const validadeCampo =
         document.getElementById(
-            "dataValidade"
+            "validadeProducao"
         );
 
 
@@ -3577,14 +3764,13 @@ function registrarProducao() {
         !produtoCampo ||
         !quantidadeCampo ||
         !fabricacaoCampo ||
-        !validadeCampo
+        !validadeCampo ||
+        !observacaoCampo
     ) {
-
 
         alert(
             "Não foi possível localizar os campos de produção."
         );
-
 
         return;
 
@@ -3605,18 +3791,16 @@ function registrarProducao() {
         );
 
 
-    const dataFabricacao =
+    const fabricacao =
         fabricacaoCampo.value;
 
 
-    const dataValidade =
+    const validade =
         validadeCampo.value;
 
 
     const observacao =
-        observacaoCampo
-            ? observacaoCampo.value.trim()
-            : "";
+        observacaoCampo.value.trim();
 
 
     /* =================================================
@@ -3624,14 +3808,14 @@ function registrarProducao() {
     ================================================= */
 
     if (
-        !codigoProduto
+        codigoProduto === ""
     ) {
-
 
         alert(
             "Selecione um produto."
         );
 
+        produtoCampo.focus();
 
         return;
 
@@ -3643,15 +3827,17 @@ function registrarProducao() {
     ================================================= */
 
     if (
-        !quantidade ||
+        !Number.isFinite(
+            quantidade
+        ) ||
         quantidade <= 0
     ) {
 
-
         alert(
-            "Informe uma quantidade válida."
+            "Informe uma quantidade produzida válida."
         );
 
+        quantidadeCampo.focus();
 
         return;
 
@@ -3663,33 +3849,14 @@ function registrarProducao() {
     ================================================= */
 
     if (
-        !dataFabricacao
+        fabricacao === ""
     ) {
-
 
         alert(
             "Informe a data de fabricação."
         );
 
-
-        return;
-
-    }
-
-
-    /* =================================================
-       VALIDAR DATA DE VALIDADE
-    ================================================= */
-
-    if (
-        !dataValidade
-    ) {
-
-
-        alert(
-            "Informe a data de validade."
-        );
-
+        fabricacaoCampo.focus();
 
         return;
 
@@ -3700,12 +3867,12 @@ function registrarProducao() {
        LOCALIZAR PRODUTO
     ================================================= */
 
-    const produto =
-        produtos.find(
-            function(item) {
+    const indiceProduto =
+        produtos.findIndex(
+            function(produto) {
 
                 return (
-                    item.codigo ===
+                    produto.codigo ===
                     codigoProduto
                 );
 
@@ -3714,34 +3881,37 @@ function registrarProducao() {
 
 
     if (
-        !produto
+        indiceProduto === -1
     ) {
-
 
         alert(
             "Produto não encontrado."
         );
-
 
         return;
 
     }
 
 
+    const produto =
+        produtos[
+            indiceProduto
+        ];
+
+
     /* =================================================
-       VERIFICAR DATAS
+       VALIDAR VALIDADE
     ================================================= */
 
     if (
-        dataValidade <
-        dataFabricacao
+        validade === ""
     ) {
 
-
         alert(
-            "A data de validade não pode ser anterior à data de fabricação."
+            "Informe a validade do produto."
         );
 
+        validadeCampo.focus();
 
         return;
 
@@ -3754,13 +3924,23 @@ function registrarProducao() {
 
     if (
         produto.estoque === undefined ||
-        produto.estoque === null
+        produto.estoque === null ||
+        isNaN(
+            Number(
+                produto.estoque
+            )
+        )
     ) {
 
-        produto.estoque = 0;
+        produto.estoque =
+            0;
 
     }
 
+
+    /* =================================================
+       SOMAR PRODUÇÃO AO ESTOQUE
+    ================================================= */
 
     produto.estoque =
         Number(
@@ -3785,37 +3965,44 @@ function registrarProducao() {
 
 
     /* =================================================
-       CRIAR REGISTRO
+       CRIAR REGISTRO DA PRODUÇÃO
     ================================================= */
 
-    const producao = {
+    const registro =
+        {
 
-        id:
-            Date.now(),
+            id:
+                Date.now(),
 
-        codigoProduto:
-            produto.codigo,
+            codigoProduto:
+                produto.codigo ||
+                "",
 
-        nomeProduto:
-            produto.nome,
+            codigoBarras:
+                produto.codigoBarras ||
+                "",
 
-        quantidade:
-            quantidade,
+            produto:
+                produto.nome ||
+                "",
 
-        dataFabricacao:
-            dataFabricacao,
+            quantidade:
+                quantidade,
 
-        dataValidade:
-            dataValidade,
+            fabricacao:
+                fabricacao,
 
-        observacao:
-            observacao,
+            validade:
+                validade,
 
-        dataRegistro:
-            new Date()
+            observacao:
+                observacao,
+
+            dataRegistro:
+                new Date()
                 .toISOString()
 
-    };
+        };
 
 
     /* =================================================
@@ -3823,7 +4010,7 @@ function registrarProducao() {
     ================================================= */
 
     producoes.push(
-        producao
+        registro
     );
 
 
@@ -3832,6 +4019,13 @@ function registrarProducao() {
     ================================================= */
 
     salvarBanco();
+
+
+    /* =================================================
+       ATUALIZAR PRODUTOS
+    ================================================= */
+
+    mostrarProdutos();
 
 
     /* =================================================
@@ -3849,33 +4043,46 @@ function registrarProducao() {
 
 
     /* =================================================
-       ATUALIZAR HISTÓRICO
+       ATUALIZAR DASHBOARD
     ================================================= */
 
     if (
-        typeof atualizarHistoricoProducao ===
+        typeof atualizarDashboard ===
         "function"
     ) {
 
-        atualizarHistoricoProducao();
+        atualizarDashboard();
 
     }
 
 
     /* =================================================
-       LIMPAR CAMPOS
+       ATUALIZAR LISTA DE PRODUÇÃO
     ================================================= */
 
-    quantidadeCampo.value =
-        "";
+    mostrarProducoes();
+
+
+    /* =================================================
+       ATUALIZAR OUTROS SELECTS
+    ================================================= */
+
+    if (
+        typeof atualizarItensMovimentacao ===
+        "function"
+    ) {
+
+        atualizarItensMovimentacao();
+
+    }
 
 
     if (
-        observacaoCampo
+        typeof atualizarProdutosPrecificacao ===
+        "function"
     ) {
 
-        observacaoCampo.value =
-            "";
+        atualizarProdutosPrecificacao();
 
     }
 
@@ -3888,25 +4095,49 @@ function registrarProducao() {
         "Produção registrada com sucesso!"
     );
 
+
+    /* =================================================
+       LIMPAR CAMPOS
+    ================================================= */
+
+    quantidadeCampo.value =
+        "1";
+
+
+    observacaoCampo.value =
+        "";
+
+
+    validadeCampo.value =
+        "";
+
+
+    produtoCampo.value =
+        "";
+
+
+    fabricacaoCampo.value =
+        new Date()
+        .toISOString()
+        .split("T")[0];
+
 }
 
 
 /* =====================================================
-   HISTÓRICO DE PRODUÇÃO
+   MOSTRAR PRODUÇÕES
 ===================================================== */
 
-function atualizarHistoricoProducao() {
+function mostrarProducoes() {
 
 
     const tabela =
         document.getElementById(
-            "historicoProducao"
+            "listaProducao"
         );
 
 
-    if (
-        !tabela
-    ) {
+    if (!tabela) {
 
         return;
 
@@ -3917,10 +4148,6 @@ function atualizarHistoricoProducao() {
         "";
 
 
-    /* =================================================
-       VERIFICAR PRODUÇÕES
-    ================================================= */
-
     if (
         !Array.isArray(
             producoes
@@ -3928,15 +4155,11 @@ function atualizarHistoricoProducao() {
         producoes.length === 0
     ) {
 
-
         tabela.innerHTML = `
 
             <tr>
 
-                <td
-                    colspan="6"
-                    class="text-center"
-                >
+                <td colspan="4">
 
                     Nenhuma produção registrada.
 
@@ -3952,15 +4175,25 @@ function atualizarHistoricoProducao() {
     }
 
 
-    /* =================================================
-       MOSTRAR MAIS RECENTE PRIMEIRO
-    ================================================= */
-
     producoes
         .slice()
         .reverse()
         .forEach(
-            function(producao) {
+            function(
+                producao
+            ) {
+
+
+                const dataFabricacao =
+                    formatarDataProducao(
+                        producao.fabricacao
+                    );
+
+
+                const dataValidade =
+                    formatarDataProducao(
+                        producao.validade
+                    );
 
 
                 tabela.innerHTML += `
@@ -3968,36 +4201,39 @@ function atualizarHistoricoProducao() {
                     <tr>
 
                         <td>
-                            ${producao.dataFabricacao || "-"}
+
+                            ${
+                                producao.produto ||
+                                ""
+                            }
+
                         </td>
 
-                        <td>
-                            ${producao.nomeProduto || "-"}
-                        </td>
-
-                        <td>
-                            ${producao.quantidade || 0}
-                        </td>
-
-                        <td>
-                            ${producao.dataValidade || "-"}
-                        </td>
-
-                        <td>
-                            ${producao.observacao || "-"}
-                        </td>
 
                         <td>
 
-                            <button
-                                type="button"
-                                class="btn btn-danger"
-                                onclick="excluirProducao(${producao.id})"
-                            >
+                            ${
+                                producao.quantidade ||
+                                0
+                            }
 
-                                Excluir
+                        </td>
 
-                            </button>
+
+                        <td>
+
+                            ${
+                                dataFabricacao
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                dataValidade
+                            }
 
                         </td>
 
@@ -4012,13 +4248,59 @@ function atualizarHistoricoProducao() {
 
 
 /* =====================================================
-   EXCLUIR PRODUÇÃO
+   FORMATAR DATA
 ===================================================== */
 
-function excluirProducao(
-    id
+function formatarDataProducao(
+    data
 ) {
 
+
+    if (
+        !data
+    ) {
+
+        return "";
+
+    }
+
+
+    const partes =
+        data.split(
+            "-"
+        );
+
+
+    if (
+        partes.length === 3
+    ) {
+
+        return (
+            partes[2] +
+            "/" +
+            partes[1] +
+            "/" +
+            partes[0]
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =====================================================
+   INICIALIZAR MÓDULO DE PRODUÇÃO
+===================================================== */
+
+function inicializarProducao() {
+
+
+    /* =================================================
+       GARANTIR ARRAY
+    ================================================= */
 
     if (
         !Array.isArray(
@@ -4026,223 +4308,96 @@ function excluirProducao(
         )
     ) {
 
-        return;
-
-    }
-
-
-    const producao =
-        producoes.find(
-            function(item) {
-
-                return (
-                    item.id ===
-                    id
-                );
-
-            }
-        );
-
-
-    if (
-        !producao
-    ) {
-
-
-        alert(
-            "Produção não encontrada."
-        );
-
-
-        return;
+        producoes = [];
 
     }
 
 
     /* =================================================
-       CONFIRMAR
-    ================================================= */
-
-    const confirmar =
-        confirm(
-            "Deseja excluir esta produção? O estoque do produto também será ajustado."
-        );
-
-
-    if (
-        !confirmar
-    ) {
-
-        return;
-
-    }
-
-
-    /* =================================================
-       LOCALIZAR PRODUTO
-    ================================================= */
-
-    const produto =
-        produtos.find(
-            function(item) {
-
-                return (
-                    item.codigo ===
-                    producao.codigoProduto
-                );
-
-            }
-        );
-
-
-    /* =================================================
-       RETIRAR DO ESTOQUE
-    ================================================= */
-
-    if (
-        produto
-    ) {
-
-
-        if (
-            produto.estoque === undefined
-        ) {
-
-            produto.estoque = 0;
-
-        }
-
-
-        produto.estoque =
-            Number(
-                produto.estoque
-            ) -
-            Number(
-                producao.quantidade
-            );
-
-
-        if (
-            produto.estoque < 0
-        ) {
-
-            produto.estoque = 0;
-
-        }
-
-    }
-
-
-    /* =================================================
-       REMOVER PRODUÇÃO
-    ================================================= */
-
-    producoes =
-        producoes.filter(
-            function(item) {
-
-                return (
-                    item.id !==
-                    id
-                );
-
-            }
-        );
-
-
-    /* =================================================
-       SALVAR
-    ================================================= */
-
-    salvarBanco();
-
-
-    /* =================================================
-       ATUALIZAR TELA
-    ================================================= */
-
-    atualizarHistoricoProducao();
-
-
-    if (
-        typeof mostrarEstoque ===
-        "function"
-    ) {
-
-        mostrarEstoque();
-
-    }
-
-
-    alert(
-        "Produção excluída com sucesso."
-    );
-
-}
-
-
-/* =====================================================
-   INICIALIZAR MÓDULO PRODUÇÃO
-===================================================== */
-
-function inicializarProducao() {
-
-
-    const dataFabricacao =
-        document.getElementById(
-            "dataFabricacao"
-        );
-
-
-    const dataValidade =
-        document.getElementById(
-            "dataValidade"
-        );
-
-
-    /* =================================================
-       DATA DE FABRICAÇÃO
-    ================================================= */
-
-    if (
-        dataFabricacao &&
-        !dataFabricacao.value
-    ) {
-
-
-        dataFabricacao.value =
-            new Date()
-                .toISOString()
-                .split("T")[0];
-
-    }
-
-
-    /* =================================================
-       CARREGAR PRODUTOS
+       ATUALIZAR PRODUTOS
     ================================================= */
 
     atualizarProdutosProducao();
 
 
     /* =================================================
-       HISTÓRICO
+       MOSTRAR HISTÓRICO
     ================================================= */
 
-    atualizarHistoricoProducao();
+    mostrarProducoes();
+
+
+    /* =================================================
+       DATA DE FABRICAÇÃO
+    ================================================= */
+
+    const fabricacaoCampo =
+        document.getElementById(
+            "fabricacaoProducao"
+        );
+
+
+    if (
+        fabricacaoCampo &&
+        !fabricacaoCampo.value
+    ) {
+
+        fabricacaoCampo.value =
+            new Date()
+            .toISOString()
+            .split("T")[0];
+
+    }
 
 }
 
 
 /* =====================================================
-   INICIALIZAÇÃO AUTOMÁTICA
+   EVENTOS DA PRODUÇÃO
 ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
+
         inicializarProducao();
+
+
+        const produtoCampo =
+            document.getElementById(
+                "produtoProducao"
+            );
+
+
+        const fabricacaoCampo =
+            document.getElementById(
+                "fabricacaoProducao"
+            );
+
+
+        if (
+            produtoCampo
+        ) {
+
+            produtoCampo.addEventListener(
+                "change",
+                calcularValidadeProducao
+            );
+
+        }
+
+
+        if (
+            fabricacaoCampo
+        ) {
+
+            fabricacaoCampo.addEventListener(
+                "change",
+                calcularValidadeProducao
+            );
+
+        }
 
     }
 );
