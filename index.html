@@ -1148,41 +1148,45 @@ Custo total
 
                 <div class="form-group">
 
-                    <label for="tipoMovimentacao">
-                        Operação
-                    </label>
+    <label for="tipoEstoque">
+        Tipo de Estoque
+    </label>
 
-                    <select id="tipoMovimentacao">
+    <select
+        id="tipoEstoque"
+        onchange="alterarTipoEstoque()"
+    >
 
-                        <option value="entrada">
-                            Entrada
-                        </option>
+        <option value="materiaPrima">
+            Matéria-Prima
+        </option>
 
-                        <option value="saida">
-                            Saída
-                        </option>
+        <option value="produtoAcabado">
+            Produto Acabado
+        </option>
 
-                    </select>
+    </select>
 
-                </div>
+</div>
 
 
                 <!-- ITEM -->
 
-                <div class="form-group">
+              <div class="form-group">
 
-                    <label for="itemMovimentacao">
-                        Item
-                    </label>
+    <label for="itemMovimentacao">
+        Item
+    </label>
 
-                    <select
-                        id="itemMovimentacao"
-                    >
+    <select id="itemMovimentacao">
 
-                    </select>
+        <option value="">
+            Selecione um item
+        </option>
 
-                </div>
+    </select>
 
+</div>
 
                 <!-- QUANTIDADE -->
 
