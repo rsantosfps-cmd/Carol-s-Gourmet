@@ -2761,7 +2761,178 @@ function inicializarEstoque() {
        CARREGAR ITENS
     ================================================= */
 
-    atualizarItensMovimentacao();
+  function atualizarItensMovimentacao() {
+
+    const tipoEstoque =
+        document.getElementById("tipoEstoque");
+
+    const selectItem =
+        document.getElementById("itemMovimentacao");
+
+
+    if (
+        !tipoEstoque ||
+        !selectItem
+    ) {
+
+        return;
+
+    }
+
+
+    const tipo =
+        tipoEstoque.value;
+
+
+    /* =================================================
+       LIMPAR LISTA ATUAL
+    ================================================= */
+
+    selectItem.innerHTML = "";
+
+
+    /* =================================================
+       OPÇÃO INICIAL
+    ================================================= */
+
+    const primeiraOpcao =
+        document.createElement("option");
+
+    primeiraOpcao.value = "";
+
+    primeiraOpcao.textContent =
+        "Selecione um item";
+
+    selectItem.appendChild(
+        primeiraOpcao
+    );
+
+
+    /* =================================================
+       MATÉRIA-PRIMA
+    ================================================= */
+
+    if (
+        tipo === "materiaPrima"
+    ) {
+
+
+        if (
+            !Array.isArray(materiasPrimas) ||
+            materiasPrimas.length === 0
+        ) {
+
+
+            const opcao =
+                document.createElement("option");
+
+            opcao.value = "";
+
+            opcao.textContent =
+                "Nenhuma matéria-prima cadastrada";
+
+            selectItem.appendChild(
+                opcao
+            );
+
+
+            return;
+
+        }
+
+
+        materiasPrimas.forEach(
+            function(materiaPrima) {
+
+
+                const opcao =
+                    document.createElement("option");
+
+
+                opcao.value =
+                    materiaPrima.codigo;
+
+
+                opcao.textContent =
+                    materiaPrima.codigo +
+                    " - " +
+                    materiaPrima.nome;
+
+
+                selectItem.appendChild(
+                    opcao
+                );
+
+            }
+        );
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       PRODUTO ACABADO
+    ================================================= */
+
+    if (
+        tipo === "produtoAcabado"
+    ) {
+
+
+        if (
+            !Array.isArray(produtos) ||
+            produtos.length === 0
+        ) {
+
+
+            const opcao =
+                document.createElement("option");
+
+            opcao.value = "";
+
+            opcao.textContent =
+                "Nenhum produto cadastrado";
+
+            selectItem.appendChild(
+                opcao
+            );
+
+
+            return;
+
+        }
+
+
+        produtos.forEach(
+            function(produto) {
+
+
+                const opcao =
+                    document.createElement("option");
+
+
+                opcao.value =
+                    produto.codigo;
+
+
+                opcao.textContent =
+                    produto.codigo +
+                    " - " +
+                    produto.nome;
+
+
+                selectItem.appendChild(
+                    opcao
+                );
+
+            }
+        );
+
+    }
+
+}
 
 
     /* =================================================
