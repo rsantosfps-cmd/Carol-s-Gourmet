@@ -3607,124 +3607,82 @@ function gerarEtiqueta() {
         "barcodeGerado";
 
 
-    /* =================================================
-       CONFIGURAÇÃO DO SVG
-       
-       O SVG ocupa toda a largura disponível,
-       evitando cortar as extremidades.
-    ================================================= */
+   /* ================================================
+   CRIAR SVG DO CÓDIGO DE BARRAS
+   EAN-13 VISUAL PADRÃO
+================================================ */
 
-    svg.setAttribute(
-        "width",
-        "100%"
+const svg =
+    document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
     );
 
+svg.id =
+    "barcodeGerado";
 
-    svg.setAttribute(
-        "height",
-        "65"
+codigoBarras.appendChild(
+    svg
+);
+
+
+/* ================================================
+   GERAR EAN-13
+================================================ */
+
+if (
+    typeof JsBarcode ===
+    "function"
+) {
+
+    JsBarcode(
+        svg,
+        codigo,
+        {
+
+            format:
+                "EAN13",
+
+            width:
+                2,
+
+            height:
+                55,
+
+            displayValue:
+                true,
+
+            fontSize:
+                11,
+
+            fontOptions:
+                "bold",
+
+            text:
+                codigo,
+
+            margin:
+                0,
+
+            marginTop:
+                0,
+
+            marginBottom:
+                0,
+
+            marginLeft:
+                0,
+
+            marginRight:
+                0,
+
+            textMargin:
+                2,
+
+            flat:
+                true
+
+        }
     );
-
-
-    svg.style.display =
-        "block";
-
-
-    svg.style.width =
-        "100%";
-
-
-    svg.style.height =
-        "65px";
-
-
-    svg.style.overflow =
-        "visible";
-
-
-    codigoBarras.appendChild(
-        svg
-    );
-
-
-    /* =================================================
-       GERAR EAN-13
-    ================================================= */
-
-    if (
-        typeof JsBarcode ===
-        "function"
-    ) {
-
-        JsBarcode(
-            svg,
-            codigo,
-            {
-
-                format:
-                    "EAN13",
-
-                /*
-                 * IMPORTANTE:
-                 * width menor para o código
-                 * caber inteiro na etiqueta.
-                 */
-
-                width:
-                    1.4,
-
-                height:
-                    50,
-
-                displayValue:
-                    true,
-
-                fontSize:
-                    11,
-
-                fontOptions:
-                    "bold",
-
-                textAlign:
-                    "center",
-
-                textPosition:
-                    "bottom",
-
-                textMargin:
-                    2,
-
-                /*
-                 * Margem suficiente para
-                 * não cortar as barras laterais.
-                 */
-
-                margin:
-                    4,
-
-                marginTop:
-                    0,
-
-                marginBottom:
-                    0,
-
-                marginLeft:
-                    4,
-
-                marginRight:
-                    4,
-
-                /*
-                 * Não achatar visualmente
-                 * o código.
-                 */
-
-                flat:
-                    false
-
-            }
-        );
-
-    }
 
 }
