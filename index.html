@@ -1032,12 +1032,6 @@ Custo total
 
 
 
-
-
-
-
-
-
 <!-- =====================================================
      ABA ESTOQUE
 ===================================================== -->
@@ -1076,7 +1070,9 @@ Custo total
                 <div class="form-group">
 
                     <label for="tipoEstoque">
+
                         Tipo de Estoque
+
                     </label>
 
                     <select
@@ -1135,7 +1131,9 @@ Custo total
             <div class="section-header">
 
                 <h2 class="section-title">
+
                     Movimentar Estoque
+
                 </h2>
 
             </div>
@@ -1144,56 +1142,110 @@ Custo total
             <div class="form-grid">
 
 
-                <!-- TIPO DE MOVIMENTAÇÃO -->
+                <!-- =================================================
+                     TIPO DE ESTOQUE
+                ================================================== -->
 
                 <div class="form-group">
 
-    <label for="tipoEstoque">
-        Tipo de Estoque
-    </label>
+                    <label for="tipoEstoqueMovimentacao">
 
-    <select
-        id="tipoEstoque"
-        onchange="alterarTipoEstoque()"
-    >
+                        Tipo de Estoque
 
-        <option value="materiaPrima">
-            Matéria-Prima
-        </option>
+                    </label>
 
-        <option value="produtoAcabado">
-            Produto Acabado
-        </option>
+                    <select
+                        id="tipoEstoqueMovimentacao"
+                        onchange="atualizarItensMovimentacao()"
+                    >
 
-    </select>
+                        <option value="materiaPrima">
 
-</div>
+                            Matéria-Prima
+
+                        </option>
+
+                        <option value="produtoAcabado">
+
+                            Produto Acabado
+
+                        </option>
+
+                    </select>
+
+                </div>
 
 
-                <!-- ITEM -->
+                <!-- =================================================
+                     OPERAÇÃO
+                ================================================== -->
 
-              <div class="form-group">
+                <div class="form-group">
 
-    <label for="itemMovimentacao">
-        Item
-    </label>
+                    <label for="tipoMovimentacao">
 
-    <select id="itemMovimentacao">
+                        Operação
 
-        <option value="">
-            Selecione um item
-        </option>
+                    </label>
 
-    </select>
+                    <select
+                        id="tipoMovimentacao"
+                    >
 
-</div>
+                        <option value="entrada">
 
-                <!-- QUANTIDADE -->
+                            Entrada
+
+                        </option>
+
+                        <option value="saida">
+
+                            Saída
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =================================================
+                     ITEM
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="itemMovimentacao">
+
+                        Item
+
+                    </label>
+
+                    <select
+                        id="itemMovimentacao"
+                    >
+
+                        <option value="">
+
+                            Selecione um item
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =================================================
+                     QUANTIDADE
+                ================================================== -->
 
                 <div class="form-group">
 
                     <label for="quantidadeMovimentacao">
+
                         Quantidade
+
                     </label>
 
                     <input
@@ -1207,12 +1259,16 @@ Custo total
                 </div>
 
 
-                <!-- DATA -->
+                <!-- =================================================
+                     DATA
+                ================================================== -->
 
                 <div class="form-group">
 
                     <label for="dataMovimentacao">
+
                         Data
+
                     </label>
 
                     <input
@@ -1223,12 +1279,16 @@ Custo total
                 </div>
 
 
-                <!-- OBSERVAÇÃO -->
+                <!-- =================================================
+                     OBSERVAÇÃO
+                ================================================== -->
 
                 <div class="form-group full">
 
                     <label for="observacaoMovimentacao">
+
                         Observação
+
                     </label>
 
                     <textarea
@@ -1241,6 +1301,10 @@ Custo total
 
             </div>
 
+
+            <!-- =================================================
+                 BOTÃO
+            ================================================== -->
 
             <div class="btn-group">
 
@@ -1268,7 +1332,9 @@ Custo total
             <div class="section-header">
 
                 <h2 class="section-title">
+
                     Histórico de Movimentações
+
                 </h2>
 
             </div>
@@ -1282,37 +1348,43 @@ Custo total
 
                         <tr>
 
-                           <thead>
+                            <th>
 
-    <tr>
+                                Data
 
-        <th>
-            Data
-        </th>
+                            </th>
 
-        <th>
-            Tipo
-        </th>
+                            <th>
 
-        <th>
-            Item
-        </th>
+                                Tipo
 
-        <th>
-            Quantidade
-        </th>
+                            </th>
 
-        <th>
-            Operação
-        </th>
+                            <th>
 
-        <th>
-            Observação
-        </th>
+                                Item
 
-    </tr>
+                            </th>
 
-</thead>
+                            <th>
+
+                                Quantidade
+
+                            </th>
+
+                            <th>
+
+                                Operação
+
+                            </th>
+
+                            <th>
+
+                                Observação
+
+                            </th>
+
+                        </tr>
 
                     </thead>
 
@@ -1330,6 +1402,7 @@ Custo total
     </div>
 
 </section>
+
 
 
 
