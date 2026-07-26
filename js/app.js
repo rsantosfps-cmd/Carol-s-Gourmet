@@ -3415,57 +3415,59 @@ function inicializarEstoque() {
 function atualizarProdutosProducao() {
 
     const select =
-        document.getElementById(
-            "produtoProducao"
-        );
+        document.getElementById("produtoProducao");
 
     if (!select) {
         return;
     }
 
 
-    /* LIMPAR SELECT */
+    /* =================================================
+       GARANTIR QUE PRODUTOS EXISTE
+    ================================================= */
+
+    if (!Array.isArray(produtos)) {
+        produtos = [];
+    }
+
+
+    /* =================================================
+       LIMPAR SELECT
+    ================================================= */
 
     select.innerHTML = "";
 
 
-    /* PRIMEIRA OPÇÃO */
+    /* =================================================
+       OPÇÃO INICIAL
+    ================================================= */
 
     const opcaoInicial =
-        document.createElement(
-            "option"
-        );
+        document.createElement("option");
 
     opcaoInicial.value = "";
 
     opcaoInicial.textContent =
         "Selecione um produto";
 
-    select.appendChild(
-        opcaoInicial
-    );
+    select.appendChild(opcaoInicial);
 
 
-    /* VERIFICAR PRODUTOS */
+    /* =================================================
+       VERIFICAR PRODUTOS
+    ================================================= */
 
-    if (
-        !Array.isArray(produtos) ||
-        produtos.length === 0
-    ) {
+    if (produtos.length === 0) {
 
         const opcao =
-            document.createElement(
-                "option"
-            );
+            document.createElement("option");
 
         opcao.value = "";
 
         opcao.textContent =
             "Nenhum produto cadastrado";
 
-        select.appendChild(
-            opcao
-        );
+        select.appendChild(opcao);
 
         return;
     }
@@ -3473,45 +3475,55 @@ function atualizarProdutosProducao() {
 
     /* =================================================
        CARREGAR TODOS OS PRODUTOS
-       
-       CADA SABOR É UM PRODUTO SEPARADO
     ================================================= */
 
-    produtos.forEach(
-        function(produto) {
+    produtos.forEach(function(produto) {
 
-            const opcao =
-                document.createElement(
-                    "option"
-                );
-
-
-            /* O VALUE É O CÓDIGO INTERNO */
-
-            opcao.value =
-                produto.codigo || "";
-
-
-            /* TEXTO MOSTRADO */
-
-            opcao.textContent =
-                (
-                    produto.nome ||
-                    "Produto sem nome"
-                ) +
-                " - Código: " +
-                (
-                    produto.codigo ||
-                    ""
-                );
-
-
-            select.appendChild(
-                opcao
-            );
-
+        if (!produto) {
+            return;
         }
-    );
+
+
+        const codigo =
+            String(
+                produto.codigo || ""
+            ).trim();
+
+
+        const nome =
+            String(
+                produto.nome || "Produto sem nome"
+            ).trim();
+
+
+        /* NÃO ADICIONAR PRODUTO SEM CÓDIGO */
+
+        if (!codigo) {
+            return;
+        }
+
+
+        const opcao =
+            document.createElement("option");
+
+
+        /* VALUE = CÓDIGO INTERNO */
+
+        opcao.value =
+            codigo;
+
+
+        /* TEXTO EXIBIDO */
+
+        opcao.textContent =
+            nome +
+            " - Código: " +
+            codigo;
+
+
+        select.appendChild(opcao);
+
+    });
 
 }
 
@@ -3522,10 +3534,6 @@ function atualizarProdutosProducao() {
 
 function registrarProducao() {
 
-
-    /* =================================================
-       CAMPOS
-    ================================================= */
 
     const produtoCampo =
         document.getElementById(
@@ -3576,7 +3584,7 @@ function registrarProducao() {
 
 
     /* =================================================
-       VALORES
+       PEGAR VALORES
     ================================================= */
 
     const codigoProduto =
@@ -3598,6 +3606,12 @@ function registrarProducao() {
             .split("T")[0];
 
 
+    const validade =
+        validadeCampo
+            ? validadeCampo.value
+            : "";
+
+
     const observacao =
         observacaoCampo
             ? observacaoCampo.value.trim()
@@ -3608,9 +3622,7 @@ function registrarProducao() {
        VALIDAR PRODUTO
     ================================================= */
 
-    if (
-        codigoProduto === ""
-    ) {
+    if (!codigoProduto) {
 
         alert(
             "Selecione um produto."
@@ -3640,27 +3652,30 @@ function registrarProducao() {
 
 
     /* =================================================
-       LOCALIZAR PRODUTO
-       
-       USA O CÓDIGO DO PRODUTO
-       CADA SABOR TEM SEU PRÓPRIO CÓDIGO
+       GARANTIR ARRAY
+    ================================================= */
+
+    if (!Array.isArray(produtos)) {
+        produtos = [];
+    }
+
+
+    /* =================================================
+       LOCALIZAR PRODUTO PELO CÓDIGO
     ================================================= */
 
     const produto =
-        Array.isArray(produtos)
-            ? produtos.find(
-                function(item) {
+        produtos.find(function(item) {
 
-                    return (
-                        String(
-                            item.codigo
-                        ) ===
-                        codigoProduto
-                    );
+            return (
+                item &&
+                String(
+                    item.codigo || ""
+                ).trim() ===
+                codigoProduto
+            );
 
-                }
-            )
-            : null;
+        });
 
 
     if (!produto) {
@@ -3679,7 +3694,12 @@ function registrarProducao() {
 
     if (
         produto.estoque === undefined ||
-        produto.estoque === null
+        produto.estoque === null ||
+        isNaN(
+            Number(
+                produto.estoque
+            )
+        )
     ) {
 
         produto.estoque = 0;
@@ -3688,7 +3708,7 @@ function registrarProducao() {
 
 
     /* =================================================
-       ATUALIZAR ESTOQUE
+       SOMAR PRODUÇÃO AO ESTOQUE
     ================================================= */
 
     produto.estoque =
@@ -3699,7 +3719,16 @@ function registrarProducao() {
 
 
     /* =================================================
-       CRIAR REGISTRO DE PRODUÇÃO
+       GARANTIR ARRAY DE PRODUÇÕES
+    ================================================= */
+
+    if (!Array.isArray(producoes)) {
+        producoes = [];
+    }
+
+
+    /* =================================================
+       CRIAR REGISTRO
     ================================================= */
 
     const producao = {
@@ -3708,13 +3737,19 @@ function registrarProducao() {
             Date.now(),
 
         codigoProduto:
-            produto.codigo,
+            String(
+                produto.codigo || ""
+            ),
 
         nomeProduto:
-            produto.nome || "",
+            String(
+                produto.nome || ""
+            ),
 
         codigoBarras:
-            produto.codigoBarras || "",
+            String(
+                produto.codigoBarras || ""
+            ),
 
         quantidade:
             quantidade,
@@ -3723,9 +3758,7 @@ function registrarProducao() {
             dataFabricacao,
 
         validade:
-            validadeCampo
-                ? validadeCampo.value
-                : "",
+            validade,
 
         observacao:
             observacao
@@ -3733,46 +3766,23 @@ function registrarProducao() {
     };
 
 
-    /* =================================================
-       GARANTIR ARRAY
-    ================================================= */
-
-    if (
-        !Array.isArray(
-            producoes
-        )
-    ) {
-
-        producoes = [];
-
-    }
-
-
-    /* =================================================
-       ADICIONAR PRODUÇÃO
-    ================================================= */
-
     producoes.push(
         producao
     );
 
 
     /* =================================================
-       REGISTRAR MOVIMENTAÇÃO DE ESTOQUE
-       
-       A produção entra como ENTRADA
+       GARANTIR MOVIMENTAÇÕES
     ================================================= */
 
-    if (
-        !Array.isArray(
-            movimentacoes
-        )
-    ) {
-
+    if (!Array.isArray(movimentacoes)) {
         movimentacoes = [];
-
     }
 
+
+    /* =================================================
+       REGISTRAR ENTRADA NO ESTOQUE
+    ================================================= */
 
     movimentacoes.push({
 
@@ -3786,7 +3796,9 @@ function registrarProducao() {
             "produtoAcabado",
 
         codigo:
-            produto.codigo,
+            String(
+                produto.codigo || ""
+            ),
 
         operacao:
             "entrada",
@@ -3797,8 +3809,7 @@ function registrarProducao() {
         observacao:
             "Produção - " +
             (
-                produto.nome ||
-                ""
+                produto.nome || ""
             )
 
     });
@@ -3826,7 +3837,7 @@ function registrarProducao() {
 
 
     /* =================================================
-       ATUALIZAR MOVIMENTAÇÕES
+       ATUALIZAR MOVIMENTAÇÃO
     ================================================= */
 
     if (
@@ -3850,7 +3861,7 @@ function registrarProducao() {
 
 
     /* =================================================
-       ATUALIZAR LISTA DE PRODUTOS
+       ATUALIZAR PRODUTOS
     ================================================= */
 
     if (
@@ -3871,9 +3882,7 @@ function registrarProducao() {
         "";
 
 
-    if (
-        observacaoCampo
-    ) {
+    if (observacaoCampo) {
 
         observacaoCampo.value =
             "";
@@ -3882,8 +3891,11 @@ function registrarProducao() {
 
 
     /* =================================================
-       MENSAGEM
+       ATUALIZAR SELECT NOVAMENTE
     ================================================= */
+
+    atualizarProdutosProducao();
+
 
     alert(
         "Produção registrada com sucesso!"
@@ -3893,7 +3905,7 @@ function registrarProducao() {
 
 
 /* =====================================================
-   INICIALIZAR PRODUTOS DA PRODUÇÃO
+   INICIALIZAR MÓDULO
 ===================================================== */
 
 function inicializarProducao() {
@@ -3904,9 +3916,7 @@ function inicializarProducao() {
 
 
 /* =====================================================
-   ATUALIZAR MÓDULO DE PRODUÇÃO
-       
-   PODE SER CHAMADA DEPOIS DE CADASTRAR PRODUTO
+   ATUALIZAR MÓDULO
 ===================================================== */
 
 function atualizarModuloProducao() {
@@ -3950,9 +3960,16 @@ function atualizarProdutosEtiquetas() {
 
 
     if (!select) {
-
         return;
+    }
 
+
+    /* =================================================
+       GARANTIR ARRAY
+    ================================================= */
+
+    if (!Array.isArray(produtos)) {
+        produtos = [];
     }
 
 
@@ -3960,12 +3977,11 @@ function atualizarProdutosEtiquetas() {
        LIMPAR SELECT
     ================================================= */
 
-    select.innerHTML =
-        "";
+    select.innerHTML = "";
 
 
     /* =================================================
-       PRIMEIRA OPÇÃO
+       OPÇÃO INICIAL
     ================================================= */
 
     const opcaoInicial =
@@ -3991,10 +4007,7 @@ function atualizarProdutosEtiquetas() {
        VERIFICAR PRODUTOS
     ================================================= */
 
-    if (
-        !Array.isArray(produtos) ||
-        produtos.length === 0
-    ) {
+    if (produtos.length === 0) {
 
         const opcao =
             document.createElement(
@@ -4022,12 +4035,35 @@ function atualizarProdutosEtiquetas() {
 
     /* =================================================
        CARREGAR PRODUTOS
-       
-       CADA SABOR É UM PRODUTO SEPARADO
     ================================================= */
 
     produtos.forEach(
         function(produto) {
+
+            if (!produto) {
+                return;
+            }
+
+
+            const codigo =
+                String(
+                    produto.codigo || ""
+                ).trim();
+
+
+            const nome =
+                String(
+                    produto.nome ||
+                    "Produto sem nome"
+                ).trim();
+
+
+            /* IGNORAR PRODUTO SEM CÓDIGO */
+
+            if (!codigo) {
+                return;
+            }
+
 
             const opcao =
                 document.createElement(
@@ -4035,28 +4071,18 @@ function atualizarProdutosEtiquetas() {
                 );
 
 
-            /* =================================================
-               O VALUE É O CÓDIGO INTERNO
-            ================================================= */
+            /* VALUE = CÓDIGO INTERNO */
 
             opcao.value =
-                produto.codigo || "";
+                codigo;
 
 
-            /* =================================================
-               MOSTRAR NOME + CÓDIGO
-            ================================================= */
+            /* NOME + CÓDIGO */
 
             opcao.textContent =
-                (
-                    produto.nome ||
-                    "Produto sem nome"
-                ) +
+                nome +
                 " - Código: " +
-                (
-                    produto.codigo ||
-                    ""
-                );
+                codigo;
 
 
             select.appendChild(
@@ -4104,31 +4130,39 @@ function calcularValidadeEtiqueta() {
     }
 
 
-    /* =================================================
-       LOCALIZAR PRODUTO
-    ================================================= */
-
     const codigoProduto =
         String(
             produtoCampo.value || ""
         ).trim();
 
 
+    /* =================================================
+       GARANTIR ARRAY
+    ================================================= */
+
+    if (!Array.isArray(produtos)) {
+        produtos = [];
+    }
+
+
+    /* =================================================
+       LOCALIZAR PRODUTO
+    ================================================= */
+
     const produto =
-        Array.isArray(produtos)
-            ? produtos.find(
-                function(item) {
+        produtos.find(
+            function(item) {
 
-                    return (
-                        String(
-                            item.codigo
-                        ) ===
-                        codigoProduto
-                    );
+                return (
+                    item &&
+                    String(
+                        item.codigo || ""
+                    ).trim() ===
+                    codigoProduto
+                );
 
-                }
-            )
-            : null;
+            }
+        );
 
 
     /* =================================================
@@ -4166,7 +4200,6 @@ function calcularValidadeEtiqueta() {
 
     /* =================================================
        PALHA ITALIANA
-       20 DIAS
     ================================================= */
 
     if (
@@ -4183,7 +4216,6 @@ function calcularValidadeEtiqueta() {
 
     /* =================================================
        BROWNIE
-       20 DIAS
     ================================================= */
 
     else if (
@@ -4200,7 +4232,6 @@ function calcularValidadeEtiqueta() {
 
     /* =================================================
        BOLO DE POTE
-       7 DIAS
     ================================================= */
 
     else if (
@@ -4217,7 +4248,6 @@ function calcularValidadeEtiqueta() {
 
     /* =================================================
        OUTROS PRODUTOS
-       VALIDADE MANUAL
     ================================================= */
 
     if (
@@ -4320,10 +4350,6 @@ function calcularValidadeEtiqueta() {
 function gerarEtiqueta() {
 
 
-    /* =================================================
-       CAMPOS
-    ================================================= */
-
     const produtoCampo =
         document.getElementById(
             "produtoEtiqueta"
@@ -4390,7 +4416,7 @@ function gerarEtiqueta() {
 
 
     /* =================================================
-       PEGAR CÓDIGO DO PRODUTO
+       PEGAR CÓDIGO
     ================================================= */
 
     const codigoProduto =
@@ -4400,26 +4426,32 @@ function gerarEtiqueta() {
 
 
     /* =================================================
+       GARANTIR ARRAY
+    ================================================= */
+
+    if (!Array.isArray(produtos)) {
+        produtos = [];
+    }
+
+
+    /* =================================================
        LOCALIZAR PRODUTO
-       
-       CADA SABOR TEM SEU PRÓPRIO CÓDIGO
     ================================================= */
 
     const produto =
-        Array.isArray(produtos)
-            ? produtos.find(
-                function(item) {
+        produtos.find(
+            function(item) {
 
-                    return (
-                        String(
-                            item.codigo
-                        ) ===
-                        codigoProduto
-                    );
+                return (
+                    item &&
+                    String(
+                        item.codigo || ""
+                    ).trim() ===
+                    codigoProduto
+                );
 
-                }
-            )
-            : null;
+            }
+        );
 
 
     if (!produto) {
@@ -4468,7 +4500,7 @@ function gerarEtiqueta() {
 
 
     /* =================================================
-       PREENCHER NOME
+       MOSTRAR PRODUTO
     ================================================= */
 
     produtoNome.textContent =
@@ -4477,7 +4509,7 @@ function gerarEtiqueta() {
 
 
     /* =================================================
-       PREENCHER DATAS
+       MOSTRAR FABRICAÇÃO
     ================================================= */
 
     mostrarFabricacao.textContent =
@@ -4486,6 +4518,10 @@ function gerarEtiqueta() {
         );
 
 
+    /* =================================================
+       MOSTRAR VALIDADE
+    ================================================= */
+
     mostrarValidade.textContent =
         formatarDataEtiqueta(
             validadeCampo.value
@@ -4493,7 +4529,7 @@ function gerarEtiqueta() {
 
 
     /* =================================================
-       LIMPAR CÓDIGO DE BARRAS ANTERIOR
+       LIMPAR BARCODE ANTERIOR
     ================================================= */
 
     codigoBarras.innerHTML =
@@ -4501,13 +4537,12 @@ function gerarEtiqueta() {
 
 
     /* =================================================
-       PEGAR EAN-13 DO PRODUTO
+       PEGAR EAN
     ================================================= */
 
     const codigo =
         String(
-            produto.codigoBarras ||
-            ""
+            produto.codigoBarras || ""
         )
         .replace(
             /\D/g,
@@ -4552,9 +4587,6 @@ function gerarEtiqueta() {
 
     /* =================================================
        CRIAR SVG
-       
-       SEM CONTAINER EXTRA
-       PARA NÃO CORTAR AS EXTREMIDADES
     ================================================= */
 
     const svg =
@@ -4583,10 +4615,6 @@ function gerarEtiqueta() {
 
     /* =================================================
        GERAR EAN-13
-       
-       CONFIGURAÇÃO MAIS LIMPA
-       SEM MARGIN
-       SEM CORTAR O SVG
     ================================================= */
 
     JsBarcode(
@@ -4622,10 +4650,7 @@ function gerarEtiqueta() {
                 2,
 
             margin:
-                2,
-
-            flat:
-                false
+                2
 
         }
     );
@@ -4641,9 +4666,7 @@ function formatarDataEtiqueta(
     data
 ) {
 
-    if (
-        !data
-    ) {
+    if (!data) {
 
         return "--/--/----";
 
@@ -4651,9 +4674,7 @@ function formatarDataEtiqueta(
 
 
     const partes =
-        String(
-            data
-        )
+        String(data)
         .split("-");
 
 
@@ -4804,5 +4825,7 @@ window.salvarEtiquetaPNG =
     salvarEtiquetaPNG;
 
 
+window.atualizarModuloEtiquetas =
+    atualizarModuloEtiquetas;
 window.atualizarModuloEtiquetas =
     atualizarModuloEtiquetas;
