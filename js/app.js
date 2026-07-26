@@ -1604,12 +1604,10 @@ function mostrarEstoque() {
 
 
     /* =================================================
-       ESTOQUE DE MATÉRIA-PRIMA
+       MATÉRIA-PRIMA
     ================================================= */
 
-    if (
-        tipo === "materiaPrima"
-    ) {
+    if (tipo === "materiaPrima") {
 
         cabecalho.innerHTML = `
 
@@ -1643,10 +1641,7 @@ function mostrarEstoque() {
 
                 <tr>
 
-                    <td
-                        colspan="7"
-                        class="text-center"
-                    >
+                    <td colspan="7" class="text-center">
 
                         Nenhuma matéria-prima cadastrada.
 
@@ -1655,7 +1650,6 @@ function mostrarEstoque() {
                 </tr>
 
             `;
-
 
             atualizarItensMovimentacao();
 
@@ -1666,7 +1660,6 @@ function mostrarEstoque() {
 
         materiasPrimas.forEach(
             function(materiaPrima) {
-
 
                 const estoque =
                     Number(
@@ -1731,19 +1724,16 @@ function mostrarEstoque() {
 
         atualizarItensMovimentacao();
 
-
         return;
 
     }
 
 
     /* =================================================
-       ESTOQUE DE PRODUTO ACABADO
+       PRODUTO ACABADO
     ================================================= */
 
-    if (
-        tipo === "produtoAcabado"
-    ) {
+    if (tipo === "produtoAcabado") {
 
         cabecalho.innerHTML = `
 
@@ -1773,10 +1763,7 @@ function mostrarEstoque() {
 
                 <tr>
 
-                    <td
-                        colspan="5"
-                        class="text-center"
-                    >
+                    <td colspan="5" class="text-center">
 
                         Nenhum produto cadastrado.
 
@@ -1785,7 +1772,6 @@ function mostrarEstoque() {
                 </tr>
 
             `;
-
 
             atualizarItensMovimentacao();
 
@@ -1797,25 +1783,16 @@ function mostrarEstoque() {
         produtos.forEach(
             function(produto) {
 
-
                 const estoque =
                     Number(
                         produto.estoque
                     ) || 0;
 
 
-                let status =
-                    "Disponível";
-
-
-                if (
-                    estoque <= 0
-                ) {
-
-                    status =
-                        "Sem estoque";
-
-                }
+                const status =
+                    estoque > 0
+                        ? "Disponível"
+                        : "Sem estoque";
 
 
                 tabela.innerHTML += `
@@ -1865,11 +1842,13 @@ function alterarTipoEstoque() {
 
     mostrarEstoque();
 
+    atualizarItensMovimentacao();
+
 }
 
 
 /* =====================================================
-   ATUALIZAR ITENS PARA MOVIMENTAÇÃO
+   ATUALIZAR LISTA DE ITENS
 ===================================================== */
 
 function atualizarItensMovimentacao() {
@@ -1880,7 +1859,7 @@ function atualizarItensMovimentacao() {
         );
 
 
-    const select =
+    const selectItem =
         document.getElementById(
             "itemMovimentacao"
         );
@@ -1888,7 +1867,7 @@ function atualizarItensMovimentacao() {
 
     if (
         !tipoEstoque ||
-        !select
+        !selectItem
     ) {
 
         return;
@@ -1900,32 +1879,25 @@ function atualizarItensMovimentacao() {
         tipoEstoque.value;
 
 
-    /* =================================================
-       LIMPAR LISTA
-    ================================================= */
-
-    select.innerHTML = "";
+    selectItem.innerHTML = "";
 
 
     /* =================================================
-       OPÇÃO INICIAL
+       PRIMEIRA OPÇÃO
     ================================================= */
 
     const primeiraOpcao =
-        document.createElement(
-            "option"
-        );
+        document.createElement("option");
 
 
-    primeiraOpcao.value =
-        "";
+    primeiraOpcao.value = "";
 
 
     primeiraOpcao.textContent =
         "Selecione um item";
 
 
-    select.appendChild(
+    selectItem.appendChild(
         primeiraOpcao
     );
 
@@ -1938,14 +1910,10 @@ function atualizarItensMovimentacao() {
         tipo === "materiaPrima"
     ) {
 
-
         if (
-            !Array.isArray(
-                materiasPrimas
-            ) ||
+            !Array.isArray(materiasPrimas) ||
             materiasPrimas.length === 0
         ) {
-
 
             const option =
                 document.createElement(
@@ -1953,15 +1921,14 @@ function atualizarItensMovimentacao() {
                 );
 
 
-            option.value =
-                "";
+            option.value = "";
 
 
             option.textContent =
                 "Nenhuma matéria-prima cadastrada";
 
 
-            select.appendChild(
+            selectItem.appendChild(
                 option
             );
 
@@ -1972,10 +1939,7 @@ function atualizarItensMovimentacao() {
 
 
         materiasPrimas.forEach(
-            function(
-                materiaPrima
-            ) {
-
+            function(materiaPrima) {
 
                 const option =
                     document.createElement(
@@ -1993,7 +1957,7 @@ function atualizarItensMovimentacao() {
                     materiaPrima.nome;
 
 
-                select.appendChild(
+                selectItem.appendChild(
                     option
                 );
 
@@ -2014,14 +1978,10 @@ function atualizarItensMovimentacao() {
         tipo === "produtoAcabado"
     ) {
 
-
         if (
-            !Array.isArray(
-                produtos
-            ) ||
+            !Array.isArray(produtos) ||
             produtos.length === 0
         ) {
-
 
             const option =
                 document.createElement(
@@ -2029,15 +1989,14 @@ function atualizarItensMovimentacao() {
                 );
 
 
-            option.value =
-                "";
+            option.value = "";
 
 
             option.textContent =
                 "Nenhum produto cadastrado";
 
 
-            select.appendChild(
+            selectItem.appendChild(
                 option
             );
 
@@ -2048,10 +2007,7 @@ function atualizarItensMovimentacao() {
 
 
         produtos.forEach(
-            function(
-                produto
-            ) {
-
+            function(produto) {
 
                 const option =
                     document.createElement(
@@ -2069,7 +2025,7 @@ function atualizarItensMovimentacao() {
                     produto.nome;
 
 
-                select.appendChild(
+                selectItem.appendChild(
                     option
                 );
 
@@ -2122,6 +2078,10 @@ function registrarMovimentacao() {
             "observacaoMovimentacao"
         );
 
+
+    /* =================================================
+       VERIFICAR CAMPOS
+    ================================================= */
 
     if (
         !tipoEstoque ||
@@ -2207,7 +2167,7 @@ function registrarMovimentacao() {
 
 
     /* =================================================
-       MOVIMENTAR PRODUTO ACABADO
+       PRODUTO ACABADO
     ================================================= */
 
     if (
@@ -2219,8 +2179,8 @@ function registrarMovimentacao() {
                 function(item) {
 
                     return (
-                        item.codigo ===
-                        codigo
+                        String(item.codigo) ===
+                        String(codigo)
                     );
 
                 }
@@ -2241,7 +2201,8 @@ function registrarMovimentacao() {
 
 
         if (
-            produto.estoque === undefined
+            produto.estoque === undefined ||
+            produto.estoque === null
         ) {
 
             produto.estoque = 0;
@@ -2249,22 +2210,27 @@ function registrarMovimentacao() {
         }
 
 
+        /* ENTRADA */
+
         if (
             operacao === "entrada"
         ) {
 
-            produto.estoque +=
+            produto.estoque =
+                Number(produto.estoque) +
                 quantidade;
 
         }
 
+
+        /* SAÍDA */
 
         if (
             operacao === "saida"
         ) {
 
             if (
-                produto.estoque <
+                Number(produto.estoque) <
                 quantidade
             ) {
 
@@ -2277,7 +2243,8 @@ function registrarMovimentacao() {
             }
 
 
-            produto.estoque -=
+            produto.estoque =
+                Number(produto.estoque) -
                 quantidade;
 
         }
@@ -2286,7 +2253,7 @@ function registrarMovimentacao() {
 
 
     /* =================================================
-       MOVIMENTAR MATÉRIA-PRIMA
+       MATÉRIA-PRIMA
     ================================================= */
 
     if (
@@ -2298,8 +2265,8 @@ function registrarMovimentacao() {
                 function(item) {
 
                     return (
-                        item.codigo ===
-                        codigo
+                        String(item.codigo) ===
+                        String(codigo)
                     );
 
                 }
@@ -2320,7 +2287,8 @@ function registrarMovimentacao() {
 
 
         if (
-            materiaPrima.estoque === undefined
+            materiaPrima.estoque === undefined ||
+            materiaPrima.estoque === null
         ) {
 
             materiaPrima.estoque = 0;
@@ -2328,22 +2296,27 @@ function registrarMovimentacao() {
         }
 
 
+        /* ENTRADA */
+
         if (
             operacao === "entrada"
         ) {
 
-            materiaPrima.estoque +=
+            materiaPrima.estoque =
+                Number(materiaPrima.estoque) +
                 quantidade;
 
         }
 
+
+        /* SAÍDA */
 
         if (
             operacao === "saida"
         ) {
 
             if (
-                materiaPrima.estoque <
+                Number(materiaPrima.estoque) <
                 quantidade
             ) {
 
@@ -2356,7 +2329,8 @@ function registrarMovimentacao() {
             }
 
 
-            materiaPrima.estoque -=
+            materiaPrima.estoque =
+                Number(materiaPrima.estoque) -
                 quantidade;
 
         }
@@ -2365,7 +2339,7 @@ function registrarMovimentacao() {
 
 
     /* =================================================
-       CRIAR REGISTRO DO HISTÓRICO
+       REGISTRO DA MOVIMENTAÇÃO
     ================================================= */
 
     const movimentacao = {
@@ -2415,7 +2389,7 @@ function registrarMovimentacao() {
 
 
     /* =================================================
-       SALVAR BANCO
+       SALVAR
     ================================================= */
 
     salvarBanco();
@@ -2426,6 +2400,9 @@ function registrarMovimentacao() {
     ================================================= */
 
     mostrarEstoque();
+
+
+    atualizarItensMovimentacao();
 
 
     atualizarHistoricoMovimentacoes();
@@ -2482,9 +2459,7 @@ function atualizarHistoricoMovimentacoes() {
 
 
     if (
-        !Array.isArray(
-            movimentacoes
-        ) ||
+        !Array.isArray(movimentacoes) ||
         movimentacoes.length === 0
     ) {
 
@@ -2505,7 +2480,6 @@ function atualizarHistoricoMovimentacoes() {
 
         `;
 
-
         return;
 
     }
@@ -2515,9 +2489,7 @@ function atualizarHistoricoMovimentacoes() {
         .slice()
         .reverse()
         .forEach(
-            function(
-                movimentacao
-            ) {
+            function(movimentacao) {
 
 
                 let nome =
@@ -2536,18 +2508,21 @@ function atualizarHistoricoMovimentacoes() {
                     "produto"
                 ) {
 
-
                     const produto =
-                        produtos.find(
-                            function(item) {
+                        Array.isArray(produtos)
+                            ? produtos.find(
+                                function(item) {
 
-                                return (
-                                    item.codigo ===
-                                    movimentacao.codigo
-                                );
+                                    return (
+                                        String(item.codigo) ===
+                                        String(
+                                            movimentacao.codigo
+                                        )
+                                    );
 
-                            }
-                        );
+                                }
+                            )
+                            : null;
 
 
                     if (
@@ -2571,18 +2546,21 @@ function atualizarHistoricoMovimentacoes() {
                     "materiaPrima"
                 ) {
 
-
                     const materiaPrima =
-                        materiasPrimas.find(
-                            function(item) {
+                        Array.isArray(materiasPrimas)
+                            ? materiasPrimas.find(
+                                function(item) {
 
-                                return (
-                                    item.codigo ===
-                                    movimentacao.codigo
-                                );
+                                    return (
+                                        String(item.codigo) ===
+                                        String(
+                                            movimentacao.codigo
+                                        )
+                                    );
 
-                            }
-                        );
+                                }
+                            )
+                            : null;
 
 
                     if (
@@ -2601,38 +2579,22 @@ function atualizarHistoricoMovimentacoes() {
                    TIPO
                 ================================================= */
 
-                let tipoTexto =
-                    "Produto Acabado";
-
-
-                if (
+                const tipoTexto =
                     movimentacao.tipo ===
                     "materiaPrima"
-                ) {
-
-                    tipoTexto =
-                        "Matéria-Prima";
-
-                }
+                        ? "Matéria-Prima"
+                        : "Produto Acabado";
 
 
                 /* =================================================
                    OPERAÇÃO
                 ================================================= */
 
-                let operacaoTexto =
-                    "Entrada";
-
-
-                if (
+                const operacaoTexto =
                     movimentacao.operacao ===
                     "saida"
-                ) {
-
-                    operacaoTexto =
-                        "Saída";
-
-                }
+                        ? "Saída"
+                        : "Entrada";
 
 
                 tabela.innerHTML += `
@@ -2674,10 +2636,16 @@ function atualizarHistoricoMovimentacoes() {
 
 
 /* =====================================================
-   INICIALIZAR MÓDULO ESTOQUE
+   INICIALIZAR ESTOQUE
 ===================================================== */
 
 function inicializarEstoque() {
+
+    const tipoEstoque =
+        document.getElementById(
+            "tipoEstoque"
+        );
+
 
     const dataMovimentacao =
         document.getElementById(
@@ -2710,16 +2678,45 @@ function inicializarEstoque() {
 
 
     /* =================================================
-       CARREGAR HISTÓRICO
+       CARREGAR ITENS
+    ================================================= */
+
+    atualizarItensMovimentacao();
+
+
+    /* =================================================
+       HISTÓRICO
     ================================================= */
 
     atualizarHistoricoMovimentacoes();
+
+
+    /* =================================================
+       EVENTO DO TIPO DE ESTOQUE
+    ================================================= */
+
+    if (
+        tipoEstoque
+    ) {
+
+        tipoEstoque.addEventListener(
+            "change",
+            function() {
+
+                mostrarEstoque();
+
+                atualizarItensMovimentacao();
+
+            }
+        );
+
+    }
 
 }
 
 
 /* =====================================================
-   INICIALIZAÇÃO AUTOMÁTICA
+   INICIALIZAÇÃO
 ===================================================== */
 
 document.addEventListener(
