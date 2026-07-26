@@ -1038,299 +1038,112 @@ Custo total
 
 
 
-<!-- ==========================
-        ESTOQUE
-========================== -->
+<!-- =====================================================
+     ABA ESTOQUE
+===================================================== -->
 
+<section
+    id="estoque"
+    class="aba"
+>
 
-<section 
-id="estoque" 
-class="aba">
+    <div class="content">
 
+        <h1 class="page-title">
+            Estoque
+        </h1>
 
+        <p class="page-subtitle">
+            Consulte automaticamente o estoque de matérias-primas
+            e produtos acabados.
+        </p>
 
-<div class="section">
 
+        <!-- =================================================
+             SELEÇÃO DO TIPO DE ESTOQUE
+        ================================================== -->
 
-<h2 class="section-title">
+        <div class="section">
 
-📋 Controle de Estoque
+            <div class="section-header">
 
-</h2>
+                <h2 class="section-title">
+                    Consulta de Estoque
+                </h2>
 
+            </div>
 
 
+            <div class="form-grid">
 
+                <div class="form-group">
 
-<div class="form-box">
+                    <label for="tipoEstoque">
+                        Tipo de Estoque
+                    </label>
 
+                    <select
+                        id="tipoEstoque"
+                        onchange="alterarTipoEstoque()"
+                    >
 
-<div class="form-grid">
+                        <option value="materiaPrima">
+                            Matéria-Prima
+                        </option>
 
+                        <option value="produtoAcabado">
+                            Produto Acabado
+                        </option>
 
+                    </select>
 
+                </div>
 
+            </div>
 
-<div class="form-group">
+        </div>
 
 
-<label>
+        <!-- =================================================
+             TABELA DE ESTOQUE
+        ================================================== -->
 
-Tipo
+        <div class="section">
 
-</label>
+            <div class="table-container">
 
+                <table>
 
-<select id="tipoEstoque">
+                    <thead id="cabecalhoEstoque">
 
+                        <!--
+                            O cabeçalho será alterado
+                            automaticamente pelo app.js
+                            conforme o tipo de estoque.
+                        -->
 
-<option value="produto">
+                    </thead>
 
-Produto Acabado
 
-</option>
+                    <tbody id="listaEstoque">
 
+                        <!--
+                            Os itens cadastrados serão
+                            carregados automaticamente
+                            pelo app.js.
+                        -->
 
-<option value="materia">
+                    </tbody>
 
-Matéria-Prima
+                </table>
 
-</option>
+            </div>
 
+        </div>
 
-</select>
-
-
-</div>
-
-
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Operação
-
-</label>
-
-
-<select id="operacaoEstoque">
-
-
-<option value="entrada">
-
-Entrada
-
-</option>
-
-
-<option value="saida">
-
-Saída
-
-</option>
-
-
-</select>
-
-
-</div>
-
-
-
-
-
-
-<div class="form-group full">
-
-
-<label>
-
-Item
-
-</label>
-
-
-<select id="itemEstoque">
-
-
-</select>
-
-
-</div>
-
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Quantidade
-
-</label>
-
-
-<input
-type="number"
-id="quantidadeEstoque"
-value="1">
-
-
-</div>
-
-
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Data
-
-</label>
-
-
-<input
-type="date"
-id="dataEstoque">
-
-
-</div>
-
-
-
-
-
-<div class="form-group full">
-
-
-<label>
-
-Observação
-
-</label>
-
-
-<textarea
-id="observacaoEstoque"></textarea>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-<div class="btn-group">
-
-
-<button
-class="btn btn-save"
-onclick="registrarEstoque()">
-
-💾 Registrar
-
-</button>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-<div class="section">
-
-
-<h2 class="section-title">
-
-📜 Histórico de Movimentações
-
-</h2>
-
-
-
-<div class="table-container">
-
-
-<table>
-
-
-<thead>
-
-
-<tr>
-
-<th>
-Data
-</th>
-
-
-<th>
-Item
-</th>
-
-
-<th>
-Tipo
-</th>
-
-
-<th>
-Operação
-</th>
-
-
-<th>
-Quantidade
-</th>
-
-
-</tr>
-
-
-</thead>
-
-
-<tbody id="listaEstoque">
-
-
-</tbody>
-
-
-</table>
-
-
-</div>
-
-
-</div>
-
-
+    </div>
 
 </section>
-
 
 
 
