@@ -4404,12 +4404,6 @@ document.addEventListener(
 /* =====================================================
    MÓDULO DE ETIQUETAS
    CAROL'S GOURMET ERP 4.0
-
-   Tamanho:
-   5 cm largura x 2 cm altura
-
-   O código de barras utilizado na etiqueta é
-   exatamente o código cadastrado no produto.
 ===================================================== */
 
 
@@ -4417,7 +4411,7 @@ document.addEventListener(
    ATUALIZAR PRODUTOS NO SELECT DE ETIQUETAS
 ===================================================== */
 
-function atualizarProdutosEtiquetas() {
+function atualizarProdutosEtiqueta() {
 
     const select =
         document.getElementById(
@@ -4425,7 +4419,9 @@ function atualizarProdutosEtiquetas() {
         );
 
 
-    if (!select) {
+    if (
+        !select
+    ) {
 
         return;
 
@@ -4433,29 +4429,6 @@ function atualizarProdutosEtiquetas() {
 
 
     select.innerHTML = "";
-
-
-    /* =================================================
-       OPÇÃO INICIAL
-    ================================================= */
-
-    const opcaoInicial =
-        document.createElement(
-            "option"
-        );
-
-
-    opcaoInicial.value =
-        "";
-
-
-    opcaoInicial.textContent =
-        "Selecione um produto";
-
-
-    select.appendChild(
-        opcaoInicial
-    );
 
 
     /* =================================================
@@ -4467,23 +4440,22 @@ function atualizarProdutosEtiquetas() {
         produtos.length === 0
     ) {
 
-
-        const opcao =
+        const option =
             document.createElement(
                 "option"
             );
 
 
-        opcao.value =
+        option.value =
             "";
 
 
-        opcao.textContent =
+        option.textContent =
             "Nenhum produto cadastrado";
 
 
         select.appendChild(
-            opcao
+            option
         );
 
 
@@ -4493,33 +4465,63 @@ function atualizarProdutosEtiquetas() {
 
 
     /* =================================================
+       OPÇÃO INICIAL
+    ================================================= */
+
+    const primeiraOpcao =
+        document.createElement(
+            "option"
+        );
+
+
+    primeiraOpcao.value =
+        "";
+
+
+    primeiraOpcao.textContent =
+        "Selecione um produto";
+
+
+    select.appendChild(
+        primeiraOpcao
+    );
+
+
+    /* =================================================
        CARREGAR PRODUTOS
     ================================================= */
 
     produtos.forEach(
-        function(produto) {
+        function(
+            produto
+        ) {
 
 
-            const opcao =
+            const option =
                 document.createElement(
                     "option"
                 );
 
 
-            opcao.value =
+            option.value =
                 produto.codigo ||
                 "";
 
 
-            opcao.textContent =
+            option.textContent =
                 (
                     produto.nome ||
                     "Produto sem nome"
+                ) +
+                " - " +
+                (
+                    produto.codigoBarras ||
+                    "Sem código"
                 );
 
 
             select.appendChild(
-                opcao
+                option
             );
 
         }
@@ -4529,10 +4531,11 @@ function atualizarProdutosEtiquetas() {
 
 
 /* =====================================================
-   CARREGAR DATAS DA PRODUÇÃO
+   CALCULAR VALIDADE DA ETIQUETA
 ===================================================== */
 
-function carregarDatasEtiqueta() {
+function calcularValidadeEtiqueta() {
+
 
     const produtoCampo =
         document.getElementById(
@@ -4563,16 +4566,142 @@ function carregarDatasEtiqueta() {
     }
 
 
-    const codigoProduto =
-        produtoCampo.value;
+    /* =================================================
+       LOCALIZAR PRODUTO
+    ================================================= */
+
+    const produtoSelecionado =
+        produtos.find(
+            function(
+                produto
+            ) {
+
+                return (
+                    produto.codigo ===
+                    produtoCampo.value
+                );
+
+            }
+        );
 
 
     if (
-        !codigoProduto
+        !produtoSelecionado
     ) {
 
-        fabricacaoCampo.value =
+        validadeCampo.value =
             "";
+
+        validadeCampo.readOnly =
+            true;
+
+        return;
+
+    }
+
+
+    /* =================================================
+       NOME DO PRODUTO
+    ================================================= */
+
+    const nomeProduto =
+        (
+            produtoSelecionado.nome ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+    /* =================================================
+       DEFINIR VALIDADE
+    ================================================= */
+
+    let diasValidade =
+        null;
+
+
+    /* ---------------------------------------------
+       PALHA ITALIANA
+    --------------------------------------------- */
+
+    if (
+        nomeProduto.includes(
+            "palha italiana"
+        )
+    ) {
+
+        diasValidade =
+            20;
+
+    }
+
+
+    /* ---------------------------------------------
+       BROWNIE
+    --------------------------------------------- */
+
+    else if (
+        nomeProduto.includes(
+            "brownie"
+        )
+    ) {
+
+        diasValidade =
+            20;
+
+    }
+
+
+    /* ---------------------------------------------
+       BOLO DE POTE
+    --------------------------------------------- */
+
+    else if (
+        nomeProduto.includes(
+            "bolo de pote"
+        )
+    ) {
+
+        diasValidade =
+            7;
+
+    }
+
+
+    /* =================================================
+       VALIDADE MANUAL
+    ================================================= */
+
+    if (
+        diasValidade ===
+        null
+    ) {
+
+        validadeCampo.readOnly =
+            false;
+
+
+        validadeCampo.value =
+            "";
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       VALIDADE AUTOMÁTICA
+    ================================================= */
+
+    validadeCampo.readOnly =
+        true;
+
+
+    if (
+        !fabricacaoCampo.value
+    ) {
 
         validadeCampo.value =
             "";
@@ -4582,81 +4711,63 @@ function carregarDatasEtiqueta() {
     }
 
 
-    /* =================================================
-       PROCURAR ÚLTIMA PRODUÇÃO
-    ================================================= */
+    const data =
+        new Date(
+            fabricacaoCampo.value +
+            "T00:00:00"
+        );
+
 
     if (
-        Array.isArray(producoes)
+        isNaN(
+            data.getTime()
+        )
     ) {
 
+        validadeCampo.value =
+            "";
 
-        const producoesProduto =
-            producoes
-                .filter(
-                    function(producao) {
-
-                        return (
-                            producao.codigoProduto ===
-                            codigoProduto
-                        );
-
-                    }
-                )
-                .sort(
-                    function(a, b) {
-
-                        return (
-                            new Date(
-                                b.dataRegistro
-                            ) -
-                            new Date(
-                                a.dataRegistro
-                            )
-                        );
-
-                    }
-                );
-
-
-        if (
-            producoesProduto.length > 0
-        ) {
-
-
-            const ultimaProducao =
-                producoesProduto[0];
-
-
-            fabricacaoCampo.value =
-                ultimaProducao.fabricacao ||
-                "";
-
-
-            validadeCampo.value =
-                ultimaProducao.validade ||
-                "";
-
-
-            return;
-
-        }
+        return;
 
     }
 
 
-    /* =================================================
-       SE NÃO HOUVER PRODUÇÃO
-    ================================================= */
+    data.setDate(
+        data.getDate() +
+        diasValidade
+    );
 
-    fabricacaoCampo.value =
-        new Date()
-        .toISOString()
-        .split("T")[0];
+
+    const ano =
+        data.getFullYear();
+
+
+    const mes =
+        String(
+            data.getMonth() + 1
+        )
+        .padStart(
+            2,
+            "0"
+        );
+
+
+    const dia =
+        String(
+            data.getDate()
+        )
+        .padStart(
+            2,
+            "0"
+        );
 
 
     validadeCampo.value =
-        "";
+        ano +
+        "-" +
+        mes +
+        "-" +
+        dia;
 
 }
 
@@ -4674,12 +4785,6 @@ function gerarEtiqueta() {
         );
 
 
-    const quantidadeCampo =
-        document.getElementById(
-            "quantidadeEtiquetas"
-        );
-
-
     const fabricacaoCampo =
         document.getElementById(
             "fabricacaoEtiqueta"
@@ -4692,18 +4797,38 @@ function gerarEtiqueta() {
         );
 
 
-    const preview =
+    const codigoBarrasCampo =
         document.getElementById(
-            "previewEtiqueta"
+            "codigoBarrasEtiqueta"
+        );
+
+
+    const mostrarProduto =
+        document.getElementById(
+            "mostrarProduto"
+        );
+
+
+    const mostrarFabricacao =
+        document.getElementById(
+            "mostrarFabricacao"
+        );
+
+
+    const mostrarValidade =
+        document.getElementById(
+            "mostrarValidade"
         );
 
 
     if (
         !produtoCampo ||
-        !quantidadeCampo ||
         !fabricacaoCampo ||
         !validadeCampo ||
-        !preview
+        !codigoBarrasCampo ||
+        !mostrarProduto ||
+        !mostrarFabricacao ||
+        !mostrarValidade
     ) {
 
         alert(
@@ -4715,53 +4840,19 @@ function gerarEtiqueta() {
     }
 
 
-    const codigoProduto =
-        produtoCampo.value;
-
-
-    const quantidade =
-        Number(
-            quantidadeCampo.value
-        );
-
-
-    const fabricacao =
-        fabricacaoCampo.value;
-
-
-    const validade =
-        validadeCampo.value;
-
-
     /* =================================================
        VALIDAR PRODUTO
     ================================================= */
 
     if (
-        !codigoProduto
+        produtoCampo.value === ""
     ) {
 
         alert(
             "Selecione um produto."
         );
 
-        return;
-
-    }
-
-
-    /* =================================================
-       VALIDAR QUANTIDADE
-    ================================================= */
-
-    if (
-        !quantidade ||
-        quantidade <= 0
-    ) {
-
-        alert(
-            "Informe uma quantidade válida de etiquetas."
-        );
+        produtoCampo.focus();
 
         return;
 
@@ -4774,11 +4865,13 @@ function gerarEtiqueta() {
 
     const produto =
         produtos.find(
-            function(item) {
+            function(
+                item
+            ) {
 
                 return (
                     item.codigo ===
-                    codigoProduto
+                    produtoCampo.value
                 );
 
             }
@@ -4799,7 +4892,48 @@ function gerarEtiqueta() {
 
 
     /* =================================================
-       CÓDIGO DE BARRAS
+       VALIDAR FABRICAÇÃO
+    ================================================= */
+
+    if (
+        fabricacaoCampo.value === ""
+    ) {
+
+        alert(
+            "Informe a data de fabricação."
+        );
+
+        fabricacaoCampo.focus();
+
+        return;
+
+    }
+
+
+    /* =================================================
+       CALCULAR VALIDADE
+    ================================================= */
+
+    calcularValidadeEtiqueta();
+
+
+    if (
+        validadeCampo.value === ""
+    ) {
+
+        alert(
+            "Informe a validade do produto."
+        );
+
+        validadeCampo.focus();
+
+        return;
+
+    }
+
+
+    /* =================================================
+       PEGAR CÓDIGO DE BARRAS
     ================================================= */
 
     const codigoBarras =
@@ -4821,116 +4955,111 @@ function gerarEtiqueta() {
 
 
     /* =================================================
-       LIMPAR PREVIEW
+       MOSTRAR NOME
     ================================================= */
 
-    preview.innerHTML =
+    mostrarProduto.textContent =
+        produto.nome ||
+        "Produto";
+
+
+    /* =================================================
+       MOSTRAR DATA DE FABRICAÇÃO
+    ================================================= */
+
+    mostrarFabricacao.textContent =
+        formatarDataEtiqueta(
+            fabricacaoCampo.value
+        );
+
+
+    /* =================================================
+       MOSTRAR VALIDADE
+    ================================================= */
+
+    mostrarValidade.textContent =
+        formatarDataEtiqueta(
+            validadeCampo.value
+        );
+
+
+    /* =================================================
+       LIMPAR CÓDIGO ANTERIOR
+    ================================================= */
+
+    codigoBarrasCampo.innerHTML =
         "";
 
 
     /* =================================================
-       CRIAR ETIQUETAS
+       GERAR CÓDIGO DE BARRAS
+       EAN-13
     ================================================= */
 
-    for (
-        let i = 0;
-        i < quantidade;
-        i++
-    ) {
-
-
-        const etiqueta =
-            document.createElement(
-                "div"
-            );
-
-
-        etiqueta.className =
-            "etiqueta-impressao";
-
-
-        etiqueta.innerHTML = `
-
-            <div class="etiqueta-nome">
-
-                ${produto.nome || ""}
-
-            </div>
-
-
-            <svg
-                class="codigo-barras-etiqueta"
-                data-codigo="${codigoBarras}"
-            ></svg>
-
-
-            <div class="etiqueta-numero">
-
-                ${codigoBarras}
-
-            </div>
-
-
-            <div class="etiqueta-datas">
-
-                FAB:
-                ${formatarDataEtiqueta(fabricacao)}
-
-                &nbsp;&nbsp;
-
-                VAL:
-                ${formatarDataEtiqueta(validade)}
-
-            </div>
-
-        `;
-
-
-        preview.appendChild(
-            etiqueta
+    const svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
         );
 
 
-        /* =================================================
-           GERAR CÓDIGO DE BARRAS
-        ================================================= */
-
-        const svg =
-            etiqueta.querySelector(
-                ".codigo-barras-etiqueta"
-            );
+    codigoBarrasCampo.appendChild(
+        svg
+    );
 
 
-        if (
-            typeof JsBarcode ===
-            "function"
-        ) {
+    try {
+
+        JsBarcode(
+            svg,
+            codigoBarras,
+            {
+
+                format:
+                    "EAN13",
+
+                width:
+                    1.5,
+
+                height:
+                    35,
+
+                displayValue:
+                    true,
+
+                fontSize:
+                    10,
+
+                margin:
+                    0,
+
+                textMargin:
+                    2
+
+            }
+        );
+
+    }
+
+    catch (
+        erro
+    ) {
+
+        console.error(
+            erro
+        );
 
 
-            JsBarcode(
-                svg,
-                codigoBarras,
-                {
+        alert(
+            "Não foi possível gerar o código de barras."
+        );
 
-                    format:
-                        "ean13",
 
-                    width:
-                        1.5,
+        codigoBarrasCampo.innerHTML =
+            "";
 
-                    height:
-                        35,
 
-                    displayValue:
-                        false,
-
-                    margin:
-                        0
-
-                }
-            );
-
-        }
+        return;
 
     }
 
@@ -4962,7 +5091,8 @@ function formatarDataEtiqueta(
 
 
     if (
-        partes.length === 3
+        partes.length ===
+        3
     ) {
 
         return (
@@ -4982,25 +5112,24 @@ function formatarDataEtiqueta(
 
 
 /* =====================================================
-   IMPRIMIR ETIQUETAS
+   SALVAR ETIQUETA COMO PNG
 ===================================================== */
 
-function imprimirEtiquetas() {
+function salvarEtiquetaPNG() {
 
 
-    const preview =
+    const etiqueta =
         document.getElementById(
-            "previewEtiqueta"
+            "etiquetaGerada"
         );
 
 
     if (
-        !preview ||
-        preview.innerHTML.trim() === ""
+        !etiqueta
     ) {
 
         alert(
-            "Gere a etiqueta antes de imprimir."
+            "Etiqueta não encontrada."
         );
 
         return;
@@ -5008,19 +5137,23 @@ function imprimirEtiquetas() {
     }
 
 
-    const janela =
-        window.open(
-            "",
-            "_blank"
+    /* =================================================
+       VERIFICAR SE EXISTE PRODUTO
+    ================================================= */
+
+    const produtoCampo =
+        document.getElementById(
+            "produtoEtiqueta"
         );
 
 
     if (
-        !janela
+        !produtoCampo ||
+        produtoCampo.value === ""
     ) {
 
         alert(
-            "O navegador bloqueou a janela de impressão."
+            "Selecione um produto e gere a visualização primeiro."
         );
 
         return;
@@ -5028,201 +5161,114 @@ function imprimirEtiquetas() {
     }
 
 
-    janela.document.write(`
+    /* =================================================
+       VERIFICAR HTML2CANVAS
+    ================================================= */
 
-        <!DOCTYPE html>
+    if (
+        typeof html2canvas !==
+        "function"
+    ) {
 
-        <html>
+        alert(
+            "A biblioteca de geração de imagem não está carregada."
+        );
 
-        <head>
+        return;
 
-            <meta charset="UTF-8">
+    }
 
-            <title>
-                Etiquetas - Carol's Gourmet
-            </title>
 
+    /* =================================================
+       GERAR IMAGEM
+    ================================================= */
 
-            <style>
+    html2canvas(
+        etiqueta,
+        {
 
-                @page {
+            scale:
+                3,
 
-                    size:
-                        50mm
-                        20mm;
+            backgroundColor:
+                "#ffffff"
 
-                    margin:
-                        0;
+        }
+    )
+    .then(
+        function(
+            canvas
+        ) {
 
-                }
 
+            const link =
+                document.createElement(
+                    "a"
+                );
 
-                * {
 
-                    box-sizing:
-                        border-box;
+            const produto =
+                produtos.find(
+                    function(
+                        item
+                    ) {
 
-                }
+                        return (
+                            item.codigo ===
+                            produtoCampo.value
+                        );
 
+                    }
+                );
 
-                html,
-                body {
 
-                    margin:
-                        0;
+            const nomeArquivo =
+                produto &&
+                produto.nome
+                    ? produto.nome
+                        .replace(
+                            /[^a-zA-Z0-9À-ÿ ]/g,
+                            ""
+                        )
+                        .replace(
+                            /\s+/g,
+                            "_"
+                        )
+                    : "etiqueta";
 
-                    padding:
-                        0;
 
-                    width:
-                        50mm;
+            link.download =
+                "etiqueta_" +
+                nomeArquivo +
+                ".png";
 
-                }
 
+            link.href =
+                canvas.toDataURL(
+                    "image/png"
+                );
 
-                body {
 
-                    font-family:
-                        Arial,
-                        sans-serif;
+            link.click();
 
-                }
+        }
+    )
+    .catch(
+        function(
+            erro
+        ) {
 
+            console.error(
+                erro
+            );
 
-                .etiqueta-impressao {
 
-                    width:
-                        50mm;
+            alert(
+                "Não foi possível gerar a imagem da etiqueta."
+            );
 
-                    height:
-                        20mm;
-
-                    padding:
-                        1mm;
-
-                    display:
-                        flex;
-
-                    flex-direction:
-                        column;
-
-                    justify-content:
-                        center;
-
-                    align-items:
-                        center;
-
-                    overflow:
-                        hidden;
-
-                    page-break-after:
-                        always;
-
-                }
-
-
-                .etiqueta-nome {
-
-                    width:
-                        100%;
-
-                    font-size:
-                        8pt;
-
-                    font-weight:
-                        bold;
-
-                    text-align:
-                        center;
-
-                    white-space:
-                        nowrap;
-
-                    overflow:
-                        hidden;
-
-                    text-overflow:
-                        ellipsis;
-
-                }
-
-
-                .codigo-barras-etiqueta {
-
-                    width:
-                        44mm;
-
-                    height:
-                        9mm;
-
-                    display:
-                        block;
-
-                }
-
-
-                .etiqueta-numero {
-
-                    font-size:
-                        6pt;
-
-                    letter-spacing:
-                        0.5px;
-
-                    line-height:
-                        2.5mm;
-
-                }
-
-
-                .etiqueta-datas {
-
-                    width:
-                        100%;
-
-                    font-size:
-                        6pt;
-
-                    font-weight:
-                        bold;
-
-                    text-align:
-                        center;
-
-                    white-space:
-                        nowrap;
-
-                }
-
-            </style>
-
-        </head>
-
-
-        <body>
-
-            ${preview.innerHTML}
-
-        </body>
-
-        </html>
-
-    `);
-
-
-    janela.document.close();
-
-
-    janela.onload =
-        function() {
-
-            janela.focus();
-
-            janela.print();
-
-            janela.close();
-
-        };
+        }
+    );
 
 }
 
@@ -5234,25 +5280,11 @@ function imprimirEtiquetas() {
 function inicializarEtiquetas() {
 
 
-    atualizarProdutosEtiquetas();
+    /* =================================================
+       CARREGAR PRODUTOS
+    ================================================= */
 
-
-    const produtoCampo =
-        document.getElementById(
-            "produtoEtiqueta"
-        );
-
-
-    if (
-        produtoCampo
-    ) {
-
-        produtoCampo.addEventListener(
-            "change",
-            carregarDatasEtiqueta
-        );
-
-    }
+    atualizarProdutosEtiqueta();
 
 
     /* =================================================
@@ -5272,8 +5304,31 @@ function inicializarEtiquetas() {
 
         fabricacaoCampo.value =
             new Date()
-            .toISOString()
-            .split("T")[0];
+                .toISOString()
+                .split("T")[0];
+
+    }
+
+
+    /* =================================================
+       LIMPAR VALIDADE
+    ================================================= */
+
+    const validadeCampo =
+        document.getElementById(
+            "validadeEtiqueta"
+        );
+
+
+    if (
+        validadeCampo
+    ) {
+
+        validadeCampo.value =
+            "";
+
+        validadeCampo.readOnly =
+            true;
 
     }
 
@@ -5281,25 +5336,67 @@ function inicializarEtiquetas() {
 
 
 /* =====================================================
-   ATUALIZAR ETIQUETAS QUANDO PRODUTO FOR SALVO
-===================================================== */
-
-function atualizarEtiquetasAposCadastro() {
-
-    atualizarProdutosEtiquetas();
-
-}
-
-
-/* =====================================================
-   INICIALIZAÇÃO AUTOMÁTICA
+   EVENTOS DAS ETIQUETAS
 ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
+
         inicializarEtiquetas();
+
+
+        /* =================================================
+           PRODUTO ALTERADO
+        ================================================= */
+
+        const produtoCampo =
+            document.getElementById(
+                "produtoEtiqueta"
+            );
+
+
+        if (
+            produtoCampo
+        ) {
+
+            produtoCampo.addEventListener(
+                "change",
+                function() {
+
+                    calcularValidadeEtiqueta();
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           DATA DE FABRICAÇÃO ALTERADA
+        ================================================= */
+
+        const fabricacaoCampo =
+            document.getElementById(
+                "fabricacaoEtiqueta"
+            );
+
+
+        if (
+            fabricacaoCampo
+        ) {
+
+            fabricacaoCampo.addEventListener(
+                "change",
+                function() {
+
+                    calcularValidadeEtiqueta();
+
+                }
+            );
+
+        }
 
     }
 );
