@@ -1,10 +1,14 @@
 /* =========================================================
-   CAROL'S GOURMET ERP
-   APP.JS - VERSÃO CONSOLIDADA
+   CAROL'S GOURMET
+   APP.JS
+   ERP 4.0
+   VERSÃO COMPLETA E CORRIGIDA
+
    Compatível com o index.html enviado
 ========================================================= */
 
 "use strict";
+
 
 /* =========================================================
    BANCO DE DADOS
@@ -21,7 +25,7 @@ let materiaPrimaEditando = null;
 
 
 /* =========================================================
-   LOCALSTORAGE
+   CHAVES DO LOCALSTORAGE
 ========================================================= */
 
 const STORAGE_PRODUTOS =
@@ -57,8 +61,6 @@ document.addEventListener(
 
         configurarDatas();
 
-        configurarEventos();
-
         atualizarTudo();
 
     }
@@ -80,12 +82,14 @@ function carregarDados() {
                 )
             ) || [];
 
+
         materiasPrimas =
             JSON.parse(
                 localStorage.getItem(
                     STORAGE_MP
                 )
             ) || [];
+
 
         movimentacoes =
             JSON.parse(
@@ -94,12 +98,14 @@ function carregarDados() {
                 )
             ) || [];
 
+
         producoes =
             JSON.parse(
                 localStorage.getItem(
                     STORAGE_PRODUCOES
                 )
             ) || [];
+
 
         precificacoes =
             JSON.parse(
@@ -108,7 +114,9 @@ function carregarDados() {
                 )
             ) || [];
 
-    } catch (erro) {
+    }
+
+    catch (erro) {
 
         console.error(
             "Erro ao carregar dados:",
@@ -116,9 +124,13 @@ function carregarDados() {
         );
 
         produtos = [];
+
         materiasPrimas = [];
+
         movimentacoes = [];
+
         producoes = [];
+
         precificacoes = [];
 
     }
@@ -137,32 +149,42 @@ function salvarDados() {
         JSON.stringify(produtos)
     );
 
+
     localStorage.setItem(
         STORAGE_MP,
         JSON.stringify(materiasPrimas)
     );
+
 
     localStorage.setItem(
         STORAGE_MOVIMENTACOES,
         JSON.stringify(movimentacoes)
     );
 
+
     localStorage.setItem(
         STORAGE_PRODUCOES,
         JSON.stringify(producoes)
     );
+
 
     localStorage.setItem(
         STORAGE_PRECIFICACOES,
         JSON.stringify(precificacoes)
     );
 
-    localStorage.setItem(
-        STORAGE_ULTIMA_ATUALIZACAO,
+
+    const agora =
         new Date().toLocaleString(
             "pt-BR"
-        )
+        );
+
+
+    localStorage.setItem(
+        STORAGE_ULTIMA_ATUALIZACAO,
+        agora
     );
+
 
     atualizarUltimaAtualizacao();
 
@@ -179,73 +201,13 @@ function inicializarSistema() {
 
     gerarNovoCodigoMP();
 
-}
+    atualizarSelectsProdutos();
 
+    atualizarSelectsMateriaPrima();
 
-/* =========================================================
-   CONFIGURAR EVENTOS
-========================================================= */
+    alterarTipoEstoque();
 
-function configurarEventos() {
-
-    const fabricacaoProducao =
-        document.getElementById(
-            "fabricacaoProducao"
-        );
-
-    if (fabricacaoProducao) {
-
-        fabricacaoProducao.addEventListener(
-            "change",
-            calcularValidadeProducao
-        );
-
-    }
-
-
-    const produtoProducao =
-        document.getElementById(
-            "produtoProducao"
-        );
-
-    if (produtoProducao) {
-
-        produtoProducao.addEventListener(
-            "change",
-            calcularValidadeProducao
-        );
-
-    }
-
-
-    const fabricacaoEtiqueta =
-        document.getElementById(
-            "fabricacaoEtiqueta"
-        );
-
-    if (fabricacaoEtiqueta) {
-
-        fabricacaoEtiqueta.addEventListener(
-            "change",
-            calcularValidadeEtiqueta
-        );
-
-    }
-
-
-    const produtoEtiqueta =
-        document.getElementById(
-            "produtoEtiqueta"
-        );
-
-    if (produtoEtiqueta) {
-
-        produtoEtiqueta.addEventListener(
-            "change",
-            calcularValidadeEtiqueta
-        );
-
-    }
+    atualizarItensMovimentacao();
 
 }
 
@@ -263,6 +225,7 @@ function mostrarAba(
         document.querySelectorAll(
             ".aba"
         );
+
 
     abas.forEach(
         function (aba) {
@@ -338,26 +301,6 @@ function mostrarAba(
 
     }
 
-
-    /* Atualiza validade ao entrar nas abas */
-
-    if (
-        idAba === "producao"
-    ) {
-
-        calcularValidadeProducao();
-
-    }
-
-
-    if (
-        idAba === "etiquetas"
-    ) {
-
-        calcularValidadeEtiqueta();
-
-    }
-
 }
 
 
@@ -388,7 +331,7 @@ function toggleMenu() {
 
 
 /* =========================================================
-   CÓDIGOS INTERNOS
+   GERAR CÓDIGO INTERNO
 ========================================================= */
 
 function gerarCodigoInterno(
@@ -411,9 +354,7 @@ function gerarCodigoInterno(
 
             const numero =
                 parseInt(
-                    String(
-                        item.codigo
-                    ).replace(
+                    item.codigo.replace(
                         prefixo,
                         ""
                     ),
@@ -435,85 +376,16 @@ function gerarCodigoInterno(
     );
 
 
+    const proximo =
+        maiorNumero + 1;
+
+
     return (
         prefixo +
-        String(
-            maiorNumero + 1
-        ).padStart(
+        String(proximo).padStart(
             4,
             "0"
         )
-    );
-
-}
-
-
-/* =========================================================
-   GERAR EAN-13
-========================================================= */
-
-function gerarEAN13() {
-
-    let base = "";
-
-
-    /*
-       Prefixo 20 = código interno
-       de circulação restrita.
-       O objetivo é manter aparência
-       de EAN-13 profissional.
-    */
-
-    base = "20";
-
-
-    while (
-        base.length < 12
-    ) {
-
-        base +=
-            Math.floor(
-                Math.random() * 10
-            );
-
-    }
-
-
-    let soma = 0;
-
-
-    for (
-        let i = 0;
-        i < 12;
-        i++
-    ) {
-
-        const numero =
-            Number(
-                base[i]
-            );
-
-
-        soma +=
-            i % 2 === 0
-                ? numero
-                : numero * 3;
-
-    }
-
-
-    const digito =
-        (
-            10 -
-            (
-                soma % 10
-            )
-        ) % 10;
-
-
-    return (
-        base +
-        digito
     );
 
 }
@@ -548,6 +420,80 @@ function gerarNovoCodigoProduto() {
 
 
 /* =========================================================
+   GERAR EAN-13
+========================================================= */
+
+function gerarEAN13() {
+
+    let numeroBase = "";
+
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        numeroBase +=
+            Math.floor(
+                Math.random() * 10
+            );
+
+    }
+
+
+    let soma = 0;
+
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        const numero =
+            parseInt(
+                numeroBase[i],
+                10
+            );
+
+
+        if (
+            i % 2 === 0
+        ) {
+
+            soma += numero;
+
+        }
+
+        else {
+
+            soma +=
+                numero * 3;
+
+        }
+
+    }
+
+
+    const digito =
+        (
+            10 -
+            (
+                soma % 10
+            )
+        ) % 10;
+
+
+    return (
+        numeroBase +
+        digito
+    );
+
+}
+
+
+/* =========================================================
    SALVAR PRODUTO
 ========================================================= */
 
@@ -556,31 +502,31 @@ function salvarProduto() {
     const codigo =
         document.getElementById(
             "codigoProduto"
-        )?.value.trim();
+        ).value.trim();
 
 
     const nome =
         document.getElementById(
             "nomeProduto"
-        )?.value.trim();
+        ).value.trim();
 
 
     const categoria =
         document.getElementById(
             "categoriaProduto"
-        )?.value;
+        ).value;
 
 
     const unidade =
         document.getElementById(
             "unidadeProduto"
-        )?.value;
+        ).value;
 
 
     const status =
         document.getElementById(
             "statusProduto"
-        )?.value;
+        ).value;
 
 
     if (!nome) {
@@ -597,7 +543,7 @@ function salvarProduto() {
     if (!categoria) {
 
         alert(
-            "Selecione a categoria."
+            "Selecione uma categoria."
         );
 
         return;
@@ -640,68 +586,57 @@ function salvarProduto() {
         produtoEditando =
             null;
 
-
-        salvarDados();
-
-        atualizarTudo();
-
-        novoProduto();
-
-
-        alert(
-            "Produto atualizado com sucesso!"
-        );
-
-        return;
-
     }
 
+    else {
 
-    const novo = {
+        const novoProdutoObjeto = {
 
-        id:
-            Date.now(),
+            id:
+                Date.now(),
 
-        codigo:
-            codigo ||
-            gerarCodigoInterno(
-                "PROD-",
-                produtos
-            ),
+            codigo:
+                codigo ||
+                gerarCodigoInterno(
+                    "PROD-",
+                    produtos
+                ),
 
-        ean:
-            gerarEAN13(),
+            ean:
+                gerarEAN13(),
 
-        nome:
-            nome,
+            nome:
+                nome,
 
-        categoria:
-            categoria,
+            categoria:
+                categoria,
 
-        unidade:
-            unidade,
+            unidade:
+                unidade,
 
-        status:
-            status,
+            status:
+                status,
 
-        estoque:
-            0,
+            estoque:
+                0,
 
-        custoUnitario:
-            0,
+            custoUnitario:
+                0,
 
-        precoVenda:
-            0,
+            precoVenda:
+                0,
 
-        dataCadastro:
-            new Date().toISOString()
+            dataCadastro:
+                new Date().toISOString()
 
-    };
+        };
 
 
-    produtos.push(
-        novo
-    );
+        produtos.push(
+            novoProdutoObjeto
+        );
+
+    }
 
 
     salvarDados();
@@ -815,7 +750,7 @@ function novoProduto() {
 
 
 /* =========================================================
-   LISTA DE PRODUTOS
+   LISTAR PRODUTOS
 ========================================================= */
 
 function atualizarListaProdutos() {
@@ -845,21 +780,17 @@ function atualizarListaProdutos() {
                 );
 
 
-            const estoque =
-                Number(
-                    produto.estoque
-                ) || 0;
-
-
-            const custo =
-                Number(
-                    produto.custoUnitario
-                ) || 0;
-
-
             const valorTotal =
-                estoque *
-                custo;
+                (
+                    Number(
+                        produto.estoque
+                    ) || 0
+                ) *
+                (
+                    Number(
+                        produto.custoUnitario
+                    ) || 0
+                );
 
 
             linha.innerHTML = `
@@ -881,15 +812,21 @@ function atualizarListaProdutos() {
                 </td>
 
                 <td>
-                    ${estoque.toFixed(2)}
+                    ${Number(
+                        produto.estoque || 0
+                    ).toFixed(2)}
                 </td>
 
                 <td>
-                    ${formatarMoeda(custo)}
+                    ${formatarMoeda(
+                        produto.custoUnitario || 0
+                    )}
                 </td>
 
                 <td>
-                    ${formatarMoeda(valorTotal)}
+                    ${formatarMoeda(
+                        valorTotal
+                    )}
                 </td>
 
                 <td>
@@ -933,9 +870,7 @@ function editarProduto(id) {
         produtos.find(
             function (item) {
 
-                return (
-                    item.id === id
-                );
+                return item.id === id;
 
             }
         );
@@ -1006,11 +941,13 @@ function editarProduto(id) {
 
 function excluirProduto(id) {
 
-    if (
-        !confirm(
+    const confirmar =
+        confirm(
             "Deseja realmente excluir este produto?"
-        )
-    ) {
+        );
+
+
+    if (!confirmar) {
 
         return;
 
@@ -1073,32 +1010,32 @@ function salvarMateriaPrima() {
     const codigo =
         document.getElementById(
             "codigoMP"
-        )?.value.trim();
+        ).value.trim();
 
 
     const nome =
         document.getElementById(
             "nomeMP"
-        )?.value.trim();
+        ).value.trim();
 
 
     const categoria =
         document.getElementById(
             "categoriaMP"
-        )?.value;
+        ).value;
 
 
     const unidade =
         document.getElementById(
             "unidadeMP"
-        )?.value;
+        ).value;
 
 
     const estoque =
         Number(
             document.getElementById(
                 "estoqueMP"
-            )?.value
+            ).value
         ) || 0;
 
 
@@ -1106,7 +1043,7 @@ function salvarMateriaPrima() {
         Number(
             document.getElementById(
                 "custoMP"
-            )?.value
+            ).value
         ) || 0;
 
 
@@ -1156,7 +1093,9 @@ function salvarMateriaPrima() {
         materiaPrimaEditando =
             null;
 
-    } else {
+    }
+
+    else {
 
         materiasPrimas.push({
 
@@ -1276,7 +1215,7 @@ function novaMateriaPrima() {
 
 
 /* =========================================================
-   LISTA MATÉRIA-PRIMA
+   LISTAR MATÉRIA-PRIMA
 ========================================================= */
 
 function atualizarListaMateriaPrima() {
@@ -1300,26 +1239,22 @@ function atualizarListaMateriaPrima() {
     materiasPrimas.forEach(
         function (materia) {
 
-            const estoque =
-                Number(
-                    materia.estoque
-                ) || 0;
-
-
-            const custo =
-                Number(
-                    materia.custo
-                ) || 0;
-
-
-            const custoTotal =
-                estoque *
-                custo;
-
-
             const linha =
                 document.createElement(
                     "tr"
+                );
+
+
+            const custoTotal =
+                (
+                    Number(
+                        materia.estoque
+                    ) || 0
+                ) *
+                (
+                    Number(
+                        materia.custo
+                    ) || 0
                 );
 
 
@@ -1342,15 +1277,21 @@ function atualizarListaMateriaPrima() {
                 </td>
 
                 <td>
-                    ${estoque.toFixed(2)}
+                    ${Number(
+                        materia.estoque || 0
+                    ).toFixed(2)}
                 </td>
 
                 <td>
-                    ${formatarMoeda(custo)}
+                    ${formatarMoeda(
+                        materia.custo || 0
+                    )}
                 </td>
 
                 <td>
-                    ${formatarMoeda(custoTotal)}
+                    ${formatarMoeda(
+                        custoTotal
+                    )}
                 </td>
 
             `;
@@ -1368,6 +1309,7 @@ function atualizarListaMateriaPrima() {
 
 /* =========================================================
    ESTOQUE
+   CONSULTA E MOVIMENTAÇÃO MANUAL
 ========================================================= */
 
 function alterarTipoEstoque() {
@@ -1376,6 +1318,17 @@ function alterarTipoEstoque() {
         document.getElementById(
             "tipoEstoque"
         );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    const tipo =
+        select.value;
 
 
     const cabecalho =
@@ -1391,7 +1344,6 @@ function alterarTipoEstoque() {
 
 
     if (
-        !select ||
         !cabecalho ||
         !tabela
     ) {
@@ -1399,10 +1351,6 @@ function alterarTipoEstoque() {
         return;
 
     }
-
-
-    const tipo =
-        select.value;
 
 
     cabecalho.innerHTML = "";
@@ -1420,11 +1368,17 @@ function alterarTipoEstoque() {
             <tr>
 
                 <th>Código</th>
+
                 <th>Nome</th>
+
                 <th>Categoria</th>
+
                 <th>Unidade</th>
+
                 <th>Estoque</th>
+
                 <th>Custo</th>
+
                 <th>Valor Total</th>
 
             </tr>
@@ -1435,37 +1389,56 @@ function alterarTipoEstoque() {
         materiasPrimas.forEach(
             function (item) {
 
-                const estoque =
-                    Number(
-                        item.estoque
-                    ) || 0;
-
-
-                const custo =
-                    Number(
-                        item.custo
-                    ) || 0;
+                const valorTotal =
+                    (
+                        Number(
+                            item.estoque
+                        ) || 0
+                    ) *
+                    (
+                        Number(
+                            item.custo
+                        ) || 0
+                    );
 
 
                 tabela.innerHTML += `
 
                     <tr>
 
-                        <td>${item.codigo || ""}</td>
+                        <td>
+                            ${item.codigo || ""}
+                        </td>
 
-                        <td>${item.nome || ""}</td>
+                        <td>
+                            ${item.nome || ""}
+                        </td>
 
-                        <td>${item.categoria || ""}</td>
+                        <td>
+                            ${item.categoria || ""}
+                        </td>
 
-                        <td>${item.unidade || ""}</td>
+                        <td>
+                            ${item.unidade || ""}
+                        </td>
 
-                        <td>${estoque.toFixed(2)}</td>
+                        <td>
+                            ${Number(
+                                item.estoque || 0
+                            ).toFixed(2)}
+                        </td>
 
-                        <td>${formatarMoeda(custo)}</td>
+                        <td>
+                            ${formatarMoeda(
+                                item.custo || 0
+                            )}
+                        </td>
 
-                        <td>${formatarMoeda(
-                            estoque * custo
-                        )}</td>
+                        <td>
+                            ${formatarMoeda(
+                                valorTotal
+                            )}
+                        </td>
 
                     </tr>
 
@@ -1474,17 +1447,24 @@ function alterarTipoEstoque() {
             }
         );
 
-    } else {
+    }
+
+    else {
 
         cabecalho.innerHTML = `
 
             <tr>
 
                 <th>Código</th>
+
                 <th>Nome</th>
+
                 <th>Categoria</th>
+
                 <th>Unidade</th>
-                <th>Estoque</th>
+
+                <th>Estoque Atual</th>
+
                 <th>Status</th>
 
             </tr>
@@ -1499,19 +1479,31 @@ function alterarTipoEstoque() {
 
                     <tr>
 
-                        <td>${item.codigo || ""}</td>
+                        <td>
+                            ${item.codigo || ""}
+                        </td>
 
-                        <td>${item.nome || ""}</td>
+                        <td>
+                            ${item.nome || ""}
+                        </td>
 
-                        <td>${item.categoria || ""}</td>
+                        <td>
+                            ${item.categoria || ""}
+                        </td>
 
-                        <td>${item.unidade || ""}</td>
+                        <td>
+                            ${item.unidade || ""}
+                        </td>
 
-                        <td>${Number(
-                            item.estoque || 0
-                        ).toFixed(2)}</td>
+                        <td>
+                            ${Number(
+                                item.estoque || 0
+                            ).toFixed(2)}
+                        </td>
 
-                        <td>${item.status || ""}</td>
+                        <td>
+                            ${item.status || ""}
+                        </td>
 
                     </tr>
 
@@ -1526,7 +1518,7 @@ function alterarTipoEstoque() {
 
 
 /* =========================================================
-   ITENS DE MOVIMENTAÇÃO
+   ATUALIZAR ITENS PARA MOVIMENTAÇÃO
 ========================================================= */
 
 function atualizarItensMovimentacao() {
@@ -1551,10 +1543,6 @@ function atualizarItensMovimentacao() {
         return;
 
     }
-
-
-    const valorAtual =
-        select.value;
 
 
     select.innerHTML = `
@@ -1605,32 +1593,11 @@ function atualizarItensMovimentacao() {
         }
     );
 
-
-    if (
-        lista.some(
-            function (item) {
-
-                return String(
-                    item.id
-                ) ===
-                String(
-                    valorAtual
-                );
-
-            }
-        )
-    ) {
-
-        select.value =
-            valorAtual;
-
-    }
-
 }
 
 
 /* =========================================================
-   MOVIMENTAÇÃO
+   REGISTRAR MOVIMENTAÇÃO MANUAL
 ========================================================= */
 
 function registrarMovimentacao() {
@@ -1638,20 +1605,20 @@ function registrarMovimentacao() {
     const tipoEstoque =
         document.getElementById(
             "tipoEstoqueMovimentacao"
-        )?.value;
+        ).value;
 
 
     const operacao =
         document.getElementById(
             "tipoMovimentacao"
-        )?.value;
+        ).value;
 
 
     const itemId =
         Number(
             document.getElementById(
                 "itemMovimentacao"
-            )?.value
+            ).value
         );
 
 
@@ -1659,21 +1626,21 @@ function registrarMovimentacao() {
         Number(
             document.getElementById(
                 "quantidadeMovimentacao"
-            )?.value
+            ).value
         );
 
 
     const data =
         document.getElementById(
             "dataMovimentacao"
-        )?.value ||
+        ).value ||
         obterDataHoje();
 
 
     const observacao =
         document.getElementById(
             "observacaoMovimentacao"
-        )?.value.trim();
+        ).value.trim();
 
 
     if (!itemId) {
@@ -1701,24 +1668,43 @@ function registrarMovimentacao() {
     }
 
 
-    const lista =
+    let item;
+
+
+    if (
         tipoEstoque ===
         "materiaPrima"
-            ? materiasPrimas
-            : produtos;
+    ) {
 
+        item =
+            materiasPrimas.find(
+                function (produto) {
 
-    const item =
-        lista.find(
-            function (produto) {
+                    return (
+                        produto.id ===
+                        itemId
+                    );
 
-                return (
-                    produto.id ===
-                    itemId
-                );
+                }
+            );
 
-            }
-        );
+    }
+
+    else {
+
+        item =
+            produtos.find(
+                function (produto) {
+
+                    return (
+                        produto.id ===
+                        itemId
+                    );
+
+                }
+            );
+
+    }
 
 
     if (!item) {
@@ -1732,16 +1718,13 @@ function registrarMovimentacao() {
     }
 
 
-    const estoqueAtual =
-        Number(
-            item.estoque
-        ) || 0;
-
-
     if (
-        operacao === "saida" &&
-        estoqueAtual <
-            quantidade
+        operacao ===
+        "saida" &&
+        Number(
+            item.estoque || 0
+        ) <
+        quantidade
     ) {
 
         alert(
@@ -1759,13 +1742,19 @@ function registrarMovimentacao() {
     ) {
 
         item.estoque =
-            estoqueAtual +
+            Number(
+                item.estoque || 0
+            ) +
             quantidade;
 
-    } else {
+    }
+
+    else {
 
         item.estoque =
-            estoqueAtual -
+            Number(
+                item.estoque || 0
+            ) -
             quantidade;
 
     }
@@ -1795,7 +1784,10 @@ function registrarMovimentacao() {
             operacao,
 
         observacao:
-            observacao
+            observacao,
+
+        origem:
+            "manual"
 
     });
 
@@ -1805,30 +1797,14 @@ function registrarMovimentacao() {
     atualizarTudo();
 
 
-    const quantidadeCampo =
-        document.getElementById(
-            "quantidadeMovimentacao"
-        );
+    document.getElementById(
+        "quantidadeMovimentacao"
+    ).value = "";
 
 
-    const observacaoCampo =
-        document.getElementById(
-            "observacaoMovimentacao"
-        );
-
-
-    if (quantidadeCampo) {
-
-        quantidadeCampo.value = "";
-
-    }
-
-
-    if (observacaoCampo) {
-
-        observacaoCampo.value = "";
-
-    }
+    document.getElementById(
+        "observacaoMovimentacao"
+    ).value = "";
 
 
     alert(
@@ -1839,7 +1815,7 @@ function registrarMovimentacao() {
 
 
 /* =========================================================
-   HISTÓRICO
+   HISTÓRICO DE MOVIMENTAÇÕES
 ========================================================= */
 
 function atualizarHistoricoMovimentacoes() {
@@ -1866,433 +1842,83 @@ function atualizarHistoricoMovimentacoes() {
         .forEach(
             function (movimento) {
 
-                tabela.innerHTML += `
+                const linha =
+                    document.createElement(
+                        "tr"
+                    );
 
-                    <tr>
 
-                        <td>
-                            ${formatarData(
-                                movimento.data
-                            )}
-                        </td>
+                linha.innerHTML = `
 
-                        <td>
-                            ${
-                                movimento.tipo ===
-                                "materiaPrima"
-                                    ? "Matéria-Prima"
-                                    : "Produto Acabado"
-                            }
-                        </td>
+                    <td>
+                        ${formatarData(
+                            movimento.data
+                        )}
+                    </td>
 
-                        <td>
-                            ${movimento.itemNome || ""}
-                        </td>
+                    <td>
+                        ${
+                            movimento.tipo ===
+                            "materiaPrima"
+                                ? "Matéria-Prima"
+                                : "Produto Acabado"
+                        }
+                    </td>
 
-                        <td>
-                            ${Number(
-                                movimento.quantidade || 0
-                            ).toFixed(2)}
-                        </td>
+                    <td>
+                        ${
+                            movimento.itemNome ||
+                            ""
+                        }
+                    </td>
 
-                        <td>
-                            ${
-                                movimento.operacao ===
-                                "entrada"
-                                    ? "Entrada"
-                                    : "Saída"
-                            }
-                        </td>
+                    <td>
+                        ${Number(
+                            movimento.quantidade ||
+                            0
+                        ).toFixed(2)}
+                    </td>
 
-                        <td>
-                            ${movimento.observacao || ""}
-                        </td>
+                    <td>
+                        ${
+                            movimento.operacao ===
+                            "entrada"
+                                ? "Entrada"
+                                : "Saída"
+                        }
+                    </td>
 
-                    </tr>
+                    <td>
+                        ${
+                            movimento.observacao ||
+                            ""
+                        }
+                    </td>
 
                 `;
 
-            }
-        );
 
-}
-
-
-/* =========================================================
-   PRAZO DE VALIDADE POR CATEGORIA
-========================================================= */
-
-function obterDiasValidade(
-    produto
-) {
-
-    if (!produto) {
-
-        return null;
-
-    }
-
-
-    const categoria =
-        String(
-            produto.categoria || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    const nome =
-        String(
-            produto.nome || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    /*
-       Palha Italiana:
-       20 dias
-    */
-
-    if (
-        categoria.includes(
-            "palha italiana"
-        ) ||
-        nome.includes(
-            "palha italiana"
-        )
-    ) {
-
-        return 20;
-
-    }
-
-
-    /*
-       Brownie:
-       20 dias
-    */
-
-    if (
-        categoria.includes(
-            "brownie"
-        ) ||
-        nome.includes(
-            "brownie"
-        )
-    ) {
-
-        return 20;
-
-    }
-
-
-    /*
-       Bolo de Pote:
-       7 dias
-    */
-
-    if (
-        categoria.includes(
-            "bolo de pote"
-        ) ||
-        nome.includes(
-            "bolo de pote"
-        )
-    ) {
-
-        return 7;
-
-    }
-
-
-    /*
-       Outros produtos:
-       validade manual
-    */
-
-    return null;
-
-}
-
-
-/* =========================================================
-   CALCULAR DATA DE VALIDADE
-========================================================= */
-
-function calcularDataValidade(
-    dataFabricacao,
-    produto
-) {
-
-    if (
-        !dataFabricacao ||
-        !produto
-    ) {
-
-        return "";
-
-    }
-
-
-    const dias =
-        obterDiasValidade(
-            produto
-        );
-
-
-    if (
-        dias === null
-    ) {
-
-        return "";
-
-    }
-
-
-    const data =
-        new Date(
-            dataFabricacao +
-            "T00:00:00"
-        );
-
-
-    data.setDate(
-        data.getDate() +
-        dias
-    );
-
-
-    return (
-        data
-            .getFullYear()
-            .toString() +
-        "-" +
-        String(
-            data.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        ) +
-        "-" +
-        String(
-            data.getDate()
-        ).padStart(
-            2,
-            "0"
-        )
-    );
-
-}
-
-
-/* =========================================================
-   VALIDADE DA PRODUÇÃO
-========================================================= */
-
-function calcularValidadeProducao() {
-
-    const produtoSelect =
-        document.getElementById(
-            "produtoProducao"
-        );
-
-
-    const fabricacao =
-        document.getElementById(
-            "fabricacaoProducao"
-        );
-
-
-    const validade =
-        document.getElementById(
-            "validadeProducao"
-        );
-
-
-    if (
-        !produtoSelect ||
-        !fabricacao ||
-        !validade
-    ) {
-
-        return;
-
-    }
-
-
-    const produto =
-        produtos.find(
-            function (item) {
-
-                return String(
-                    item.id
-                ) ===
-                String(
-                    produtoSelect.value
+                tabela.appendChild(
+                    linha
                 );
 
             }
         );
-
-
-    const dataValidade =
-        calcularDataValidade(
-            fabricacao.value,
-            produto
-        );
-
-
-    if (
-        dataValidade
-    ) {
-
-        validade.value =
-            dataValidade;
-
-    } else {
-
-        validade.value = "";
-
-    }
-
-}
-
-
-/* =========================================================
-   VALIDADE DA ETIQUETA
-========================================================= */
-
-function calcularValidadeEtiqueta() {
-
-    const produtoSelect =
-        document.getElementById(
-            "produtoEtiqueta"
-        );
-
-
-    const fabricacao =
-        document.getElementById(
-            "fabricacaoEtiqueta"
-        );
-
-
-    const validade =
-        document.getElementById(
-            "validadeEtiqueta"
-        );
-
-
-    if (
-        !produtoSelect ||
-        !fabricacao ||
-        !validade
-    ) {
-
-        return;
-
-    }
-
-
-    const produto =
-        produtos.find(
-            function (item) {
-
-                return String(
-                    item.id
-                ) ===
-                String(
-                    produtoSelect.value
-                );
-
-            }
-        );
-
-
-    const dataValidade =
-        calcularDataValidade(
-            fabricacao.value,
-            produto
-        );
-
-
-    if (
-        dataValidade
-    ) {
-
-        validade.value =
-            dataValidade;
-
-    } else {
-
-        /*
-           Outros produtos:
-           validade manual.
-           Como o campo é readonly no index atual,
-           ele permanecerá vazio até que o HTML
-           permita edição manual.
-        */
-
-        validade.value = "";
-
-    }
-
-}
-
-
-/* =========================================================
-   CONFIGURAR DATAS
-========================================================= */
-
-function configurarDatas() {
-
-    const hoje =
-        obterDataHoje();
-
-
-    const campos = [
-
-        "dataMovimentacao",
-
-        "fabricacaoProducao",
-
-        "fabricacaoEtiqueta"
-
-    ];
-
-
-    campos.forEach(
-        function (id) {
-
-            const campo =
-                document.getElementById(
-                    id
-                );
-
-
-            if (
-                campo &&
-                !campo.value
-            ) {
-
-                campo.value =
-                    hoje;
-
-            }
-
-        }
-    );
-
-
-    calcularValidadeProducao();
-
-    calcularValidadeEtiqueta();
 
 }
 
 
 /* =========================================================
    PRODUÇÃO
+   PRODUÇÃO = ENTRADA AUTOMÁTICA DE PRODUTO ACABADO
+
+   IMPORTANTE:
+   Ao registrar produção:
+   1. A quantidade produzida é adicionada ao estoque.
+   2. A produção é salva no histórico de produção.
+   3. É criada uma movimentação automática de entrada.
+   4. O usuário NÃO precisa registrar outra entrada
+      manualmente no Estoque.
 ========================================================= */
 
 function registrarProducao() {
@@ -2301,7 +1927,7 @@ function registrarProducao() {
         Number(
             document.getElementById(
                 "produtoProducao"
-            )?.value
+            ).value
         );
 
 
@@ -2309,27 +1935,33 @@ function registrarProducao() {
         Number(
             document.getElementById(
                 "quantidadeProducao"
-            )?.value
+            ).value
         );
 
 
     const fabricacao =
         document.getElementById(
             "fabricacaoProducao"
-        )?.value ||
+        ).value ||
         obterDataHoje();
 
 
-    const validade =
+    const validadeCampo =
         document.getElementById(
             "validadeProducao"
-        )?.value;
+        );
+
+
+    const validade =
+        validadeCampo
+            ? validadeCampo.value
+            : "";
 
 
     const observacao =
         document.getElementById(
             "observacaoProducao"
-        )?.value.trim();
+        ).value.trim();
 
 
     if (!produtoId) {
@@ -2381,26 +2013,23 @@ function registrarProducao() {
     }
 
 
-    const validadeAutomatica =
-        calcularDataValidade(
-            fabricacao,
-            produto
-        );
+    /*
+       UMA ÚNICA ALTERAÇÃO DE ESTOQUE
 
-
-    const validadeFinal =
-        validadeAutomatica ||
-        validade;
-
+       A produção entra diretamente
+       como produto acabado.
+    */
 
     produto.estoque =
-        (
-            Number(
-                produto.estoque
-            ) || 0
+        Number(
+            produto.estoque || 0
         ) +
         quantidade;
 
+
+    /*
+       REGISTRA A PRODUÇÃO
+    */
 
     producoes.push({
 
@@ -2420,13 +2049,20 @@ function registrarProducao() {
             fabricacao,
 
         validade:
-            validadeFinal || "",
+            validade,
 
         observacao:
             observacao
 
     });
 
+
+    /*
+       REGISTRA NO HISTÓRICO DE ESTOQUE
+
+       Isso é apenas histórico/auditoria.
+       Não altera o estoque novamente.
+    */
 
     movimentacoes.push({
 
@@ -2452,7 +2088,13 @@ function registrarProducao() {
             "entrada",
 
         observacao:
-            "Produção registrada"
+            observacao
+                ? "Produção: " +
+                  observacao
+                : "Produção registrada",
+
+        origem:
+            "producao"
 
     });
 
@@ -2460,6 +2102,15 @@ function registrarProducao() {
     salvarDados();
 
     atualizarTudo();
+
+
+    alert(
+        "Produção registrada com sucesso!\n\n" +
+        "Quantidade produzida: " +
+        quantidade +
+        "\n" +
+        "Produto adicionado ao estoque de produtos acabados."
+    );
 
 
     document.getElementById(
@@ -2474,15 +2125,27 @@ function registrarProducao() {
         "";
 
 
-    alert(
-        "Produção registrada com sucesso!"
-    );
+    const fabricacaoCampo =
+        document.getElementById(
+            "fabricacaoProducao"
+        );
+
+
+    if (fabricacaoCampo) {
+
+        fabricacaoCampo.value =
+            obterDataHoje();
+
+    }
+
+
+    calcularValidadeProducao();
 
 }
 
 
 /* =========================================================
-   LISTA PRODUÇÃO
+   LISTA DE PRODUÇÕES
 ========================================================= */
 
 function atualizarListaProducao() {
@@ -2514,12 +2177,16 @@ function atualizarListaProducao() {
                     <tr>
 
                         <td>
-                            ${producao.produtoNome || ""}
+                            ${
+                                producao.produtoNome ||
+                                ""
+                            }
                         </td>
 
                         <td>
                             ${Number(
-                                producao.quantidade || 0
+                                producao.quantidade ||
+                                0
                             ).toFixed(2)}
                         </td>
 
@@ -2555,7 +2222,7 @@ function calcularPreco() {
         Number(
             document.getElementById(
                 "produtoPreco"
-            )?.value
+            ).value
         );
 
 
@@ -2563,7 +2230,7 @@ function calcularPreco() {
         Number(
             document.getElementById(
                 "custoMateria"
-            )?.value
+            ).value
         ) || 0;
 
 
@@ -2571,7 +2238,7 @@ function calcularPreco() {
         Number(
             document.getElementById(
                 "custoEmbalagem"
-            )?.value
+            ).value
         ) || 0;
 
 
@@ -2579,7 +2246,7 @@ function calcularPreco() {
         Number(
             document.getElementById(
                 "outrosCustos"
-            )?.value
+            ).value
         ) || 0;
 
 
@@ -2587,7 +2254,7 @@ function calcularPreco() {
         Number(
             document.getElementById(
                 "margemLucro"
-            )?.value
+            ).value
         ) || 0;
 
 
@@ -2637,79 +2304,73 @@ function calcularPreco() {
     }
 
 
-    if (!produtoId) {
+    if (produtoId) {
 
-        return;
+        const produto =
+            produtos.find(
+                function (item) {
+
+                    return (
+                        item.id ===
+                        produtoId
+                    );
+
+                }
+            );
+
+
+        if (produto) {
+
+            produto.custoUnitario =
+                custoTotal;
+
+            produto.precoVenda =
+                precoVenda;
+
+        }
+
+
+        precificacoes.push({
+
+            id:
+                Date.now(),
+
+            produtoId:
+                produtoId,
+
+            custoMateria:
+                custoMateria,
+
+            custoEmbalagem:
+                custoEmbalagem,
+
+            outrosCustos:
+                outrosCustos,
+
+            margem:
+                margem,
+
+            custoTotal:
+                custoTotal,
+
+            precoVenda:
+                precoVenda
+
+        });
+
+
+        salvarDados();
+
+        atualizarListaProdutos();
 
     }
-
-
-    const produto =
-        produtos.find(
-            function (item) {
-
-                return (
-                    item.id ===
-                    produtoId
-                );
-
-            }
-        );
-
-
-    if (!produto) {
-
-        return;
-
-    }
-
-
-    produto.custoUnitario =
-        custoTotal;
-
-
-    produto.precoVenda =
-        precoVenda;
-
-
-    precificacoes.push({
-
-        id:
-            Date.now(),
-
-        produtoId:
-            produtoId,
-
-        custoMateria:
-            custoMateria,
-
-        custoEmbalagem:
-            custoEmbalagem,
-
-        outrosCustos:
-            outrosCustos,
-
-        margem:
-            margem,
-
-        custoTotal:
-            custoTotal,
-
-        precoVenda:
-            precoVenda
-
-    });
-
-
-    salvarDados();
-
-    atualizarListaProdutos();
 
 }
 
 
 /* =========================================================
-   ETIQUETA
+   ETIQUETAS
+   MANTIDA A LÓGICA PROFISSIONAL EAN-13
 ========================================================= */
 
 function gerarEtiqueta() {
@@ -2718,20 +2379,20 @@ function gerarEtiqueta() {
         Number(
             document.getElementById(
                 "produtoEtiqueta"
-            )?.value
+            ).value
         );
 
 
     const fabricacao =
         document.getElementById(
             "fabricacaoEtiqueta"
-        )?.value;
+        ).value;
 
 
-    const validadeCampo =
+    const validade =
         document.getElementById(
             "validadeEtiqueta"
-        );
+        ).value;
 
 
     const produto =
@@ -2758,221 +2419,84 @@ function gerarEtiqueta() {
     }
 
 
-    const validadeAutomatica =
-        calcularDataValidade(
-            fabricacao,
-            produto
+    document.getElementById(
+        "mostrarProduto"
+    ).textContent =
+        produto.nome;
+
+
+    document.getElementById(
+        "mostrarFabricacao"
+    ).textContent =
+        formatarData(
+            fabricacao
         );
 
 
-    const validade =
-        validadeAutomatica ||
-        validadeCampo?.value ||
-        "";
-
-
-    if (
-        validadeCampo &&
-        validadeAutomatica
-    ) {
-
-        validadeCampo.value =
-            validadeAutomatica;
-
-    }
-
-
-    const mostrarProduto =
-        document.getElementById(
-            "mostrarProduto"
-        );
-
-
-    const mostrarFabricacao =
-        document.getElementById(
-            "mostrarFabricacao"
-        );
-
-
-    const mostrarValidade =
-        document.getElementById(
-            "mostrarValidade"
-        );
-
-
-    if (mostrarProduto) {
-
-        mostrarProduto.textContent =
-            produto.nome;
-
-    }
-
-
-    if (mostrarFabricacao) {
-
-        mostrarFabricacao.textContent =
-            formatarData(
-                fabricacao
-            );
-
-    }
-
-
-    if (mostrarValidade) {
-
-        mostrarValidade.textContent =
+    document.getElementById(
+        "mostrarValidade"
+    ).textContent =
+        formatarData(
             validade
-                ? formatarData(
-                    validade
-                )
-                : "--/--/----";
-
-    }
+        );
 
 
-    gerarCodigoBarrasEtiqueta(
-        produto
-    );
-
-}
-
-
-/* =========================================================
-   GERAR CÓDIGO DE BARRAS DA ETIQUETA
-========================================================= */
-
-function gerarCodigoBarrasEtiqueta(
-    produto
-) {
-
-    const area =
+    const areaCodigo =
         document.getElementById(
             "codigoBarrasEtiqueta"
         );
 
 
-    if (!area) {
-
-        return;
-
-    }
-
-
-    area.innerHTML = "";
-
-
-    const ean =
-        produto.ean ||
-        gerarEAN13();
-
-
-    /*
-       Se o produto antigo não possuía EAN,
-       salva um novo EAN permanentemente.
-    */
-
-    if (!produto.ean) {
-
-        produto.ean =
-            ean;
-
-        salvarDados();
-
-    }
+    areaCodigo.innerHTML = "";
 
 
     if (
-        typeof JsBarcode ===
+        typeof JsBarcode !==
         "undefined"
     ) {
 
-        area.textContent =
-            ean;
+        const svg =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "svg"
+            );
 
-        return;
 
-    }
-
-
-    /*
-       Cria SVG próprio.
-       Isso evita problemas de tamanho
-       e mantém o EAN-13 completo.
-    */
-
-    const svg =
-        document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "svg"
+        areaCodigo.appendChild(
+            svg
         );
 
 
-    svg.setAttribute(
-        "width",
-        "260"
-    );
-
-
-    svg.setAttribute(
-        "height",
-        "95"
-    );
-
-
-    svg.setAttribute(
-        "viewBox",
-        "0 0 260 95"
-    );
-
-
-    area.appendChild(
-        svg
-    );
-
-
-    try {
-
         JsBarcode(
             svg,
-            ean,
+            produto.ean ||
+            gerarEAN13(),
             {
 
                 format:
-                    "ean13",
+                    "EAN13",
+
+                displayValue:
+                    true,
 
                 width:
                     2,
 
                 height:
-                    58,
-
-                displayValue:
-                    true,
-
-                fontSize:
-                    14,
-
-                textMargin:
-                    4,
+                    50,
 
                 margin:
-                    0,
-
-                flat:
-                    false
+                    5
 
             }
         );
 
-    } catch (erro) {
+    }
 
-        console.error(
-            "Erro ao gerar EAN-13:",
-            erro
-        );
+    else {
 
-        area.textContent =
-            ean;
+        areaCodigo.textContent =
+            produto.ean || "";
 
     }
 
@@ -2980,7 +2504,7 @@ function gerarCodigoBarrasEtiqueta(
 
 
 /* =========================================================
-   SALVAR ETIQUETA PNG
+   SALVAR ETIQUETA COMO PNG
 ========================================================= */
 
 function salvarEtiquetaPNG() {
@@ -3012,74 +2536,495 @@ function salvarEtiquetaPNG() {
     }
 
 
-    /*
-       Garante que a etiqueta esteja
-       atualizada antes de salvar.
-    */
+    html2canvas(
+        etiqueta
+    ).then(
+        function (canvas) {
 
-    gerarEtiqueta();
-
-
-    setTimeout(
-        function () {
-
-            html2canvas(
-                etiqueta,
-                {
-
-                    scale:
-                        3,
-
-                    backgroundColor:
-                        "#ffffff",
-
-                    useCORS:
-                        true
-
-                }
-            ).then(
-                function (canvas) {
-
-                    const link =
-                        document.createElement(
-                            "a"
-                        );
+            const link =
+                document.createElement(
+                    "a"
+                );
 
 
-                    link.download =
-                        "etiqueta-" +
-                        obterDataHoraArquivo() +
-                        ".png";
+            link.download =
+                "etiqueta-carols-gourmet.png";
 
 
-                    link.href =
-                        canvas.toDataURL(
-                            "image/png"
-                        );
+            link.href =
+                canvas.toDataURL(
+                    "image/png"
+                );
 
 
-                    link.click();
+            link.click();
 
-                }
-            ).catch(
-                function (erro) {
-
-                    console.error(
-                        erro
-                    );
-
-                    alert(
-                        "Não foi possível gerar a imagem da etiqueta."
-                    );
-
-                }
-            );
-
-        },
-        200
+        }
     );
 
 }
+
+
+/* =========================================================
+   DATAS
+========================================================= */
+
+function configurarDatas() {
+
+    const hoje =
+        obterDataHoje();
+
+
+    const campos = [
+
+        "dataMovimentacao",
+
+        "fabricacaoProducao",
+
+        "fabricacaoEtiqueta"
+
+    ];
+
+
+    campos.forEach(
+        function (id) {
+
+            const campo =
+                document.getElementById(
+                    id
+                );
+
+
+            if (
+                campo &&
+                !campo.value
+            ) {
+
+                campo.value =
+                    hoje;
+
+            }
+
+        }
+    );
+
+
+    calcularValidadeProducao();
+
+    calcularValidadeEtiqueta();
+
+}
+
+
+/* =========================================================
+   OBTER DATA DE HOJE
+========================================================= */
+
+function obterDataHoje() {
+
+    const agora =
+        new Date();
+
+
+    const ano =
+        agora.getFullYear();
+
+
+    const mes =
+        String(
+            agora.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const dia =
+        String(
+            agora.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    return (
+        ano +
+        "-" +
+        mes +
+        "-" +
+        dia
+    );
+
+}
+
+
+/* =========================================================
+   DETERMINAR PRAZO DE VALIDADE
+=========================================================
+
+   Palha Italiana = 20 dias
+   Brownie        = 20 dias
+   Bolo de Pote   = 7 dias
+   Outros         = manual
+========================================================= */
+
+function obterDiasValidadeProduto(
+    produto
+) {
+
+    if (!produto) {
+
+        return null;
+
+    }
+
+
+    const nome =
+        String(
+            produto.nome || ""
+        )
+        .toLowerCase()
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        );
+
+
+    const categoria =
+        String(
+            produto.categoria || ""
+        )
+        .toLowerCase()
+        .normalize(
+            "NFD"
+        )
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        );
+
+
+    if (
+        nome.includes(
+            "palha italiana"
+        ) ||
+        categoria.includes(
+            "palha italiana"
+        )
+    ) {
+
+        return 20;
+
+    }
+
+
+    if (
+        nome.includes(
+            "brownie"
+        ) ||
+        categoria.includes(
+            "brownie"
+        )
+    ) {
+
+        return 20;
+
+    }
+
+
+    if (
+        nome.includes(
+            "bolo de pote"
+        ) ||
+        categoria.includes(
+            "bolo de pote"
+        )
+    ) {
+
+        return 7;
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   CALCULAR VALIDADE DE PRODUÇÃO
+========================================================= */
+
+function calcularValidadeProducao() {
+
+    const fabricacao =
+        document.getElementById(
+            "fabricacaoProducao"
+        );
+
+
+    const validade =
+        document.getElementById(
+            "validadeProducao"
+        );
+
+
+    const produtoSelect =
+        document.getElementById(
+            "produtoProducao"
+        );
+
+
+    if (
+        !fabricacao ||
+        !validade
+    ) {
+
+        return;
+
+    }
+
+
+    if (!fabricacao.value) {
+
+        validade.value = "";
+
+        return;
+
+    }
+
+
+    const produtoId =
+        produtoSelect
+            ? Number(
+                produtoSelect.value
+            )
+            : 0;
+
+
+    const produto =
+        produtos.find(
+            function (item) {
+
+                return (
+                    item.id ===
+                    produtoId
+                );
+
+            }
+        );
+
+
+    const dias =
+        obterDiasValidadeProduto(
+            produto
+        );
+
+
+    /*
+       OUTROS PRODUTOS:
+       validade manual.
+    */
+
+    if (
+        dias === null
+    ) {
+
+        validade.readOnly =
+            false;
+
+        return;
+
+    }
+
+
+    /*
+       PALHA / BROWNIE / BOLO:
+       cálculo automático.
+    */
+
+    validade.readOnly =
+        true;
+
+
+    const data =
+        new Date(
+            fabricacao.value +
+            "T00:00:00"
+        );
+
+
+    data.setDate(
+        data.getDate() +
+        dias
+    );
+
+
+    validade.value =
+        data
+            .toISOString()
+            .split(
+                "T"
+            )[0];
+
+}
+
+
+/* =========================================================
+   CALCULAR VALIDADE DA ETIQUETA
+========================================================= */
+
+function calcularValidadeEtiqueta() {
+
+    const fabricacao =
+        document.getElementById(
+            "fabricacaoEtiqueta"
+        );
+
+
+    const validade =
+        document.getElementById(
+            "validadeEtiqueta"
+        );
+
+
+    const produtoSelect =
+        document.getElementById(
+            "produtoEtiqueta"
+        );
+
+
+    if (
+        !fabricacao ||
+        !validade
+    ) {
+
+        return;
+
+    }
+
+
+    if (!fabricacao.value) {
+
+        validade.value = "";
+
+        return;
+
+    }
+
+
+    const produtoId =
+        produtoSelect
+            ? Number(
+                produtoSelect.value
+            )
+            : 0;
+
+
+    const produto =
+        produtos.find(
+            function (item) {
+
+                return (
+                    item.id ===
+                    produtoId
+                );
+
+            }
+        );
+
+
+    const dias =
+        obterDiasValidadeProduto(
+            produto
+        );
+
+
+    /*
+       OUTROS PRODUTOS:
+       validade manual.
+    */
+
+    if (
+        dias === null
+    ) {
+
+        validade.readOnly =
+            false;
+
+        return;
+
+    }
+
+
+    /*
+       PRODUTOS COM PRAZO PADRÃO
+    */
+
+    validade.readOnly =
+        true;
+
+
+    const data =
+        new Date(
+            fabricacao.value +
+            "T00:00:00"
+        );
+
+
+    data.setDate(
+        data.getDate() +
+        dias
+    );
+
+
+    validade.value =
+        data
+            .toISOString()
+            .split(
+                "T"
+            )[0];
+
+}
+
+
+/* =========================================================
+   EVENTOS DE DATA E PRODUTO
+========================================================= */
+
+document.addEventListener(
+    "change",
+    function (evento) {
+
+        if (
+            evento.target.id ===
+            "fabricacaoProducao" ||
+            evento.target.id ===
+            "produtoProducao"
+        ) {
+
+            calcularValidadeProducao();
+
+        }
+
+
+        if (
+            evento.target.id ===
+            "fabricacaoEtiqueta" ||
+            evento.target.id ===
+            "produtoEtiqueta"
+        ) {
+
+            calcularValidadeEtiqueta();
+
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -3165,11 +3110,13 @@ function atualizarSelectsProdutos() {
                 produtos.some(
                     function (produto) {
 
-                        return String(
-                            produto.id
-                        ) ===
-                        String(
-                            valorAtual
+                        return (
+                            String(
+                                produto.id
+                            ) ===
+                            String(
+                                valorAtual
+                            )
                         );
 
                     }
@@ -3185,6 +3132,11 @@ function atualizarSelectsProdutos() {
     );
 
 
+    /*
+       Depois de atualizar os produtos,
+       recalcula as validades.
+    */
+
     calcularValidadeProducao();
 
     calcularValidadeEtiqueta();
@@ -3193,7 +3145,7 @@ function atualizarSelectsProdutos() {
 
 
 /* =========================================================
-   SELECTS MATÉRIA-PRIMA
+   SELECTS DE MATÉRIA-PRIMA
 ========================================================= */
 
 function atualizarSelectsMateriaPrima() {
@@ -3268,7 +3220,8 @@ function atualizarUltimaAtualizacao() {
 
 
     campo.textContent =
-        ultima || "--";
+        ultima ||
+        "--";
 
 }
 
@@ -3343,15 +3296,7 @@ function exportarBackup() {
         ".json";
 
 
-    document.body.appendChild(
-        link
-    );
-
-
     link.click();
-
-
-    link.remove();
 
 
     URL.revokeObjectURL(
@@ -3426,11 +3371,13 @@ function importarBackup() {
                         }
 
 
-                        if (
-                            !confirm(
+                        const confirmar =
+                            confirm(
                                 "Restaurar este backup irá substituir os dados atuais. Deseja continuar?"
-                            )
-                        ) {
+                            );
+
+
+                        if (!confirmar) {
 
                             return;
 
@@ -3471,11 +3418,14 @@ function importarBackup() {
                             "Backup restaurado com sucesso!"
                         );
 
-                    } catch (erro) {
+                    }
+
+                    catch (erro) {
 
                         console.error(
                             erro
                         );
+
 
                         alert(
                             "Não foi possível restaurar o backup."
@@ -3526,43 +3476,6 @@ function atualizarTudo() {
 
 
 /* =========================================================
-   DATA ATUAL
-========================================================= */
-
-function obterDataHoje() {
-
-    const agora =
-        new Date();
-
-
-    return (
-
-        agora.getFullYear() +
-
-        "-" +
-
-        String(
-            agora.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        ) +
-
-        "-" +
-
-        String(
-            agora.getDate()
-        ).padStart(
-            2,
-            "0"
-        )
-
-    );
-
-}
-
-
-/* =========================================================
    FORMATAÇÃO DE DATA
 ========================================================= */
 
@@ -3580,7 +3493,9 @@ function formatarData(
     const partes =
         String(
             data
-        ).split("-");
+        ).split(
+            "-"
+        );
 
 
     if (
@@ -3588,17 +3503,11 @@ function formatarData(
     ) {
 
         return (
-
             partes[2] +
-
             "/" +
-
             partes[1] +
-
             "/" +
-
             partes[0]
-
         );
 
     }
@@ -3636,118 +3545,72 @@ function formatarMoeda(
 
 
 /* =========================================================
-   NOME DE ARQUIVO
-========================================================= */
-
-function obterDataHoraArquivo() {
-
-    const agora =
-        new Date();
-
-
-    return (
-
-        agora.getFullYear() +
-
-        String(
-            agora.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        ) +
-
-        String(
-            agora.getDate()
-        ).padStart(
-            2,
-            "0"
-        ) +
-
-        "-" +
-
-        String(
-            agora.getHours()
-        ).padStart(
-            2,
-            "0"
-        ) +
-
-        String(
-            agora.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        ) +
-
-        String(
-            agora.getSeconds()
-        ).padStart(
-            2,
-            "0"
-        )
-
-    );
-
-}
-
-
-/* =========================================================
    COMPATIBILIDADE COM INDEX.HTML
 ========================================================= */
 
 window.mostrarAba =
     mostrarAba;
 
+
 window.toggleMenu =
     toggleMenu;
+
 
 window.salvarProduto =
     salvarProduto;
 
+
 window.novoProduto =
     novoProduto;
+
 
 window.editarProduto =
     editarProduto;
 
+
 window.excluirProduto =
     excluirProduto;
+
 
 window.salvarMateriaPrima =
     salvarMateriaPrima;
 
+
 window.novaMateriaPrima =
     novaMateriaPrima;
+
 
 window.alterarTipoEstoque =
     alterarTipoEstoque;
 
+
 window.atualizarItensMovimentacao =
     atualizarItensMovimentacao;
+
 
 window.registrarMovimentacao =
     registrarMovimentacao;
 
+
 window.registrarProducao =
     registrarProducao;
+
 
 window.calcularPreco =
     calcularPreco;
 
+
 window.gerarEtiqueta =
     gerarEtiqueta;
+
 
 window.salvarEtiquetaPNG =
     salvarEtiquetaPNG;
 
+
 window.exportarBackup =
     exportarBackup;
 
+
 window.importarBackup =
     importarBackup;
-
-window.calcularValidadeProducao =
-    calcularValidadeProducao;
-
-window.calcularValidadeEtiqueta =
-    calcularValidadeEtiqueta;
