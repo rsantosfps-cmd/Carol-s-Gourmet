@@ -1,12 +1,13 @@
 /* =====================================================
    CAROL'S GOURMET ERP 4.0
-   STYLE.CSS - PARTE 1
-   Base do sistema
+   STYLE.CSS
+   PADRÃO FINAL
+   ETIQUETA: 5cm x 2cm
 ===================================================== */
 
 
 /* =====================================================
-   RESET GERAL
+   RESET
 ===================================================== */
 
 * {
@@ -16,20 +17,16 @@
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
-
 html {
     scroll-behavior: smooth;
 }
-
 
 body {
     min-height: 100vh;
     background: var(--creme);
     color: var(--marrom-escuro);
+    overflow-x: hidden;
 }
-
-
-/* Remove estilos padrões */
 
 button,
 input,
@@ -38,11 +35,9 @@ textarea {
     font-family: inherit;
 }
 
-
 button {
     cursor: pointer;
 }
-
 
 a {
     text-decoration: none;
@@ -51,12 +46,10 @@ a {
 
 
 /* =====================================================
-   VARIÁVEIS DO SISTEMA
+   VARIÁVEIS
 ===================================================== */
 
 :root {
-
-    /* Identidade Carol's Gourmet */
 
     --marrom: #5D4037;
 
@@ -68,73 +61,48 @@ a {
 
     --dourado: #C9A227;
 
-
-    /* Status */
-
     --verde: #4CAF50;
 
     --vermelho: #E53935;
 
     --cinza: #666;
 
-
-    /* Neutros */
-
     --branco: #FFFFFF;
 
     --preto: #222;
 
-
-    /* Sombras */
-
     --sombra:
-    0 4px 15px rgba(0,0,0,0.12);
-
+        0 4px 15px rgba(0,0,0,0.12);
 
     --sombra-leve:
-    0 2px 8px rgba(0,0,0,0.08);
-
-
-    /* Bordas */
+        0 2px 8px rgba(0,0,0,0.08);
 
     --raio:
-    12px;
-
-
-    /* Menu */
+        12px;
 
     --menu-width:
-    260px;
-
+        260px;
 }
 
 
-
 /* =====================================================
-   ESTRUTURA PRINCIPAL
+   ESTRUTURA
 ===================================================== */
-
 
 body {
-
     display: flex;
-    overflow-x: hidden;
-
 }
 
 
-
 /* =====================================================
-   CABEÇALHO SUPERIOR
+   CABEÇALHO
 ===================================================== */
-
 
 .header {
 
     height: 70px;
 
-    background:
-    var(--branco);
+    background: var(--branco);
 
     display: flex;
 
@@ -144,107 +112,86 @@ body {
 
     padding: 0 25px;
 
-    box-shadow:
-    var(--sombra-leve);
+    box-shadow: var(--sombra-leve);
 
     position: fixed;
 
-    top:0;
+    top: 0;
 
-    left:0;
+    left: 0;
 
-    width:100%;
+    width: 100%;
 
-    z-index:1000;
-
+    z-index: 1000;
 }
-
 
 
 /* =====================================================
    LOGO
 ===================================================== */
 
-
 .logo {
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    gap:12px;
+    gap: 12px;
 
-    font-size:24px;
+    font-size: 24px;
 
-    font-weight:700;
+    font-weight: 700;
 
-    color:
-    var(--marrom);
-
+    color: var(--marrom);
 }
-
-
 
 .logo span {
-
-    color:
-    var(--dourado);
-
+    color: var(--dourado);
 }
-
-
 
 .logo-icon {
 
-    width:45px;
+    width: 45px;
 
-    height:45px;
+    height: 45px;
 
-    border-radius:50%;
+    border-radius: 50%;
 
-    background:
-    var(--marrom);
+    background: var(--marrom);
 
-    color:
-    var(--branco);
+    color: var(--branco);
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    justify-content:center;
+    justify-content: center;
 
-    font-size:24px;
-
+    font-size: 24px;
 }
 
 
-
 /* =====================================================
-   BOTÃO MENU MOBILE ☰
+   BOTÃO MOBILE
 ===================================================== */
-
 
 .menu-toggle {
 
-    display:none;
+    display: none;
 
-    border:none;
+    border: none;
 
-    background:none;
+    background: none;
 
-    font-size:30px;
+    font-size: 30px;
 
-    color:
-    var(--marrom);
-
+    color: var(--marrom);
 }
 
 
 /* =====================================================
    MENU LATERAL
 ===================================================== */
-
 
 .sidebar {
 
@@ -267,15 +214,12 @@ body {
     transition: 0.3s ease;
 
     z-index: 999;
-
 }
 
 
-
 /* =====================================================
-   ITENS DO MENU
+   ITENS MENU
 ===================================================== */
-
 
 .menu-item {
 
@@ -302,18 +246,13 @@ body {
     transition: 0.25s;
 
     border-left: 4px solid transparent;
-
 }
-
-
 
 .menu-item:hover {
 
-    background: rgba(255,255,255,0.08);
-
+    background:
+        rgba(255,255,255,0.08);
 }
-
-
 
 .menu-item.ativo {
 
@@ -321,18 +260,16 @@ body {
 
     color: var(--marrom-escuro);
 
-    border-left: 4px solid var(--branco);
+    border-left:
+        4px solid var(--branco);
 
     font-weight: 700;
-
 }
 
 
-
 /* =====================================================
-   ÁREA PRINCIPAL DO SISTEMA
+   ÁREA PRINCIPAL
 ===================================================== */
-
 
 .conteudo-principal {
 
@@ -340,45 +277,45 @@ body {
 
     padding-top: 90px;
 
-    width: calc(100% - var(--menu-width));
+    width:
+        calc(100% - var(--menu-width));
 
     min-height: 100vh;
 
     padding-left: 30px;
 
     padding-right: 30px;
-
 }
 
 
-
 /* =====================================================
-   CONTAINER DAS PÁGINAS
+   ABAS
 ===================================================== */
 
+.aba {
+    display: none;
+}
+
+.aba.ativa {
+    display: block;
+}
+
+
+/* =====================================================
+   CONTEÚDO
+===================================================== */
 
 .container {
-
     width: 100%;
-
 }
-
-
-
-/* =====================================================
-   ÁREA INTERNA
-===================================================== */
-
 
 .content {
 
     width: 100%;
 
-    animation: aparecer 0.3s ease;
-
+    animation:
+        aparecer 0.3s ease;
 }
-
-
 
 .page-title {
 
@@ -389,10 +326,7 @@ body {
     color: var(--marrom-escuro);
 
     margin-bottom: 8px;
-
 }
-
-
 
 .page-subtitle {
 
@@ -401,2019 +335,1236 @@ body {
     font-size: 15px;
 
     margin-bottom: 25px;
-
 }
-
-
-/* =====================================================
-   FIM DA PARTE 1
-===================================================== */
-/* =====================================================
-   CAROL'S GOURMET ERP 4.0
-   STYLE.CSS - PARTE 2
-   Conteúdo interno do sistema
-===================================================== */
-
-
-/* =====================================================
-   ÁREA PRINCIPAL
-===================================================== */
-
-
-.content {
-
-
-    width:100%;
-
-
-    animation:
-    aparecer 0.3s ease;
-
-
-}
-
-
-
-.page-title {
-
-
-    font-size:30px;
-
-
-    font-weight:700;
-
-
-    color:
-    var(--marrom-escuro);
-
-
-    margin-bottom:8px;
-
-
-}
-
-
-
-.page-subtitle {
-
-
-    color:
-    var(--cinza);
-
-
-    font-size:15px;
-
-
-    margin-bottom:25px;
-
-
-}
-
 
 
 /* =====================================================
    SEÇÕES
 ===================================================== */
 
-
 .section {
 
+    background: var(--branco);
 
-    background:
-    var(--branco);
+    border-radius: var(--raio);
 
+    padding: 25px;
 
-    border-radius:
-    var(--raio);
+    margin-bottom: 25px;
 
-
-    padding:25px;
-
-
-    margin-bottom:25px;
-
-
-    box-shadow:
-    var(--sombra-leve);
-
-
+    box-shadow: var(--sombra-leve);
 }
-
-
 
 .section-header {
 
+    display: flex;
 
-    display:flex;
+    justify-content: space-between;
 
+    align-items: center;
 
-    justify-content:space-between;
-
-
-    align-items:center;
-
-
-    margin-bottom:20px;
-
-
+    margin-bottom: 20px;
 }
-
-
 
 .section-title {
 
+    font-size: 20px;
 
-    font-size:20px;
+    font-weight: 700;
 
-
-    font-weight:700;
-
-
-    color:
-    var(--marrom);
-
-
+    color: var(--marrom);
 }
-
 
 
 /* =====================================================
-   CARDS DO SISTEMA
+   CARDS
 ===================================================== */
-
 
 .cards {
 
-
-    display:grid;
-
+    display: grid;
 
     grid-template-columns:
-    repeat(auto-fit,minmax(230px,1fr));
+        repeat(auto-fit, minmax(230px, 1fr));
 
+    gap: 20px;
 
-    gap:20px;
-
-
-    margin-bottom:30px;
-
-
+    margin-bottom: 30px;
 }
-
-
 
 .card {
 
+    background: var(--branco);
 
-    background:
-    var(--branco);
+    border-radius: var(--raio);
 
+    padding: 25px;
 
-    border-radius:
-    var(--raio);
+    box-shadow: var(--sombra);
 
+    transition: 0.3s;
 
-    padding:25px;
-
-
-    box-shadow:
-    var(--sombra);
-
-
-    transition:
-    0.3s;
-
-
-    border:
-    1px solid transparent;
-
-
+    border: 1px solid transparent;
 }
-
-
 
 .card:hover {
 
-
     transform:
-    translateY(-4px);
-
+        translateY(-4px);
 
     border-color:
-    var(--bege);
-
-
+        var(--bege);
 }
-
-
 
 .card-title {
 
+    font-size: 15px;
 
-    font-size:15px;
+    color: var(--cinza);
 
-
-    color:
-    var(--cinza);
-
-
-    margin-bottom:12px;
-
-
+    margin-bottom: 12px;
 }
-
-
 
 .card-value {
 
+    font-size: 32px;
 
-    font-size:32px;
+    font-weight: 700;
 
-
-    font-weight:700;
-
-
-    color:
-    var(--marrom-escuro);
-
-
+    color: var(--marrom-escuro);
 }
-
-
 
 .card-icon {
 
+    font-size: 35px;
 
-    font-size:35px;
-
-
-    margin-bottom:15px;
-
-
+    margin-bottom: 15px;
 }
-
-
-
-/* Cards de status */
-
 
 .card.green {
-
-
-    border-left:
-    5px solid var(--verde);
-
-
+    border-left: 5px solid var(--verde);
 }
-
-
 
 .card.red {
-
-
-    border-left:
-    5px solid var(--vermelho);
-
-
+    border-left: 5px solid var(--vermelho);
 }
-
-
 
 .card.gold {
-
-
-    border-left:
-    5px solid var(--dourado);
-
-
+    border-left: 5px solid var(--dourado);
 }
-
 
 
 /* =====================================================
    FORMULÁRIOS
 ===================================================== */
 
-
 .form {
 
+    display: flex;
 
-    display:flex;
+    flex-direction: column;
 
-
-    flex-direction:column;
-
-
-    gap:18px;
-
-
+    gap: 18px;
 }
-
-
 
 .form-group {
 
+    display: flex;
 
-    display:flex;
+    flex-direction: column;
 
-
-    flex-direction:column;
-
-
-    gap:7px;
-
-
+    gap: 7px;
 }
-
-
 
 label {
 
+    font-size: 14px;
 
-    font-size:14px;
+    font-weight: 600;
 
-
-    font-weight:600;
-
-
-    color:
-    var(--marrom-escuro);
-
-
+    color: var(--marrom-escuro);
 }
-
-
 
 input,
 select,
 textarea {
 
+    width: 100%;
 
-    width:100%;
+    padding: 13px 15px;
 
+    border-radius: 8px;
 
-    padding:13px 15px;
+    border: 1px solid #ddd;
 
+    background: var(--branco);
 
-    border-radius:
-    8px;
+    font-size: 15px;
 
+    outline: none;
 
-    border:
-    1px solid #ddd;
-
-
-    background:
-    var(--branco);
-
-
-    font-size:15px;
-
-
-    outline:none;
-
-
-    transition:
-    0.25s;
-
-
+    transition: 0.25s;
 }
-
-
-
-/* =====================================================
-   INPUT EM FOCO
-===================================================== */
-
 
 input:focus,
 select:focus,
 textarea:focus {
 
-
     border-color:
-    var(--dourado);
-
+        var(--dourado);
 
     box-shadow:
-    0 0 0 3px rgba(201,162,39,0.18);
-
-
+        0 0 0 3px
+        rgba(201,162,39,0.18);
 }
-
-
-
-/* =====================================================
-   TEXTAREA
-===================================================== */
-
 
 textarea {
 
+    resize: vertical;
 
-    resize:
-    vertical;
-
-
-    min-height:
-    120px;
-
-
+    min-height: 120px;
 }
-
-
-
-/* =====================================================
-   GRID DE FORMULÁRIOS
-===================================================== */
-
 
 .form-grid {
 
-
-    display:grid;
-
+    display: grid;
 
     grid-template-columns:
-    repeat(2,1fr);
+        repeat(2, 1fr);
 
-
-    gap:20px;
-
-
+    gap: 20px;
 }
-
-
 
 .form-grid .full {
 
-
     grid-column:
-    1 / -1;
-
-
+        1 / -1;
 }
-
-
-
-/* =====================================================
-   CAIXA DE CADASTRO
-===================================================== */
-
 
 .form-box {
 
+    background: var(--branco);
 
-    background:
-    var(--branco);
+    padding: 30px;
 
+    border-radius: var(--raio);
 
-    padding:30px;
-
-
-    border-radius:
-    var(--raio);
-
-
-    box-shadow:
-    var(--sombra-leve);
-
-
+    box-shadow: var(--sombra-leve);
 }
-
-
 
 .form-box h2 {
 
+    color: var(--marrom);
 
-    color:
-    var(--marrom);
-
-
-    margin-bottom:20px;
-
-
+    margin-bottom: 20px;
 }
-
-
-
-/* =====================================================
-   BADGES / ETIQUETAS DE STATUS
-===================================================== */
-
-
-.badge {
-
-
-    display:inline-flex;
-
-
-    align-items:center;
-
-
-    padding:
-    5px 12px;
-
-
-    border-radius:
-    20px;
-
-
-    font-size:12px;
-
-
-    font-weight:700;
-
-
-}
-
-
-
-.badge-success {
-
-
-    background:
-    #E8F5E9;
-
-
-    color:
-    var(--verde);
-
-
-}
-
-
-
-.badge-danger {
-
-
-    background:
-    #FFEBEE;
-
-
-    color:
-    var(--vermelho);
-
-
-}
-
-
-
-.badge-warning {
-
-
-    background:
-    #FFF8E1;
-
-
-    color:
-    var(--dourado);
-
-
-}
-
-
-
-/* =====================================================
-   ANIMAÇÃO BASE
-===================================================== */
-
-
-@keyframes aparecer {
-
-
-    from {
-
-
-        opacity:0;
-
-
-        transform:
-        translateY(10px);
-
-
-    }
-
-
-    to {
-
-
-        opacity:1;
-
-
-        transform:
-        translateY(0);
-
-
-    }
-
-
-}
-
-
-
-/* =====================================================
-   FIM DA PARTE 2
-===================================================== */
-/* =====================================================
-   CAROL'S GOURMET ERP 4.0
-   STYLE.CSS - PARTE 3
-   Botões, tabelas e dashboard
-===================================================== */
 
 
 /* =====================================================
    BOTÕES
 ===================================================== */
 
-
 .btn {
 
+    border: none;
 
-    border:none;
+    padding: 12px 22px;
 
+    border-radius: 8px;
 
-    padding:12px 22px;
+    font-size: 14px;
 
+    font-weight: 600;
 
-    border-radius:8px;
+    display: inline-flex;
 
+    align-items: center;
 
-    font-size:14px;
+    justify-content: center;
 
+    gap: 8px;
 
-    font-weight:600;
+    transition: 0.25s;
 
-
-    display:inline-flex;
-
-
-    align-items:center;
-
-
-    justify-content:center;
-
-
-    gap:8px;
-
-
-    transition:0.25s;
-
-
-    color:
-    var(--branco);
-
-
+    color: var(--branco);
 }
-
-
 
 .btn:hover {
 
-
     transform:
-    translateY(-2px);
+        translateY(-2px);
 
-
-    opacity:0.9;
-
-
+    opacity: 0.9;
 }
-
-
-
-/* Botão salvar */
-
 
 .btn-save {
-
-
-    background:
-    var(--verde);
-
-
+    background: var(--verde);
 }
-
-
-
-/* Botão cancelar */
-
 
 .btn-cancel {
-
-
-    background:
-    var(--cinza);
-
-
+    background: var(--cinza);
 }
-
-
-
-/* Botão excluir */
-
 
 .btn-delete {
-
-
-    background:
-    var(--vermelho);
-
-
+    background: var(--vermelho);
 }
-
-
-
-/* Botão imprimir */
-
 
 .btn-print {
-
-
-    background:
-    var(--marrom);
-
-
+    background: var(--marrom);
 }
-
-
-
-/* Botão principal */
-
 
 .btn-primary {
 
+    background: var(--dourado);
 
-    background:
-    var(--dourado);
-
-
-    color:
-    var(--marrom-escuro);
-
-
+    color: var(--marrom-escuro);
 }
-
-
-
-/* Botão pequeno */
-
 
 .btn-sm {
 
+    padding: 8px 14px;
 
-    padding:
-    8px 14px;
-
-
-    font-size:
-    12px;
-
-
+    font-size: 12px;
 }
-
-
-
-/* Grupo de botões */
-
 
 .btn-group {
 
+    display: flex;
 
-    display:flex;
+    gap: 12px;
 
-
-    gap:12px;
-
-
-    flex-wrap:wrap;
-
-
+    flex-wrap: wrap;
 }
-
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-
-.dashboard {
-
-
-    display:flex;
-
-
-    flex-direction:column;
-
-
-    gap:25px;
-
-
-}
-
-
-
-/* Área superior do dashboard */
-
-
-.dashboard-header {
-
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-    align-items:center;
-
-
-    flex-wrap:wrap;
-
-
-}
-
-
-
-/* Indicadores */
-
-
-.indicators {
-
-
-    display:grid;
-
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(200px,1fr));
-
-
-    gap:20px;
-
-
-}
-
-
-
-/* Card indicador */
-
-
-.indicator {
-
-
-    background:
-    var(--branco);
-
-
-    padding:22px;
-
-
-    border-radius:
-    var(--raio);
-
-
-    box-shadow:
-    var(--sombra-leve);
-
-
-}
-
-
-
-.indicator h3 {
-
-
-    font-size:
-    14px;
-
-
-    color:
-    var(--cinza);
-
-
-}
-
-
-
-.indicator strong {
-
-
-    display:block;
-
-
-    margin-top:10px;
-
-
-    font-size:
-    30px;
-
-
-    color:
-    var(--marrom-escuro);
-
-
-}
-
 
 
 /* =====================================================
    TABELAS
 ===================================================== */
 
-
 .table-container {
 
+    width: 100%;
 
-    width:100%;
+    overflow-x: auto;
 
+    background: var(--branco);
 
-    overflow-x:auto;
+    border-radius: var(--raio);
 
-
-    background:
-    var(--branco);
-
-
-    border-radius:
-    var(--raio);
-
-
-    box-shadow:
-    var(--sombra-leve);
-
-
+    box-shadow: var(--sombra-leve);
 }
-
-
 
 table {
 
+    width: 100%;
 
-    width:100%;
-
-
-    border-collapse:
-    collapse;
-
-
+    border-collapse: collapse;
 }
-
-
 
 thead {
 
+    background: var(--marrom);
 
-    background:
-    var(--marrom);
-
-
-    color:
-    var(--branco);
-
-
+    color: var(--branco);
 }
-
-
 
 th {
 
+    padding: 15px;
 
-    padding:
-    15px;
+    text-align: left;
 
-
-    text-align:left;
-
-
-    font-size:
-    14px;
-
-
+    font-size: 14px;
 }
-
-
 
 td {
 
-
-    padding:
-    14px 15px;
-
+    padding: 14px 15px;
 
     border-bottom:
-    1px solid #eee;
+        1px solid #eee;
 
-
-    font-size:
-    14px;
-
-
+    font-size: 14px;
 }
-
-
 
 tbody tr {
 
-
-    transition:
-    0.2s;
-
-
+    transition: 0.2s;
 }
-
-
 
 tbody tr:hover {
 
-
-    background:
-    var(--bege);
-
-
+    background: var(--bege);
 }
-
-
-
-/* Última linha sem borda */
-
 
 tbody tr:last-child td {
 
-
-    border-bottom:none;
-
-
+    border-bottom: none;
 }
 
 
-
 /* =====================================================
-   ÁREA DE PESQUISA
+   DASHBOARD
 ===================================================== */
 
+.dashboard {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 25px;
+}
+
+.dashboard-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+}
+
+.indicators {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(200px, 1fr));
+
+    gap: 20px;
+}
+
+.indicator {
+
+    background: var(--branco);
+
+    padding: 22px;
+
+    border-radius: var(--raio);
+
+    box-shadow: var(--sombra-leve);
+}
+
+.indicator h3 {
+
+    font-size: 14px;
+
+    color: var(--cinza);
+}
+
+.indicator strong {
+
+    display: block;
+
+    margin-top: 10px;
+
+    font-size: 30px;
+
+    color: var(--marrom-escuro);
+}
+
+
+/* =====================================================
+   PESQUISA
+===================================================== */
 
 .search-box {
 
+    display: flex;
 
-    display:flex;
+    gap: 10px;
 
+    align-items: center;
 
-    gap:10px;
+    background: var(--branco);
 
+    padding: 10px 15px;
 
-    align-items:center;
+    border-radius: 10px;
 
-
-    background:
-    var(--branco);
-
-
-    padding:
-    10px 15px;
-
-
-    border-radius:
-    10px;
-
-
-    box-shadow:
-    var(--sombra-leve);
-
-
+    box-shadow: var(--sombra-leve);
 }
-
-
 
 .search-box input {
 
+    border: none;
 
-    border:none;
-
-
-    box-shadow:none;
-
-
+    box-shadow: none;
 }
-
-
 
 .search-box input:focus {
 
-
-    box-shadow:none;
-
-
+    box-shadow: none;
 }
-
 
 
 /* =====================================================
-   FILTROS
+   ETIQUETAS DE STATUS
 ===================================================== */
 
+.badge {
 
-.filters {
+    display: inline-flex;
 
+    align-items: center;
 
-    display:flex;
+    padding: 5px 12px;
 
+    border-radius: 20px;
 
-    gap:15px;
+    font-size: 12px;
 
-
-    flex-wrap:wrap;
-
-
-    margin-bottom:20px;
-
-
+    font-weight: 700;
 }
 
+.badge-success {
+
+    background: #E8F5E9;
+
+    color: var(--verde);
+}
+
+.badge-danger {
+
+    background: #FFEBEE;
+
+    color: var(--vermelho);
+}
+
+.badge-warning {
+
+    background: #FFF8E1;
+
+    color: var(--dourado);
+}
 
 
 /* =====================================================
-   PAGINAÇÃO
+   =====================================================
+   ETIQUETA PROFISSIONAL
+   TAMANHO FÍSICO: 5 CM X 2 CM
+   =====================================================
 ===================================================== */
-
-
-.pagination {
-
-
-    display:flex;
-
-
-    gap:8px;
-
-
-    margin-top:20px;
-
-
-}
-
-
-
-.pagination button {
-
-
-    width:35px;
-
-
-    height:35px;
-
-
-    border:none;
-
-
-    border-radius:50%;
-
-
-    background:
-    var(--bege);
-
-
-    color:
-    var(--marrom);
-
-
-}
-
-
-
-.pagination button.active {
-
-
-    background:
-    var(--dourado);
-
-
-    color:
-    var(--marrom-escuro);
-
-
-}
-
-
-
-/* =====================================================
-   SCROLL PERSONALIZADO
-===================================================== */
-
-
-::-webkit-scrollbar {
-
-
-    width:
-    10px;
-
-
-    height:
-    10px;
-
-
-}
-
-
-
-::-webkit-scrollbar-track {
-
-
-    background:
-    var(--creme);
-
-
-}
-
-
-
-::-webkit-scrollbar-thumb {
-
-
-    background:
-    var(--marrom);
-
-
-    border-radius:
-    20px;
-
-
-}
-
-
-
-::-webkit-scrollbar-thumb:hover {
-
-
-    background:
-    var(--dourado);
-
-
-}
-
-
-
-/* =====================================================
-   ALERTAS DO SISTEMA
-===================================================== */
-
-
-.alert {
-
-
-    padding:
-    15px 20px;
-
-
-    border-radius:
-    10px;
-
-
-    margin-bottom:
-    20px;
-
-
-    font-size:
-    14px;
-
-
-}
-
-
-
-.alert-success {
-
-
-    background:
-    #E8F5E9;
-
-
-    color:
-    #2E7D32;
-
-
-}
-
-
-
-.alert-danger {
-
-
-    background:
-    #FFEBEE;
-
-
-    color:
-    #C62828;
-
-
-}
-
-
-
-.alert-warning {
-
-
-    background:
-    #FFF8E1;
-
-
-    color:
-    #8D6E00;
-
-
-}
-
-
-
-/* =====================================================
-   FIM DA PARTE 3
-===================================================== */
-/* =====================================================
-   CAROL'S GOURMET ERP 4.0
-   STYLE.CSS - PARTE 4
-   Impressão, responsividade e ajustes finais
-===================================================== */
-
-
-/* =====================================================
-   ETIQUETAS DE PRODUTO
-===================================================== */
-
 
 .etiqueta {
 
+    width: 50mm;
 
-    width:
-    300px;
+    height: 20mm;
 
+    min-width: 50mm;
 
-    min-height:
-    180px;
+    max-width: 50mm;
 
+    min-height: 20mm;
 
-    background:
-    var(--branco);
+    max-height: 20mm;
 
+    background: #ffffff;
 
-    border:
-    1px solid #ddd;
+    border: 1px solid #d8d8d8;
 
+    border-radius: 2mm;
 
-    border-radius:
-    8px;
+    padding: 1.5mm 2mm;
 
+    display: flex;
 
-    padding:
-    15px;
+    flex-direction: column;
 
+    justify-content: space-between;
 
-    display:flex;
+    align-items: stretch;
 
-
-    flex-direction:column;
-
-
-    justify-content:space-between;
-
+    overflow: hidden;
 
     box-shadow:
-    var(--sombra-leve);
+        0 2px 8px rgba(0,0,0,0.10);
 
+    color: #000000;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
 }
 
 
+/* =====================================================
+   NOME DA EMPRESA
+===================================================== */
 
 .etiqueta-logo {
 
+    width: 100%;
 
-    text-align:center;
+    text-align: center;
 
+    font-size: 3.2mm;
 
-    font-size:
-    18px;
+    line-height: 3.2mm;
 
+    font-weight: 700;
 
-    font-weight:
-    700;
+    color: #5D4037;
 
+    white-space: nowrap;
 
-    color:
-    var(--marrom);
-
-
-}
-
-
-
-.etiqueta-produto {
-
-
-    text-align:center;
-
-
-    font-size:
-    20px;
-
-
-    font-weight:
-    700;
-
-
-    color:
-    var(--marrom-escuro);
-
+    overflow: hidden;
 
 }
 
 
-
-.etiqueta-info {
-
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-    font-size:
-    12px;
-
-
-}
-
-
-
-.etiqueta-validade {
-
-
-    text-align:center;
-
-
-    font-size:
-    14px;
-
-
-    font-weight:
-    600;
-
-
-}
-
-
-
-/* Código de barras */
-
+/* =====================================================
+   CÓDIGO DE BARRAS
+===================================================== */
 
 .codigo-barras {
 
+    width: 100%;
 
-    height:
-    45px;
+    height: 8mm;
 
+    min-height: 8mm;
 
-    background:
-    repeating-linear-gradient(
-        90deg,
-        #000 0px,
-        #000 2px,
-        transparent 2px,
-        transparent 5px
-    );
+    max-height: 8mm;
 
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    overflow: hidden;
+
+    margin: 0.5mm 0;
 
 }
 
 
+/*
+   IMPORTANTE:
+   O JsBarcode gera SVG.
+   O CSS abaixo impede que o código
+   fique cortado horizontalmente.
+*/
+
+.codigo-barras svg {
+
+    display: block;
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    height: 8mm !important;
+
+    max-height: 8mm !important;
+
+    overflow: visible !important;
+
+}
+
 
 /* =====================================================
-   ÁREA DE IMPRESSÃO
+   TEXTO GERADO PELO EAN-13
 ===================================================== */
 
+.codigo-barras svg text {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif !important;
+
+    font-size: 2.6mm !important;
+
+    fill: #000000 !important;
+}
+
+
+/* =====================================================
+   NOME DO PRODUTO
+===================================================== */
+
+.etiqueta-produto {
+
+    width: 100%;
+
+    text-align: center;
+
+    font-size: 3.2mm;
+
+    line-height: 3.2mm;
+
+    font-weight: 700;
+
+    color: #000000;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* =====================================================
+   FABRICAÇÃO E VALIDADE
+===================================================== */
+
+.etiqueta-info {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 2mm;
+
+    font-size: 2.3mm;
+
+    line-height: 2.5mm;
+
+    color: #000000;
+
+    white-space: nowrap;
+
+}
+
+.etiqueta-info > div {
+
+    flex: 1;
+
+    text-align: center;
+
+}
+
+.etiqueta-info strong {
+
+    font-weight: 700;
+
+}
+
+
+/* =====================================================
+   VALIDADE
+===================================================== */
+
+.etiqueta-validade {
+
+    width: 100%;
+
+    text-align: center;
+
+    font-size: 2.5mm;
+
+    line-height: 2.5mm;
+
+    font-weight: 600;
+
+    color: #000000;
+
+}
+
+
+/* =====================================================
+   ÁREA DE PRÉ-VISUALIZAÇÃO
+===================================================== */
 
 .print-area {
 
+    display: flex;
 
-    display:flex;
+    justify-content: center;
 
+    align-items: center;
 
-    justify-content:center;
+    padding: 20px;
 
-
-    align-items:center;
-
-
-    padding:
-    20px;
-
+    overflow: auto;
 
 }
 
 
-
 /* =====================================================
-   CONFIGURAÇÃO DE IMPRESSÃO
+   IMPRESSÃO
 ===================================================== */
 
-
 @media print {
+
+    @page {
+
+        size: 50mm 20mm;
+
+        margin: 0;
+
+    }
+
+
+    html,
+    body {
+
+        width: 50mm;
+
+        height: 20mm;
+
+        margin: 0;
+
+        padding: 0;
+
+        background: #ffffff;
+
+    }
 
 
     body {
 
-
-        background:
-        white;
-
+        display: block;
 
     }
-
 
 
     .header,
     .sidebar,
     .btn,
-    .no-print {
+    .no-print,
+    button {
+
+        display: none !important;
+
+    }
 
 
-        display:none !important;
+    .conteudo-principal {
 
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        width: 50mm !important;
+
+        height: 20mm !important;
 
     }
 
 
+    .aba {
 
-    .main {
-
-
-        margin:0;
-
-
-        padding:0;
-
-
-        width:100%;
-
+        display: none !important;
 
     }
 
+
+    .aba.ativa {
+
+        display: block !important;
+
+    }
+
+
+    .print-area {
+
+        display: block;
+
+        padding: 0;
+
+        margin: 0;
+
+        width: 50mm;
+
+        height: 20mm;
+
+    }
 
 
     .etiqueta {
 
+        width: 50mm !important;
 
-        box-shadow:none;
+        height: 20mm !important;
 
+        min-width: 50mm !important;
 
-        border:
-        1px solid #000;
+        max-width: 50mm !important;
 
+        min-height: 20mm !important;
+
+        max-height: 20mm !important;
+
+        margin: 0 !important;
+
+        padding: 1.5mm 2mm !important;
+
+        border: none;
+
+        border-radius: 0;
+
+        box-shadow: none;
+
+        overflow: hidden;
 
     }
 
+
+    .codigo-barras svg {
+
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+    }
 
 }
 
 
-
 /* =====================================================
-   TABLET
+   RESPONSIVIDADE
 ===================================================== */
 
-
-@media(max-width:1024px){
-
+@media(max-width:1024px) {
 
     .sidebar {
 
-
-        width:
-        230px;
-
+        width: 230px;
 
     }
 
+    .conteudo-principal {
 
-
-    .main {
-
-
-        margin-left:
-        230px;
-
+        margin-left: 230px;
 
         width:
-        calc(100% - 230px);
-
+            calc(100% - 230px);
 
     }
-
-
 
     .form-grid {
 
-
-        grid-template-columns:
-        1fr;
-
+        grid-template-columns: 1fr;
 
     }
-
 
 }
 
 
-
-/* =====================================================
-   CELULAR
-===================================================== */
-
-
-@media(max-width:768px){
-
-
+@media(max-width:768px) {
 
     body {
 
-
-        display:block;
-
+        display: block;
 
     }
-
-
 
     .header {
 
+        height: 60px;
 
-        height:
-        60px;
-
-
-        padding:
-        0 15px;
-
+        padding: 0 15px;
 
     }
-
-
 
     .logo {
 
-
-        font-size:
-        18px;
-
+        font-size: 18px;
 
     }
-
-
 
     .menu-toggle {
 
-
-        display:block;
-
+        display: block;
 
     }
-
-
 
     .sidebar {
 
-
         transform:
-        translateX(-100%);
+            translateX(-100%);
 
+        width: 260px;
 
-        width:
-        260px;
-
-
-        padding-top:
-        70px;
-
+        padding-top: 70px;
 
     }
 
-
-
-    .sidebar.open {
-
+    .sidebar.aberto {
 
         transform:
-        translateX(0);
-
+            translateX(0);
 
     }
 
+    .conteudo-principal {
 
+        margin-left: 0;
 
-    .main {
-
-
-        margin-left:0;
-
-
-        width:100%;
-
+        width: 100%;
 
         padding:
-        80px 15px 20px;
-
+            80px 15px 20px;
 
     }
-
-
 
     .page-title {
 
-
-        font-size:
-        24px;
-
+        font-size: 24px;
 
     }
-
-
 
     .cards {
 
-
-        grid-template-columns:
-        1fr;
-
+        grid-template-columns: 1fr;
 
     }
-
-
 
     .dashboard-header {
 
+        flex-direction: column;
 
-        flex-direction:
-        column;
+        align-items: flex-start;
 
-
-        align-items:flex-start;
-
-
-        gap:15px;
-
+        gap: 15px;
 
     }
-
-
 
     .btn-group {
 
-
-        width:100%;
-
+        width: 100%;
 
     }
-
-
 
     .btn {
 
-
-        width:100%;
-
+        width: 100%;
 
     }
-
-
 
     .search-box {
 
-
-        width:100%;
-
+        width: 100%;
 
     }
-
-
 
 }
 
 
-
-/* =====================================================
-   CELULAR PEQUENO
-===================================================== */
-
-
-@media(max-width:480px){
-
+@media(max-width:480px) {
 
     .section {
 
-
-        padding:
-        18px;
-
+        padding: 18px;
 
     }
-
-
 
     .card {
 
-
-        padding:
-        18px;
-
+        padding: 18px;
 
     }
-
-
 
     th,
     td {
 
+        font-size: 12px;
 
-        font-size:
-        12px;
-
-
-        padding:
-        10px;
-
+        padding: 10px;
 
     }
 
-
-
 }
-
 
 
 /* =====================================================
-   ANIMAÇÕES FINAIS
+   ANIMAÇÕES
 ===================================================== */
 
+@keyframes aparecer {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
 
 .fade-in {
 
-
     animation:
-    fadeIn .4s ease;
-
+        fadeIn .4s ease;
 
 }
-
-
 
 .slide-in {
 
-
     animation:
-    slideIn .4s ease;
-
+        slideIn .4s ease;
 
 }
-
-
 
 @keyframes fadeIn {
 
-
     from {
 
-
-        opacity:
-        0;
-
+        opacity: 0;
 
     }
-
 
     to {
 
-
-        opacity:
-        1;
-
+        opacity: 1;
 
     }
 
-
 }
-
-
 
 @keyframes slideIn {
 
-
     from {
 
-
-        opacity:
-        0;
-
+        opacity: 0;
 
         transform:
-        translateX(-20px);
-
+            translateX(-20px);
 
     }
-
 
     to {
 
-
-        opacity:
-        1;
-
+        opacity: 1;
 
         transform:
-        translateX(0);
-
+            translateX(0);
 
     }
 
-
 }
-
 
 
 /* =====================================================
    UTILIDADES
 ===================================================== */
 
-
 .hidden {
 
-
-    display:none !important;
-
+    display: none !important;
 
 }
-
-
 
 .text-center {
 
-
-    text-align:center;
-
+    text-align: center;
 
 }
-
-
 
 .text-right {
 
-
-    text-align:right;
-
+    text-align: right;
 
 }
-
-
 
 .mt-20 {
 
-
-    margin-top:
-    20px;
-
+    margin-top: 20px;
 
 }
-
-
 
 .mb-20 {
 
-
-    margin-bottom:
-    20px;
-
+    margin-bottom: 20px;
 
 }
 
 
-
 /* =====================================================
-   FIM DO STYLE.CSS CAROL'S GOURMET ERP 4.0
-===================================================== */
-/* =====================================================
-   CONTROLE DAS ABAS
+   SCROLL
 ===================================================== */
 
+::-webkit-scrollbar {
 
-.aba {
+    width: 10px;
 
-    display: none;
+    height: 10px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: var(--creme);
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: var(--marrom);
+
+    border-radius: 20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: var(--dourado);
 
 }
 
 
+/* =====================================================
+   ALERTAS
+===================================================== */
 
-.aba.ativa {
+.alert {
 
-    display: block;
+    padding: 15px 20px;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+
+    font-size: 14px;
+
+}
+
+.alert-success {
+
+    background: #E8F5E9;
+
+    color: #2E7D32;
+
+}
+
+.alert-danger {
+
+    background: #FFEBEE;
+
+    color: #C62828;
+
+}
+
+.alert-warning {
+
+    background: #FFF8E1;
+
+    color: #8D6E00;
 
 }
