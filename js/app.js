@@ -659,8 +659,7 @@ function gerarCodigoProduto() {
 
 function gerarEAN() {
 
-    let codigo =
-        "";
+    let codigo = "";
 
     for (
         let i = 0;
@@ -676,13 +675,11 @@ function gerarEAN() {
     }
 
 
-    /* ================================================
-       CALCULAR DÍGITO VERIFICADOR EAN-13
-    ================================================ */
+    /* =================================================
+       CALCULAR DÍGITO VERIFICADOR
+    ================================================= */
 
-    let soma =
-        0;
-
+    let soma = 0;
 
     for (
         let i = 0;
@@ -700,8 +697,7 @@ function gerarEAN() {
             i % 2 === 0
         ) {
 
-            soma +=
-                numero;
+            soma += numero;
 
         } else {
 
@@ -737,20 +733,48 @@ function gerarEAN() {
 
 function novoProduto() {
 
+    produtoEditando = -1;
 
-    produtoEditando =
-        -1;
-
-
-    /* ================================================
-       CÓDIGO INTERNO
-    ================================================ */
 
     const codigoCampo =
         document.getElementById(
             "codigoProduto"
         );
 
+
+    const eanCampo =
+        document.getElementById(
+            "eanProduto"
+        );
+
+
+    const nomeCampo =
+        document.getElementById(
+            "nomeProduto"
+        );
+
+
+    const categoriaCampo =
+        document.getElementById(
+            "categoriaProduto"
+        );
+
+
+    const unidadeCampo =
+        document.getElementById(
+            "unidadeProduto"
+        );
+
+
+    const statusCampo =
+        document.getElementById(
+            "statusProduto"
+        );
+
+
+    /* =================================================
+       GERAR CÓDIGO
+    ================================================= */
 
     if (
         codigoCampo
@@ -762,15 +786,9 @@ function novoProduto() {
     }
 
 
-    /* ================================================
-       CÓDIGO DE BARRAS
-    ================================================ */
-
-    const eanCampo =
-        document.getElementById(
-            "eanProduto"
-        );
-
+    /* =================================================
+       GERAR EAN-13
+    ================================================= */
 
     if (
         eanCampo
@@ -782,15 +800,9 @@ function novoProduto() {
     }
 
 
-    /* ================================================
-       NOME
-    ================================================ */
-
-    const nomeCampo =
-        document.getElementById(
-            "nomeProduto"
-        );
-
+    /* =================================================
+       LIMPAR NOME
+    ================================================= */
 
     if (
         nomeCampo
@@ -802,15 +814,9 @@ function novoProduto() {
     }
 
 
-    /* ================================================
-       CATEGORIA
-    ================================================ */
-
-    const categoriaCampo =
-        document.getElementById(
-            "categoriaProduto"
-        );
-
+    /* =================================================
+       LIMPAR CATEGORIA
+    ================================================= */
 
     if (
         categoriaCampo
@@ -822,15 +828,9 @@ function novoProduto() {
     }
 
 
-    /* ================================================
-       UNIDADE
-    ================================================ */
-
-    const unidadeCampo =
-        document.getElementById(
-            "unidadeProduto"
-        );
-
+    /* =================================================
+       UNIDADE PADRÃO
+    ================================================= */
 
     if (
         unidadeCampo
@@ -842,15 +842,9 @@ function novoProduto() {
     }
 
 
-    /* ================================================
-       STATUS
-    ================================================ */
-
-    const statusCampo =
-        document.getElementById(
-            "statusProduto"
-        );
-
+    /* =================================================
+       STATUS PADRÃO
+    ================================================= */
 
     if (
         statusCampo
@@ -871,9 +865,9 @@ function novoProduto() {
 function salvarProduto() {
 
 
-    /* ================================================
-       LOCALIZAR CAMPOS
-    ================================================ */
+    /* =================================================
+       LOCALIZAR CAMPOS DO INDEX
+    ================================================= */
 
     const codigoCampo =
         document.getElementById(
@@ -911,9 +905,9 @@ function salvarProduto() {
         );
 
 
-    /* ================================================
+    /* =================================================
        VERIFICAR CAMPOS
-    ================================================ */
+    ================================================= */
 
     if (
         !codigoCampo ||
@@ -924,20 +918,18 @@ function salvarProduto() {
         !statusCampo
     ) {
 
-
         alert(
             "Não foi possível localizar os campos do cadastro de produto."
         );
-
 
         return;
 
     }
 
 
-    /* ================================================
+    /* =================================================
        PEGAR VALORES
-    ================================================ */
+    ================================================= */
 
     const codigo =
         codigoCampo.value.trim();
@@ -963,31 +955,28 @@ function salvarProduto() {
         statusCampo.value;
 
 
-    /* ================================================
+    /* =================================================
        VALIDAR NOME
-    ================================================ */
+    ================================================= */
 
     if (
         nome === ""
     ) {
 
-
         alert(
             "Informe o nome do produto."
         );
 
-
         nomeCampo.focus();
-
 
         return;
 
     }
 
 
-    /* ================================================
-       GARANTIR ARRAY
-    ================================================ */
+    /* =================================================
+       GARANTIR ARRAY DE PRODUTOS
+    ================================================= */
 
     if (
         !Array.isArray(
@@ -1000,23 +989,23 @@ function salvarProduto() {
     }
 
 
-    /* ================================================
-       VERIFICAR SE ESTÁ EDITANDO
-    ================================================ */
+    /* =================================================
+       GARANTIR PRODUTOEDITANDO
+    ================================================= */
 
     if (
-        typeof produtoEditando !== "number"
+        typeof produtoEditando !==
+        "number"
     ) {
 
-        produtoEditando =
-            -1;
+        produtoEditando = -1;
 
     }
 
 
-    /* ================================================
+    /* =================================================
        NOVO PRODUTO
-    ================================================ */
+    ================================================= */
 
     if (
         produtoEditando === -1
@@ -1025,40 +1014,31 @@ function salvarProduto() {
 
         const produto = {
 
-
             codigo:
                 codigo ||
                 gerarCodigoProduto(),
-
 
             codigoBarras:
                 codigoBarras ||
                 gerarEAN(),
 
-
             nome:
                 nome,
-
 
             categoria:
                 categoria,
 
-
             unidade:
                 unidade,
-
 
             status:
                 status,
 
-
             estoque:
                 0,
 
-
             custo:
                 0,
-
 
             precoVenda:
                 0
@@ -1073,38 +1053,32 @@ function salvarProduto() {
     }
 
 
-    /* ================================================
+    /* =================================================
        EDITAR PRODUTO
-    ================================================ */
+    ================================================= */
 
     else {
-
-
-        if (
-            !produtos[
-                produtoEditando
-            ]
-        ) {
-
-
-            alert(
-                "Produto não encontrado para edição."
-            );
-
-
-            produtoEditando =
-                -1;
-
-
-            return;
-
-        }
 
 
         const produtoAtual =
             produtos[
                 produtoEditando
             ];
+
+
+        if (
+            !produtoAtual
+        ) {
+
+            alert(
+                "Produto não encontrado para edição."
+            );
+
+            produtoEditando = -1;
+
+            return;
+
+        }
 
 
         produtoAtual.codigo =
@@ -1135,12 +1109,13 @@ function salvarProduto() {
             status;
 
 
-        /* ============================================
-           NÃO PERDER ESTOQUE E CUSTOS EXISTENTES
-        ============================================ */
+        /* =================================================
+           GARANTIR CAMPOS EXISTENTES
+        ================================================= */
 
         if (
-            produtoAtual.estoque === undefined
+            produtoAtual.estoque ===
+            undefined
         ) {
 
             produtoAtual.estoque =
@@ -1150,7 +1125,8 @@ function salvarProduto() {
 
 
         if (
-            produtoAtual.custo === undefined
+            produtoAtual.custo ===
+            undefined
         ) {
 
             produtoAtual.custo =
@@ -1160,7 +1136,8 @@ function salvarProduto() {
 
 
         if (
-            produtoAtual.precoVenda === undefined
+            produtoAtual.precoVenda ===
+            undefined
         ) {
 
             produtoAtual.precoVenda =
@@ -1171,23 +1148,30 @@ function salvarProduto() {
     }
 
 
-    /* ================================================
+    /* =================================================
        SALVAR BANCO
-    ================================================ */
+    ================================================= */
 
-    salvarBanco();
+    if (
+        typeof salvarBanco ===
+        "function"
+    ) {
+
+        salvarBanco();
+
+    }
 
 
-    /* ================================================
+    /* =================================================
        ATUALIZAR LISTA DE PRODUTOS
-    ================================================ */
+    ================================================= */
 
     mostrarProdutos();
 
 
-    /* ================================================
+    /* =================================================
        ATUALIZAR DASHBOARD
-    ================================================ */
+    ================================================= */
 
     if (
         typeof atualizarDashboard ===
@@ -1199,9 +1183,9 @@ function salvarProduto() {
     }
 
 
-    /* ================================================
+    /* =================================================
        ATUALIZAR ESTOQUE
-    ================================================ */
+    ================================================= */
 
     if (
         typeof mostrarEstoque ===
@@ -1213,9 +1197,9 @@ function salvarProduto() {
     }
 
 
-    /* ================================================
-       ATUALIZAR ITENS DE MOVIMENTAÇÃO
-    ================================================ */
+    /* =================================================
+       ATUALIZAR LISTA DE MOVIMENTAÇÃO
+    ================================================= */
 
     if (
         typeof atualizarItensMovimentacao ===
@@ -1227,18 +1211,18 @@ function salvarProduto() {
     }
 
 
-    /* ================================================
+    /* =================================================
        MENSAGEM
-    ================================================ */
+    ================================================= */
 
     alert(
         "Produto salvo com sucesso."
     );
 
 
-    /* ================================================
-       LIMPAR PARA NOVO CADASTRO
-    ================================================ */
+    /* =================================================
+       PREPARAR NOVO CADASTRO
+    ================================================= */
 
     novoProduto();
 
@@ -1271,9 +1255,9 @@ function mostrarProdutos() {
         "";
 
 
-    /* ================================================
-       VERIFICAR PRODUTOS
-    ================================================ */
+    /* =================================================
+       NENHUM PRODUTO
+    ================================================= */
 
     if (
         !Array.isArray(
@@ -1281,7 +1265,6 @@ function mostrarProdutos() {
         ) ||
         produtos.length === 0
     ) {
-
 
         tabela.innerHTML = `
 
@@ -1300,15 +1283,14 @@ function mostrarProdutos() {
 
         `;
 
-
         return;
 
     }
 
 
-    /* ================================================
+    /* =================================================
        LISTAR PRODUTOS
-    ================================================ */
+    ================================================= */
 
     produtos.forEach(
         function(
@@ -1374,23 +1356,18 @@ function mostrarProdutos() {
 
                         <button
                             type="button"
-                            onclick="editarProduto(${indice})"
                             class="btn btn-edit"
+                            onclick="editarProduto(${indice})"
                         >
-
                             ✏️
-
                         </button>
-
 
                         <button
                             type="button"
-                            onclick="excluirProduto(${indice})"
                             class="btn btn-delete"
+                            onclick="excluirProduto(${indice})"
                         >
-
                             🗑️
-
                         </button>
 
                     </td>
@@ -1415,9 +1392,10 @@ function editarProduto(
 
 
     if (
-        !produtos[
-            indice
-        ]
+        !Array.isArray(
+            produtos
+        ) ||
+        !produtos[indice]
     ) {
 
         alert(
@@ -1430,18 +1408,16 @@ function editarProduto(
 
 
     const produto =
-        produtos[
-            indice
-        ];
+        produtos[indice];
 
 
     produtoEditando =
         indice;
 
 
-    /* ================================================
-       PREENCHER CAMPOS
-    ================================================ */
+    /* =================================================
+       CAMPOS
+    ================================================= */
 
     const codigoCampo =
         document.getElementById(
@@ -1478,6 +1454,10 @@ function editarProduto(
             "statusProduto"
         );
 
+
+    /* =================================================
+       PREENCHER FORMULÁRIO
+    ================================================= */
 
     if (
         codigoCampo
@@ -1545,14 +1525,15 @@ function editarProduto(
     }
 
 
-    /* ================================================
-       IR PARA ABA DE PRODUTOS
-    ================================================ */
+    /* =================================================
+       ABRIR ABA PRODUTOS
+    ================================================= */
 
     if (
         typeof mostrarAba ===
         "function"
     ) {
+
 
         const aba =
             document.getElementById(
@@ -1592,9 +1573,10 @@ function excluirProduto(
 
 
     if (
-        !produtos[
-            indice
-        ]
+        !Array.isArray(
+            produtos
+        ) ||
+        !produtos[indice]
     ) {
 
         alert(
@@ -1607,16 +1589,14 @@ function excluirProduto(
 
 
     const produto =
-        produtos[
-            indice
-        ];
+        produtos[indice];
 
 
     const confirmar =
         confirm(
-            "Deseja realmente excluir o produto \"" +
+            'Deseja realmente excluir o produto "' +
             produto.nome +
-            "\"?"
+            '"?'
         );
 
 
@@ -1635,11 +1615,30 @@ function excluirProduto(
     );
 
 
-    salvarBanco();
+    /* =================================================
+       SALVAR
+    ================================================= */
 
+    if (
+        typeof salvarBanco ===
+        "function"
+    ) {
+
+        salvarBanco();
+
+    }
+
+
+    /* =================================================
+       ATUALIZAR PRODUTOS
+    ================================================= */
 
     mostrarProdutos();
 
+
+    /* =================================================
+       ATUALIZAR ESTOQUE
+    ================================================= */
 
     if (
         typeof mostrarEstoque ===
@@ -1650,6 +1649,10 @@ function excluirProduto(
 
     }
 
+
+    /* =================================================
+       ATUALIZAR MOVIMENTAÇÃO
+    ================================================= */
 
     if (
         typeof atualizarItensMovimentacao ===
@@ -1675,6 +1678,10 @@ function excluirProduto(
 function inicializarProdutos() {
 
 
+    /* =================================================
+       GARANTIR ARRAY
+    ================================================= */
+
     if (
         !Array.isArray(
             produtos
@@ -1686,20 +1693,18 @@ function inicializarProdutos() {
     }
 
 
+    /* =================================================
+       MOSTRAR LISTA
+    ================================================= */
+
     mostrarProdutos();
 
 
-    /* ================================================
-       PREPARAR NOVO CADASTRO
-    ================================================ */
+    /* =================================================
+       NOVO CADASTRO
+    ================================================= */
 
-    if (
-        produtos.length === 0
-    ) {
-
-        novoProduto();
-
-    }
+    novoProduto();
 
 }
 
