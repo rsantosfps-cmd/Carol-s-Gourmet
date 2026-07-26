@@ -1,6 +1,8 @@
 /* =========================================================
    CAROL'S GOURMET
-   APP.JS - VERSÃO FINAL CORRIGIDA
+   APP.JS
+   ERP OFFLINE
+   Versão corrigida
 ========================================================= */
 
 "use strict";
@@ -24,29 +26,43 @@ let materiaPrimaEditando = null;
    CHAVES DO LOCALSTORAGE
 ========================================================= */
 
-const STORAGE_PRODUTOS = "carols_gourmet_produtos";
-const STORAGE_MP = "carols_gourmet_materias_primas";
-const STORAGE_MOVIMENTACOES = "carols_gourmet_movimentacoes";
-const STORAGE_PRODUCOES = "carols_gourmet_producoes";
-const STORAGE_PRECIFICACOES = "carols_gourmet_precificacoes";
-const STORAGE_ULTIMA_ATUALIZACAO = "carols_gourmet_ultima_atualizacao";
+const STORAGE_PRODUTOS =
+    "carols_gourmet_produtos";
+
+const STORAGE_MP =
+    "carols_gourmet_materias_primas";
+
+const STORAGE_MOVIMENTACOES =
+    "carols_gourmet_movimentacoes";
+
+const STORAGE_PRODUCOES =
+    "carols_gourmet_producoes";
+
+const STORAGE_PRECIFICACOES =
+    "carols_gourmet_precificacoes";
+
+const STORAGE_ULTIMA_ATUALIZACAO =
+    "carols_gourmet_ultima_atualizacao";
 
 
 /* =========================================================
    INICIALIZAÇÃO
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    carregarDados();
+        carregarDados();
 
-    inicializarSistema();
+        inicializarSistema();
 
-    configurarDatas();
+        configurarDatas();
 
-    atualizarTudo();
+        atualizarTudo();
 
-});
+    }
+);
 
 
 /* =========================================================
@@ -59,28 +75,85 @@ function carregarDados() {
 
         produtos =
             JSON.parse(
-                localStorage.getItem(STORAGE_PRODUTOS)
+                localStorage.getItem(
+                    STORAGE_PRODUTOS
+                )
             ) || [];
+
 
         materiasPrimas =
             JSON.parse(
-                localStorage.getItem(STORAGE_MP)
+                localStorage.getItem(
+                    STORAGE_MP
+                )
             ) || [];
+
 
         movimentacoes =
             JSON.parse(
-                localStorage.getItem(STORAGE_MOVIMENTACOES)
+                localStorage.getItem(
+                    STORAGE_MOVIMENTACOES
+                )
             ) || [];
+
 
         producoes =
             JSON.parse(
-                localStorage.getItem(STORAGE_PRODUCOES)
+                localStorage.getItem(
+                    STORAGE_PRODUCOES
+                )
             ) || [];
+
 
         precificacoes =
             JSON.parse(
-                localStorage.getItem(STORAGE_PRECIFICACOES)
+                localStorage.getItem(
+                    STORAGE_PRECIFICACOES
+                )
             ) || [];
+
+
+        /*
+        =====================================================
+        GARANTIR EAN VÁLIDO EM PRODUTOS ANTIGOS
+        =====================================================
+        */
+
+        let houveAlteracao = false;
+
+
+        produtos.forEach(
+            function (produto) {
+
+                if (
+                    !produto.ean ||
+                    !validarEAN13(
+                        produto.ean
+                    )
+                ) {
+
+                    produto.ean =
+                        gerarEAN13();
+
+                    houveAlteracao = true;
+
+                }
+
+            }
+        );
+
+
+        if (houveAlteracao) {
+
+            localStorage.setItem(
+                STORAGE_PRODUTOS,
+                JSON.stringify(
+                    produtos
+                )
+            );
+
+        }
+
 
     } catch (erro) {
 
@@ -89,10 +162,15 @@ function carregarDados() {
             erro
         );
 
+
         produtos = [];
+
         materiasPrimas = [];
+
         movimentacoes = [];
+
         producoes = [];
+
         precificacoes = [];
 
     }
@@ -108,36 +186,55 @@ function salvarDados() {
 
     localStorage.setItem(
         STORAGE_PRODUTOS,
-        JSON.stringify(produtos)
+        JSON.stringify(
+            produtos
+        )
     );
+
 
     localStorage.setItem(
         STORAGE_MP,
-        JSON.stringify(materiasPrimas)
+        JSON.stringify(
+            materiasPrimas
+        )
     );
+
 
     localStorage.setItem(
         STORAGE_MOVIMENTACOES,
-        JSON.stringify(movimentacoes)
+        JSON.stringify(
+            movimentacoes
+        )
     );
+
 
     localStorage.setItem(
         STORAGE_PRODUCOES,
-        JSON.stringify(producoes)
+        JSON.stringify(
+            producoes
+        )
     );
+
 
     localStorage.setItem(
         STORAGE_PRECIFICACOES,
-        JSON.stringify(precificacoes)
+        JSON.stringify(
+            precificacoes
+        )
     );
 
+
     const agora =
-        new Date().toLocaleString("pt-BR");
+        new Date().toLocaleString(
+            "pt-BR"
+        );
+
 
     localStorage.setItem(
         STORAGE_ULTIMA_ATUALIZACAO,
         agora
     );
+
 
     atualizarUltimaAtualizacao();
 
@@ -145,7 +242,7 @@ function salvarDados() {
 
 
 /* =========================================================
-   INICIALIZAÇÃO
+   INICIALIZAÇÃO DO SISTEMA
 ========================================================= */
 
 function inicializarSistema() {
@@ -169,20 +266,32 @@ function inicializarSistema() {
    MENU LATERAL
 ========================================================= */
 
-function mostrarAba(idAba, botao) {
+function mostrarAba(
+    idAba,
+    botao
+) {
 
     const abas =
-        document.querySelectorAll(".aba");
+        document.querySelectorAll(
+            ".aba"
+        );
 
-    abas.forEach(function (aba) {
 
-        aba.classList.remove("ativa");
+    abas.forEach(
+        function (aba) {
 
-    });
+            aba.classList.remove(
+                "ativa"
+            );
+
+        }
+    );
 
 
     const abaSelecionada =
-        document.getElementById(idAba);
+        document.getElementById(
+            idAba
+        );
 
 
     if (!abaSelecionada) {
@@ -197,50 +306,48 @@ function mostrarAba(idAba, botao) {
     }
 
 
-    abaSelecionada.classList.add("ativa");
+    abaSelecionada.classList.add(
+        "ativa"
+    );
 
 
     const botoes =
-        document.querySelectorAll(".menu-item");
+        document.querySelectorAll(
+            ".menu-item"
+        );
 
 
-    botoes.forEach(function (item) {
+    botoes.forEach(
+        function (item) {
 
-        item.classList.remove("ativo");
+            item.classList.remove(
+                "ativo"
+            );
 
-    });
+        }
+    );
 
 
     if (botao) {
 
-        botao.classList.add("ativo");
+        botao.classList.add(
+            "ativo"
+        );
 
     }
 
 
     const sidebar =
-        document.getElementById("sidebar");
+        document.getElementById(
+            "sidebar"
+        );
 
 
     if (sidebar) {
 
-        sidebar.classList.remove("aberto");
-
-    }
-
-
-    /* Atualizações específicas ao abrir abas */
-
-    if (idAba === "etiquetas") {
-
-        calcularValidadeEtiqueta();
-
-    }
-
-
-    if (idAba === "producao") {
-
-        calcularValidadeProducao();
+        sidebar.classList.remove(
+            "aberto"
+        );
 
     }
 
@@ -254,7 +361,9 @@ function mostrarAba(idAba, botao) {
 function toggleMenu() {
 
     const sidebar =
-        document.getElementById("sidebar");
+        document.getElementById(
+            "sidebar"
+        );
 
 
     if (!sidebar) {
@@ -264,53 +373,245 @@ function toggleMenu() {
     }
 
 
-    sidebar.classList.toggle("aberto");
+    sidebar.classList.toggle(
+        "aberto"
+    );
 
 }
 
 
 /* =========================================================
-   GERAR CÓDIGO INTERNO
+   CÓDIGO INTERNO
 ========================================================= */
 
-function gerarCodigoInterno(prefixo, lista) {
+function gerarCodigoInterno(
+    prefixo,
+    lista
+) {
 
     let maiorNumero = 0;
 
 
-    lista.forEach(function (item) {
+    lista.forEach(
+        function (item) {
 
-        if (!item.codigo) {
+            if (!item.codigo) {
 
-            return;
+                return;
+
+            }
+
+
+            const numero =
+                parseInt(
+                    item.codigo
+                        .replace(
+                            prefixo,
+                            ""
+                        ),
+                    10
+                );
+
+
+            if (
+                !isNaN(numero) &&
+                numero > maiorNumero
+            ) {
+
+                maiorNumero =
+                    numero;
+
+            }
 
         }
-
-
-        const numero =
-            parseInt(
-                item.codigo
-                    .replace(prefixo, ""),
-                10
-            );
-
-
-        if (!isNaN(numero) && numero > maiorNumero) {
-
-            maiorNumero = numero;
-
-        }
-
-    });
-
-
-    const proximo =
-        maiorNumero + 1;
+    );
 
 
     return (
         prefixo +
-        String(proximo).padStart(4, "0")
+        String(
+            maiorNumero + 1
+        ).padStart(
+            4,
+            "0"
+        )
+    );
+
+}
+
+
+/* =========================================================
+   EAN-13
+========================================================= */
+
+function gerarEAN13() {
+
+    let numeroBase = "";
+
+
+    /*
+    =====================================================
+    GERA 12 DÍGITOS
+    =====================================================
+    */
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        numeroBase +=
+            Math.floor(
+                Math.random() * 10
+            );
+
+    }
+
+
+    /*
+    =====================================================
+    CALCULA DÍGITO VERIFICADOR EAN-13
+    =====================================================
+    */
+
+    let soma = 0;
+
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        const numero =
+            parseInt(
+                numeroBase[i],
+                10
+            );
+
+
+        if (
+            i % 2 === 0
+        ) {
+
+            soma +=
+                numero;
+
+        } else {
+
+            soma +=
+                numero * 3;
+
+        }
+
+    }
+
+
+    const digito =
+        (
+            10 -
+            (
+                soma % 10
+            )
+        ) % 10;
+
+
+    return (
+        numeroBase +
+        digito
+    );
+
+}
+
+
+/* =========================================================
+   VALIDAR EAN-13
+========================================================= */
+
+function validarEAN13(
+    codigo
+) {
+
+    if (
+        !codigo
+    ) {
+
+        return false;
+
+    }
+
+
+    codigo =
+        String(
+            codigo
+        ).replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (
+        codigo.length !== 13
+    ) {
+
+        return false;
+
+    }
+
+
+    let soma = 0;
+
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        const numero =
+            parseInt(
+                codigo[i],
+                10
+            );
+
+
+        if (
+            i % 2 === 0
+        ) {
+
+            soma +=
+                numero;
+
+        } else {
+
+            soma +=
+                numero * 3;
+
+        }
+
+    }
+
+
+    const digitoCalculado =
+        (
+            10 -
+            (
+                soma % 10
+            )
+        ) % 10;
+
+
+    const digitoInformado =
+        parseInt(
+            codigo[12],
+            10
+        );
+
+
+    return (
+        digitoCalculado ===
+        digitoInformado
     );
 
 }
@@ -340,62 +641,6 @@ function gerarNovoCodigoProduto() {
             "PROD-",
             produtos
         );
-
-}
-
-
-/* =========================================================
-   GERAR EAN-13
-========================================================= */
-
-function gerarEAN13() {
-
-    let numeroBase = "";
-
-
-    for (let i = 0; i < 12; i++) {
-
-        numeroBase +=
-            Math.floor(
-                Math.random() * 10
-            );
-
-    }
-
-
-    let soma = 0;
-
-
-    for (let i = 0; i < 12; i++) {
-
-        const numero =
-            parseInt(
-                numeroBase[i],
-                10
-            );
-
-
-        if (i % 2 === 0) {
-
-            soma += numero;
-
-        } else {
-
-            soma += numero * 3;
-
-        }
-
-    }
-
-
-    const digito =
-        (10 - (soma % 10)) % 10;
-
-
-    return (
-        numeroBase +
-        digito
-    );
 
 }
 
@@ -489,7 +734,10 @@ function salvarProduto() {
 
         }
 
-        produtoEditando = null;
+
+        produtoEditando =
+            null;
+
 
     } else {
 
@@ -530,7 +778,8 @@ function salvarProduto() {
                 0,
 
             dataCadastro:
-                new Date().toISOString()
+                new Date()
+                    .toISOString()
 
         };
 
@@ -538,6 +787,26 @@ function salvarProduto() {
         produtos.push(
             novoProduto
         );
+
+
+        /*
+        =====================================================
+        MOSTRA O EAN GERADO NO CAMPO
+        =====================================================
+        */
+
+        const campoEAN =
+            document.getElementById(
+                "eanProduto"
+            );
+
+
+        if (campoEAN) {
+
+            campoEAN.value =
+                novoProduto.ean;
+
+        }
 
     }
 
@@ -547,6 +816,7 @@ function salvarProduto() {
     atualizarTudo();
 
     novoProduto();
+
 
     alert(
         "Produto salvo com sucesso!"
@@ -561,7 +831,8 @@ function salvarProduto() {
 
 function novoProduto() {
 
-    produtoEditando = null;
+    produtoEditando =
+        null;
 
 
     const codigo =
@@ -763,13 +1034,18 @@ function atualizarListaProdutos() {
    EDITAR PRODUTO
 ========================================================= */
 
-function editarProduto(id) {
+function editarProduto(
+    id
+) {
 
     const produto =
         produtos.find(
             function (item) {
 
-                return item.id === id;
+                return (
+                    item.id ===
+                    id
+                );
 
             }
         );
@@ -813,13 +1089,15 @@ function editarProduto(id) {
     document.getElementById(
         "unidadeProduto"
     ).value =
-        produto.unidade || "Unidade";
+        produto.unidade ||
+        "Unidade";
 
 
     document.getElementById(
         "statusProduto"
     ).value =
-        produto.status || "Ativo";
+        produto.status ||
+        "Ativo";
 
 
     mostrarAba(
@@ -836,7 +1114,9 @@ function editarProduto(id) {
    EXCLUIR PRODUTO
 ========================================================= */
 
-function excluirProduto(id) {
+function excluirProduto(
+    id
+) {
 
     const confirmar =
         confirm(
@@ -855,7 +1135,10 @@ function excluirProduto(id) {
         produtos.filter(
             function (produto) {
 
-                return produto.id !== id;
+                return (
+                    produto.id !==
+                    id
+                );
 
             }
         );
@@ -988,6 +1271,7 @@ function salvarMateriaPrima() {
         materiaPrimaEditando =
             null;
 
+
     } else {
 
         materiasPrimas.push({
@@ -1018,7 +1302,8 @@ function salvarMateriaPrima() {
                 custo,
 
             dataCadastro:
-                new Date().toISOString()
+                new Date()
+                    .toISOString()
 
         });
 
@@ -1030,6 +1315,7 @@ function salvarMateriaPrima() {
     atualizarTudo();
 
     novaMateriaPrima();
+
 
     alert(
         "Matéria-prima salva com sucesso!"
@@ -1092,7 +1378,8 @@ function novaMateriaPrima() {
 
     if (estoque) {
 
-        estoque.value = "0";
+        estoque.value =
+            "0";
 
     }
 
@@ -1232,7 +1519,10 @@ function alterarTipoEstoque() {
         );
 
 
-    if (!cabecalho || !tabela) {
+    if (
+        !cabecalho ||
+        !tabela
+    ) {
 
         return;
 
@@ -1331,6 +1621,7 @@ function alterarTipoEstoque() {
             }
         );
 
+
     } else {
 
         cabecalho.innerHTML = `
@@ -1400,7 +1691,7 @@ function alterarTipoEstoque() {
 
 
 /* =========================================================
-   ATUALIZAR ITENS MOVIMENTAÇÃO
+   ITENS PARA MOVIMENTAÇÃO
 ========================================================= */
 
 function atualizarItensMovimentacao() {
@@ -1417,7 +1708,10 @@ function atualizarItensMovimentacao() {
         );
 
 
-    if (!tipo || !select) {
+    if (
+        !tipo ||
+        !select
+    ) {
 
         return;
 
@@ -1561,6 +1855,7 @@ function registrarMovimentacao() {
                 }
             );
 
+
     } else {
 
         item =
@@ -1592,8 +1887,10 @@ function registrarMovimentacao() {
     if (
         operacao ===
         "saida" &&
-        Number(item.estoque || 0) <
-            quantidade
+        Number(
+            item.estoque || 0
+        ) <
+        quantidade
     ) {
 
         alert(
@@ -1615,6 +1912,7 @@ function registrarMovimentacao() {
                 item.estoque || 0
             ) +
             quantidade;
+
 
     } else {
 
@@ -1844,22 +2142,6 @@ function registrarProducao() {
 
         alert(
             "Produto não encontrado."
-        );
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       VALIDADE
-       Outros produtos precisam de preenchimento manual
-    ===================================================== */
-
-    if (!validade) {
-
-        alert(
-            "Informe a validade do produto."
         );
 
         return;
@@ -2175,416 +2457,12 @@ function calcularPreco() {
 
 
 /* =========================================================
-   ETIQUETAS
+   VALIDADE POR CATEGORIA
 ========================================================= */
 
-function gerarEtiqueta() {
-
-    const produtoId =
-        Number(
-            document.getElementById(
-                "produtoEtiqueta"
-            ).value
-        );
-
-
-    const fabricacao =
-        document.getElementById(
-            "fabricacaoEtiqueta"
-        ).value;
-
-
-    const validade =
-        document.getElementById(
-            "validadeEtiqueta"
-        ).value;
-
-
-    const produto =
-        produtos.find(
-            function (item) {
-
-                return (
-                    item.id ===
-                    produtoId
-                );
-
-            }
-        );
-
-
-    if (!produto) {
-
-        alert(
-            "Selecione um produto."
-        );
-
-        return;
-
-    }
-
-
-    if (!fabricacao) {
-
-        alert(
-            "Informe a data de fabricação."
-        );
-
-        return;
-
-    }
-
-
-    if (!validade) {
-
-        alert(
-            "Informe a validade do produto."
-        );
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       GARANTE QUE O PRODUTO TENHA EAN
-    ===================================================== */
-
-    if (!produto.ean) {
-
-        produto.ean =
-            gerarEAN13();
-
-        salvarDados();
-
-    }
-
-
-    document.getElementById(
-        "mostrarProduto"
-    ).textContent =
-        produto.nome;
-
-
-    document.getElementById(
-        "mostrarFabricacao"
-    ).textContent =
-        formatarData(
-            fabricacao
-        );
-
-
-    document.getElementById(
-        "mostrarValidade"
-    ).textContent =
-        formatarData(
-            validade
-        );
-
-
-    const areaCodigo =
-        document.getElementById(
-            "codigoBarrasEtiqueta"
-        );
-
-
-    areaCodigo.innerHTML = "";
-
-
-    /* =====================================================
-       CÓDIGO DE BARRAS EAN-13
-    ===================================================== */
-
-    if (
-        typeof JsBarcode !==
-        "undefined"
-    ) {
-
-        const svg =
-            document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "svg"
-            );
-
-
-        svg.setAttribute(
-            "width",
-            "220"
-        );
-
-
-        svg.setAttribute(
-            "height",
-            "75"
-        );
-
-
-        areaCodigo.appendChild(
-            svg
-        );
-
-
-        try {
-
-            JsBarcode(
-                svg,
-                String(
-                    produto.ean
-                ).padStart(
-                    13,
-                    "0"
-                ),
-                {
-
-                    format:
-                        "ean13",
-
-                    width:
-                        1.6,
-
-                    height:
-                        48,
-
-                    margin:
-                        4,
-
-                    displayValue:
-                        true,
-
-                    fontSize:
-                        14,
-
-                    textMargin:
-                        3,
-
-                    font:
-                        "Arial",
-
-                    lineColor:
-                        "#000000",
-
-                    background:
-                        "#ffffff",
-
-                    flat:
-                        false
-
-                }
-            );
-
-        } catch (erro) {
-
-            console.error(
-                "Erro ao gerar código de barras:",
-                erro
-            );
-
-            areaCodigo.textContent =
-                produto.ean;
-
-        }
-
-    } else {
-
-        areaCodigo.textContent =
-            produto.ean;
-
-    }
-
-}
-
-
-/* =========================================================
-   SALVAR ETIQUETA PNG
-========================================================= */
-
-function salvarEtiquetaPNG() {
-
-    const etiqueta =
-        document.getElementById(
-            "etiquetaGerada"
-        );
-
-
-    if (!etiqueta) {
-
-        return;
-
-    }
-
-
-    if (
-        typeof html2canvas ===
-        "undefined"
-    ) {
-
-        alert(
-            "A biblioteca html2canvas não foi carregada."
-        );
-
-        return;
-
-    }
-
-
-    html2canvas(
-        etiqueta,
-        {
-
-            scale:
-                3,
-
-            backgroundColor:
-                "#ffffff",
-
-            useCORS:
-                true
-
-        }
-    ).then(
-        function (canvas) {
-
-            const link =
-                document.createElement(
-                    "a"
-                );
-
-
-            link.download =
-                "etiqueta-carols-gourmet-" +
-                obterDataHoje() +
-                ".png";
-
-
-            link.href =
-                canvas.toDataURL(
-                    "image/png"
-                );
-
-
-            link.click();
-
-        }
-    ).catch(
-        function (erro) {
-
-            console.error(
-                "Erro ao gerar imagem:",
-                erro
-            );
-
-            alert(
-                "Não foi possível gerar a imagem da etiqueta."
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   DATAS
-========================================================= */
-
-function configurarDatas() {
-
-    const hoje =
-        obterDataHoje();
-
-
-    const campos = [
-
-        "dataMovimentacao",
-
-        "fabricacaoProducao",
-
-        "fabricacaoEtiqueta"
-
-    ];
-
-
-    campos.forEach(
-        function (id) {
-
-            const campo =
-                document.getElementById(
-                    id
-                );
-
-
-            if (
-                campo &&
-                !campo.value
-            ) {
-
-                campo.value =
-                    hoje;
-
-            }
-
-        }
-    );
-
-
-    calcularValidadeProducao();
-
-    calcularValidadeEtiqueta();
-
-}
-
-
-function obterDataHoje() {
-
-    const agora =
-        new Date();
-
-
-    const ano =
-        agora.getFullYear();
-
-
-    const mes =
-        String(
-            agora.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const dia =
-        String(
-            agora.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    return (
-        ano +
-        "-" +
-        mes +
-        "-" +
-        dia
-    );
-
-}
-
-
-/* =========================================================
-   REGRA DE VALIDADE
-=========================================================
-
-   Palha Italiana = 20 dias
-   Brownie        = 20 dias
-   Bolo de Pote   = 7 dias
-   Outros         = manual
-
-========================================================= */
-
-function obterDiasValidadeProduto(produto) {
+function obterDiasValidade(
+    produto
+) {
 
     if (!produto) {
 
@@ -2601,19 +2479,16 @@ function obterDiasValidadeProduto(produto) {
         .toLowerCase();
 
 
-    const nome =
-        String(
-            produto.nome || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    /* Palha Italiana */
+    /*
+    =====================================================
+    PALHA ITALIANA
+    20 DIAS
+    =====================================================
+    */
 
     if (
-        categoria === "palha italiana" ||
-        nome.includes("palha italiana")
+        categoria ===
+            "palha italiana"
     ) {
 
         return 20;
@@ -2621,11 +2496,16 @@ function obterDiasValidadeProduto(produto) {
     }
 
 
-    /* Brownie */
+    /*
+    =====================================================
+    BROWNIE
+    20 DIAS
+    =====================================================
+    */
 
     if (
-        categoria === "brownie" ||
-        nome.includes("brownie")
+        categoria ===
+            "brownie"
     ) {
 
         return 20;
@@ -2633,11 +2513,16 @@ function obterDiasValidadeProduto(produto) {
     }
 
 
-    /* Bolo de Pote */
+    /*
+    =====================================================
+    BOLO DE POTE
+    7 DIAS
+    =====================================================
+    */
 
     if (
-        categoria === "bolo de pote" ||
-        nome.includes("bolo de pote")
+        categoria ===
+            "bolo de pote"
     ) {
 
         return 7;
@@ -2645,7 +2530,12 @@ function obterDiasValidadeProduto(produto) {
     }
 
 
-    /* Outros */
+    /*
+    =====================================================
+    SOBREMESA E OUTROS
+    MANUAL
+    =====================================================
+    */
 
     return null;
 
@@ -2653,12 +2543,18 @@ function obterDiasValidadeProduto(produto) {
 
 
 /* =========================================================
-   CALCULAR DATA COM DIAS
+   CALCULAR DATA DE VALIDADE
 ========================================================= */
 
-function adicionarDias(dataInicial, dias) {
+function calcularDataValidade(
+    dataFabricacao,
+    dias
+) {
 
-    if (!dataInicial) {
+    if (
+        !dataFabricacao ||
+        !dias
+    ) {
 
         return "";
 
@@ -2667,14 +2563,14 @@ function adicionarDias(dataInicial, dias) {
 
     const data =
         new Date(
-            dataInicial +
+            dataFabricacao +
             "T00:00:00"
         );
 
 
     data.setDate(
         data.getDate() +
-        Number(dias)
+        dias
     );
 
 
@@ -2746,11 +2642,11 @@ function calcularValidadeProducao() {
     }
 
 
-    if (!fabricacao.value) {
+    if (
+        !fabricacao.value
+    ) {
 
         validade.value = "";
-
-        validade.readOnly = true;
 
         return;
 
@@ -2777,36 +2673,41 @@ function calcularValidadeProducao() {
 
 
     const dias =
-        obterDiasValidadeProduto(
+        obterDiasValidade(
             produto
         );
 
 
-    /* =====================================================
-       PRODUTOS COM VALIDADE AUTOMÁTICA
-    ===================================================== */
+    /*
+    =====================================================
+    CATEGORIA COM PRAZO AUTOMÁTICO
+    =====================================================
+    */
 
-    if (dias !== null) {
-
-        validade.value =
-            adicionarDias(
-                fabricacao.value,
-                dias
-            );
+    if (dias) {
 
         validade.readOnly =
             true;
 
+
+        validade.value =
+            calcularDataValidade(
+                fabricacao.value,
+                dias
+            );
+
+
     } else {
 
-        /* =================================================
-           OUTROS PRODUTOS = MANUAL
-        ================================================= */
+        /*
+        =================================================
+        OUTROS PRODUTOS
+        VALIDADE MANUAL
+        =================================================
+        */
 
         validade.readOnly =
             false;
-
-        validade.value = "";
 
     }
 
@@ -2848,11 +2749,11 @@ function calcularValidadeEtiqueta() {
     }
 
 
-    if (!fabricacao.value) {
+    if (
+        !fabricacao.value
+    ) {
 
         validade.value = "";
-
-        validade.readOnly = true;
 
         return;
 
@@ -2879,38 +2780,35 @@ function calcularValidadeEtiqueta() {
 
 
     const dias =
-        obterDiasValidadeProduto(
+        obterDiasValidade(
             produto
         );
 
 
-    /* =====================================================
-       PALHA ITALIANA = 20 DIAS
-       BROWNIE = 20 DIAS
-       BOLO DE POTE = 7 DIAS
-    ===================================================== */
-
-    if (dias !== null) {
-
-        validade.value =
-            adicionarDias(
-                fabricacao.value,
-                dias
-            );
+    if (dias) {
 
         validade.readOnly =
             true;
 
+
+        validade.value =
+            calcularDataValidade(
+                fabricacao.value,
+                dias
+            );
+
+
     } else {
 
-        /* =================================================
-           OUTROS PRODUTOS = DIGITAÇÃO MANUAL
-        ================================================= */
+        /*
+        =================================================
+        OUTROS PRODUTOS
+        VALIDADE DIGITADA MANUALMENTE
+        =================================================
+        */
 
         validade.readOnly =
             false;
-
-        validade.value = "";
 
     }
 
@@ -2969,7 +2867,444 @@ document.addEventListener(
 
 
 /* =========================================================
-   SELECTS DE PRODUTOS
+   DATAS
+========================================================= */
+
+function configurarDatas() {
+
+    const hoje =
+        obterDataHoje();
+
+
+    const campos = [
+
+        "dataMovimentacao",
+
+        "fabricacaoProducao",
+
+        "fabricacaoEtiqueta"
+
+    ];
+
+
+    campos.forEach(
+        function (id) {
+
+            const campo =
+                document.getElementById(
+                    id
+                );
+
+
+            if (
+                campo &&
+                !campo.value
+            ) {
+
+                campo.value =
+                    hoje;
+
+            }
+
+        }
+    );
+
+
+    calcularValidadeProducao();
+
+    calcularValidadeEtiqueta();
+
+}
+
+
+/* =========================================================
+   DATA DE HOJE
+========================================================= */
+
+function obterDataHoje() {
+
+    const agora =
+        new Date();
+
+
+    const ano =
+        agora.getFullYear();
+
+
+    const mes =
+        String(
+            agora.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const dia =
+        String(
+            agora.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    return (
+        ano +
+        "-" +
+        mes +
+        "-" +
+        dia
+    );
+
+}
+
+
+/* =========================================================
+   ETIQUETAS
+========================================================= */
+
+function gerarEtiqueta() {
+
+    const produtoId =
+        Number(
+            document.getElementById(
+                "produtoEtiqueta"
+            ).value
+        );
+
+
+    const fabricacao =
+        document.getElementById(
+            "fabricacaoEtiqueta"
+        ).value;
+
+
+    const validade =
+        document.getElementById(
+            "validadeEtiqueta"
+        ).value;
+
+
+    const produto =
+        produtos.find(
+            function (item) {
+
+                return (
+                    item.id ===
+                    produtoId
+                );
+
+            }
+        );
+
+
+    if (!produto) {
+
+        alert(
+            "Selecione um produto."
+        );
+
+        return;
+
+    }
+
+
+    /*
+    =====================================================
+    SE TIVER PRAZO AUTOMÁTICO,
+    GARANTE O CÁLCULO
+    =====================================================
+    */
+
+    const dias =
+        obterDiasValidade(
+            produto
+        );
+
+
+    let validadeFinal =
+        validade;
+
+
+    if (
+        dias &&
+        fabricacao
+    ) {
+
+        validadeFinal =
+            calcularDataValidade(
+                fabricacao,
+                dias
+            );
+
+    }
+
+
+    /*
+    =====================================================
+    PRODUTO
+    =====================================================
+    */
+
+    document.getElementById(
+        "mostrarProduto"
+    ).textContent =
+        produto.nome;
+
+
+    /*
+    =====================================================
+    FABRICAÇÃO
+    =====================================================
+    */
+
+    document.getElementById(
+        "mostrarFabricacao"
+    ).textContent =
+        formatarData(
+            fabricacao
+        );
+
+
+    /*
+    =====================================================
+    VALIDADE
+    =====================================================
+    */
+
+    document.getElementById(
+        "mostrarValidade"
+    ).textContent =
+        formatarData(
+            validadeFinal
+        );
+
+
+    /*
+    =====================================================
+    CÓDIGO DE BARRAS
+    =====================================================
+    */
+
+    const areaCodigo =
+        document.getElementById(
+            "codigoBarrasEtiqueta"
+        );
+
+
+    areaCodigo.innerHTML = "";
+
+
+    let ean =
+        produto.ean;
+
+
+    /*
+    =====================================================
+    GARANTE EAN VÁLIDO
+    =====================================================
+    */
+
+    if (
+        !validarEAN13(
+            ean
+        )
+    ) {
+
+        ean =
+            gerarEAN13();
+
+
+        produto.ean =
+            ean;
+
+
+        salvarDados();
+
+    }
+
+
+    /*
+    =====================================================
+    RENDERIZA EAN-13
+    ESTILO PROFISSIONAL
+    =====================================================
+    */
+
+    if (
+        typeof JsBarcode !==
+        "undefined"
+    ) {
+
+        const svg =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "svg"
+            );
+
+
+        svg.setAttribute(
+            "class",
+            "barcode-profissional"
+        );
+
+
+        areaCodigo.appendChild(
+            svg
+        );
+
+
+        JsBarcode(
+            svg,
+            ean,
+            {
+
+                format:
+                    "EAN13",
+
+                width:
+                    2.2,
+
+                height:
+                    65,
+
+                displayValue:
+                    true,
+
+                fontSize:
+                    16,
+
+                font:
+                    "Arial",
+
+                textMargin:
+                    4,
+
+                margin:
+                    8,
+
+                marginTop:
+                    4,
+
+                marginBottom:
+                    8,
+
+                background:
+                    "#ffffff",
+
+                lineColor:
+                    "#000000"
+
+            }
+        );
+
+
+    } else {
+
+        areaCodigo.textContent =
+            ean;
+
+    }
+
+}
+
+
+/* =========================================================
+   SALVAR ETIQUETA PNG
+========================================================= */
+
+function salvarEtiquetaPNG() {
+
+    const etiqueta =
+        document.getElementById(
+            "etiquetaGerada"
+        );
+
+
+    if (!etiqueta) {
+
+        return;
+
+    }
+
+
+    if (
+        typeof html2canvas ===
+        "undefined"
+    ) {
+
+        alert(
+            "A biblioteca html2canvas não foi carregada."
+        );
+
+        return;
+
+    }
+
+
+    html2canvas(
+        etiqueta,
+        {
+
+            scale:
+                3,
+
+            backgroundColor:
+                "#ffffff",
+
+            useCORS:
+                true
+
+        }
+    ).then(
+        function (canvas) {
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            const produto =
+                document.getElementById(
+                    "mostrarProduto"
+                );
+
+
+            const nome =
+                produto
+                    ? produto.textContent
+                        .trim()
+                        .replace(
+                            /[^a-zA-Z0-9À-ÿ]+/g,
+                            "-"
+                        )
+                    : "produto";
+
+
+            link.download =
+                "etiqueta-" +
+                nome +
+                ".png";
+
+
+            link.href =
+                canvas.toDataURL(
+                    "image/png"
+                );
+
+
+            link.click();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SELECTS
 ========================================================= */
 
 function atualizarSelectsProdutos() {
@@ -3065,7 +3400,11 @@ function atualizarSelectsProdutos() {
     );
 
 
-    /* Recalcula validade depois de atualizar os selects */
+    /*
+    =====================================================
+    ATUALIZA VALIDADE APÓS ATUALIZAR SELECTS
+    =====================================================
+    */
 
     calcularValidadeProducao();
 
@@ -3120,6 +3459,10 @@ function atualizarDashboard() {
 }
 
 
+/* =========================================================
+   ÚLTIMA ATUALIZAÇÃO
+========================================================= */
+
 function atualizarUltimaAtualizacao() {
 
     const campo =
@@ -3142,7 +3485,8 @@ function atualizarUltimaAtualizacao() {
 
 
     campo.textContent =
-        ultima || "--";
+        ultima ||
+        "--";
 
 }
 
@@ -3159,7 +3503,8 @@ function exportarBackup() {
             "1.0",
 
         data:
-            new Date().toISOString(),
+            new Date()
+                .toISOString(),
 
         produtos:
             produtos,
@@ -3220,12 +3565,23 @@ function exportarBackup() {
     link.click();
 
 
-    URL.revokeObjectURL(
-        url
+    setTimeout(
+        function () {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        100
     );
 
 }
 
+
+/* =========================================================
+   IMPORTAR BACKUP
+========================================================= */
 
 function importarBackup() {
 
@@ -3302,23 +3658,52 @@ function importarBackup() {
 
 
                         produtos =
-                            backup.produtos || [];
+                            backup.produtos ||
+                            [];
 
 
                         materiasPrimas =
-                            backup.materiasPrimas || [];
+                            backup.materiasPrimas ||
+                            [];
 
 
                         movimentacoes =
-                            backup.movimentacoes || [];
+                            backup.movimentacoes ||
+                            [];
 
 
                         producoes =
-                            backup.producoes || [];
+                            backup.producoes ||
+                            [];
 
 
                         precificacoes =
-                            backup.precificacoes || [];
+                            backup.precificacoes ||
+                            [];
+
+
+                        /*
+                        =================================================
+                        CORRIGE EANs ANTIGOS
+                        =================================================
+                        */
+
+                        produtos.forEach(
+                            function (produto) {
+
+                                if (
+                                    !validarEAN13(
+                                        produto.ean
+                                    )
+                                ) {
+
+                                    produto.ean =
+                                        gerarEAN13();
+
+                                }
+
+                            }
+                        );
 
 
                         salvarDados();
@@ -3329,6 +3714,7 @@ function importarBackup() {
                         alert(
                             "Backup restaurado com sucesso!"
                         );
+
 
                     } catch (erro) {
 
@@ -3386,10 +3772,12 @@ function atualizarTudo() {
 
 
 /* =========================================================
-   FORMATAÇÃO
+   FORMATAÇÃO DE DATA
 ========================================================= */
 
-function formatarData(data) {
+function formatarData(
+    data
+) {
 
     if (!data) {
 
@@ -3399,7 +3787,9 @@ function formatarData(data) {
 
 
     const partes =
-        String(data).split("-");
+        String(
+            data
+        ).split("-");
 
 
     if (
@@ -3422,18 +3812,26 @@ function formatarData(data) {
 }
 
 
-function formatarMoeda(valor) {
+/* =========================================================
+   FORMATAÇÃO DE MOEDA
+========================================================= */
+
+function formatarMoeda(
+    valor
+) {
 
     return Number(
         valor || 0
     ).toLocaleString(
         "pt-BR",
         {
+
             style:
                 "currency",
 
             currency:
                 "BRL"
+
         }
     );
 
@@ -3494,9 +3892,3 @@ window.exportarBackup =
 
 window.importarBackup =
     importarBackup;
-
-window.calcularValidadeProducao =
-    calcularValidadeProducao;
-
-window.calcularValidadeEtiqueta =
-    calcularValidadeEtiqueta;
