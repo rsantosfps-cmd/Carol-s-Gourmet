@@ -1561,3 +1561,337 @@ document.addEventListener(
 
     }
 );
+/* =====================================================
+   MÓDULO ESTOQUE
+===================================================== */
+
+
+/* =====================================================
+   MOSTRAR ESTOQUE
+===================================================== */
+
+function mostrarEstoque() {
+
+
+    const tipo =
+        document.getElementById(
+            "tipoEstoque"
+        );
+
+
+    const tabela =
+        document.getElementById(
+            "listaEstoque"
+        );
+
+
+    if (!tipo || !tabela) {
+
+        return;
+
+    }
+
+
+    tabela.innerHTML = "";
+
+
+    /* =================================================
+       ESTOQUE DE MATÉRIA-PRIMA
+    ================================================= */
+
+
+    if (
+        tipo.value ===
+        "materiaPrima"
+    ) {
+
+
+        if (
+            materiasPrimas.length === 0
+        ) {
+
+
+            tabela.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center"
+                    >
+
+                        Nenhuma matéria-prima cadastrada.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            return;
+
+        }
+
+
+        materiasPrimas.forEach(
+            function(
+                materiaPrima
+            ) {
+
+
+                const estoque =
+                    Number(
+                        materiaPrima.estoque
+                    ) || 0;
+
+
+                const custoUnitario =
+                    Number(
+                        materiaPrima.custo
+                    ) || 0;
+
+
+                const valorTotal =
+                    estoque *
+                    custoUnitario;
+
+
+                tabela.innerHTML += `
+
+                    <tr>
+
+
+                        <td>
+
+                            ${materiaPrima.codigo || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${materiaPrima.nome || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${materiaPrima.categoria || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${materiaPrima.unidade || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${estoque}
+
+                        </td>
+
+
+                        <td>
+
+                            R$ ${custoUnitario.toFixed(2)}
+
+                        </td>
+
+
+                        <td>
+
+                            R$ ${valorTotal.toFixed(2)}
+
+                        </td>
+
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       ESTOQUE DE PRODUTO ACABADO
+    ================================================= */
+
+
+    if (
+        tipo.value ===
+        "produtoAcabado"
+    ) {
+
+
+        if (
+            produtos.length === 0
+        ) {
+
+
+            tabela.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center"
+                    >
+
+                        Nenhum produto cadastrado.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            return;
+
+        }
+
+
+        produtos.forEach(
+            function(
+                produto
+            ) {
+
+
+                /*
+                 * O estoque do produto acabado
+                 * será atualizado automaticamente
+                 * quando registrarmos a produção.
+                 *
+                 * Para produtos antigos que ainda
+                 * não possuem estoque, usamos zero.
+                 */
+
+
+                const estoque =
+                    Number(
+                        produto.estoque
+                    ) || 0;
+
+
+                tabela.innerHTML += `
+
+                    <tr>
+
+
+                        <td>
+
+                            ${produto.codigo || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${produto.nome || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${produto.categoria || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${produto.unidade || ""}
+
+                        </td>
+
+
+                        <td>
+
+                            ${estoque}
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                produto.status ||
+                                "Ativo"
+                            }
+
+                        </td>
+
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+    }
+
+}
+
+
+/* =====================================================
+   ALTERAR TIPO DE ESTOQUE
+===================================================== */
+
+function alterarTipoEstoque() {
+
+    mostrarEstoque();
+
+}
+
+
+/* =====================================================
+   INICIALIZAÇÃO DO ESTOQUE
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+
+        const tipo =
+            document.getElementById(
+                "tipoEstoque"
+            );
+
+
+        if (tipo) {
+
+
+            tipo.addEventListener(
+                "change",
+                function() {
+
+                    mostrarEstoque();
+
+                }
+            );
+
+
+        }
+
+
+        mostrarEstoque();
+
+
+    }
+);
