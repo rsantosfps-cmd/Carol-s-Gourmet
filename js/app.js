@@ -1854,10 +1854,9 @@ function alterarTipoEstoque() {
 function atualizarItensMovimentacao() {
 
     const tipoEstoque =
-        document.getElementById(
-            "tipoEstoque"
-        );
-
+    document.getElementById(
+        "tipoEstoqueMovimentacao"
+    );
 
     const selectItem =
         document.getElementById(
@@ -2043,10 +2042,10 @@ function atualizarItensMovimentacao() {
 
 function registrarMovimentacao() {
 
-    const tipoEstoque =
-        document.getElementById(
-            "tipoEstoque"
-        );
+   const tipoEstoque =
+    document.getElementById(
+        "tipoEstoqueMovimentacao"
+    );
 
 
     const tipoMovimentacao =
