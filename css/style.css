@@ -1568,3 +1568,266 @@ tbody tr:last-child td {
     color: #8D6E00;
 
 }
+/* =====================================================
+   AJUSTE FINAL - ETIQUETA PROFISSIONAL
+   TAMANHO REAL: 5cm x 2cm
+===================================================== */
+
+.etiqueta {
+    width: 5cm !important;
+    height: 2cm !important;
+    min-width: 5cm !important;
+    max-width: 5cm !important;
+    min-height: 2cm !important;
+    max-height: 2cm !important;
+
+    padding: 2mm 2.5mm !important;
+
+    background: #ffffff !important;
+    border: 1px solid #d8d8d8 !important;
+    border-radius: 2mm !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+
+    overflow: hidden !important;
+
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.12) !important;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif !important;
+
+    color: #3E2723 !important;
+}
+
+
+/* NOME DA EMPRESA */
+
+.etiqueta-logo {
+    text-align: center !important;
+
+    font-size: 9pt !important;
+
+    line-height: 1 !important;
+
+    font-weight: 700 !important;
+
+    margin: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* CÓDIGO DE BARRAS */
+
+.codigo-barras {
+    width: 100% !important;
+
+    height: 8mm !important;
+
+    min-height: 8mm !important;
+
+    max-height: 8mm !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    overflow: hidden !important;
+
+    background: none !important;
+}
+
+
+/* SVG GERADO PELO JsBarcode */
+
+.codigo-barras svg {
+    width: 100% !important;
+
+    height: 8mm !important;
+
+    max-width: 100% !important;
+
+    display: block !important;
+
+    overflow: visible !important;
+}
+
+
+/* INFORMAÇÕES DA ETIQUETA */
+
+.etiqueta-info {
+    width: 100% !important;
+
+    display: flex !important;
+
+    justify-content: space-between !important;
+
+    align-items: center !important;
+
+    gap: 2mm !important;
+
+    font-size: 6.5pt !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* VALIDADE */
+
+.etiqueta-validade {
+    text-align: center !important;
+
+    font-size: 6.5pt !important;
+
+    line-height: 1 !important;
+
+    font-weight: 600 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* NOME DO PRODUTO */
+
+.etiqueta-produto {
+    text-align: center !important;
+
+    font-size: 8pt !important;
+
+    line-height: 1 !important;
+
+    font-weight: 700 !important;
+
+    margin: 0 !important;
+
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+}
+
+
+/* ÁREA DE PRÉ-VISUALIZAÇÃO */
+
+.print-area {
+    display: flex !important;
+
+    justify-content: center !important;
+
+    align-items: center !important;
+
+    padding: 20px !important;
+}
+
+
+/* IMPRESSÃO */
+
+@media print {
+
+    @page {
+        size: 5cm 2cm;
+        margin: 0;
+    }
+
+
+    html,
+    body {
+        width: 5cm !important;
+        height: 2cm !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        background: #ffffff !important;
+    }
+
+
+    body {
+        display: block !important;
+    }
+
+
+    .header,
+    .sidebar,
+    .menu-toggle,
+    .btn,
+    .no-print,
+    .page-title,
+    .page-subtitle,
+    .section-header {
+        display: none !important;
+    }
+
+
+    .conteudo-principal {
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        width: 5cm !important;
+
+        min-width: 5cm !important;
+    }
+
+
+    .aba {
+        display: none !important;
+    }
+
+
+    .aba.ativa {
+        display: block !important;
+    }
+
+
+    .print-area {
+        display: block !important;
+
+        width: 5cm !important;
+
+        height: 2cm !important;
+
+        padding: 0 !important;
+
+        margin: 0 !important;
+    }
+
+
+    .etiqueta {
+        width: 5cm !important;
+
+        height: 2cm !important;
+
+        min-width: 5cm !important;
+
+        max-width: 5cm !important;
+
+        min-height: 2cm !important;
+
+        max-height: 2cm !important;
+
+        margin: 0 !important;
+
+        padding: 2mm 2.5mm !important;
+
+        border: none !important;
+
+        border-radius: 0 !important;
+
+        box-shadow: none !important;
+
+        overflow: hidden !important;
+    }
+
+}
