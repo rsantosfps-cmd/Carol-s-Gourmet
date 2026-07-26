@@ -632,9 +632,103 @@ function gerarEAN() {
 
 
 /* =====================================================
-   CAROL'S GOURMET
    MÓDULO DE PRODUTOS
+   CAROL'S GOURMET ERP 4.0
 ===================================================== */
+
+
+/* =====================================================
+   GERAR CÓDIGO INTERNO DO PRODUTO
+===================================================== */
+
+function gerarCodigoProduto() {
+
+    const numero =
+        Date.now()
+            .toString()
+            .slice(-6);
+
+    return "P" + numero;
+
+}
+
+
+/* =====================================================
+   GERAR CÓDIGO EAN-13
+===================================================== */
+
+function gerarEAN() {
+
+    let codigo =
+        "";
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        codigo +=
+            Math.floor(
+                Math.random() * 10
+            );
+
+    }
+
+
+    /* ================================================
+       CALCULAR DÍGITO VERIFICADOR EAN-13
+    ================================================ */
+
+    let soma =
+        0;
+
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        const numero =
+            Number(
+                codigo[i]
+            );
+
+
+        if (
+            i % 2 === 0
+        ) {
+
+            soma +=
+                numero;
+
+        } else {
+
+            soma +=
+                numero * 3;
+
+        }
+
+    }
+
+
+    const resto =
+        soma % 10;
+
+
+    const digito =
+        resto === 0
+            ? 0
+            : 10 - resto;
+
+
+    return (
+        codigo +
+        digito
+    );
+
+}
 
 
 /* =====================================================
@@ -643,26 +737,26 @@ function gerarEAN() {
 
 function novoProduto() {
 
-    /* ================================================
-       MODO NOVO CADASTRO
-    ================================================ */
 
-    produtoEditando = -1;
+    produtoEditando =
+        -1;
 
 
     /* ================================================
        CÓDIGO INTERNO
     ================================================ */
 
-    const codigo =
+    const codigoCampo =
         document.getElementById(
-            "codigoInterno"
+            "codigoProduto"
         );
 
 
-    if (codigo) {
+    if (
+        codigoCampo
+    ) {
 
-        codigo.value =
+        codigoCampo.value =
             gerarCodigoProduto();
 
     }
@@ -672,15 +766,17 @@ function novoProduto() {
        CÓDIGO DE BARRAS
     ================================================ */
 
-    const barras =
+    const eanCampo =
         document.getElementById(
-            "codigoBarras"
+            "eanProduto"
         );
 
 
-    if (barras) {
+    if (
+        eanCampo
+    ) {
 
-        barras.value =
+        eanCampo.value =
             gerarEAN();
 
     }
@@ -690,15 +786,17 @@ function novoProduto() {
        NOME
     ================================================ */
 
-    const nome =
+    const nomeCampo =
         document.getElementById(
             "nomeProduto"
         );
 
 
-    if (nome) {
+    if (
+        nomeCampo
+    ) {
 
-        nome.value =
+        nomeCampo.value =
             "";
 
     }
@@ -708,15 +806,17 @@ function novoProduto() {
        CATEGORIA
     ================================================ */
 
-    const categoria =
+    const categoriaCampo =
         document.getElementById(
             "categoriaProduto"
         );
 
 
-    if (categoria) {
+    if (
+        categoriaCampo
+    ) {
 
-        categoria.value =
+        categoriaCampo.value =
             "";
 
     }
@@ -726,52 +826,18 @@ function novoProduto() {
        UNIDADE
     ================================================ */
 
-    const unidade =
+    const unidadeCampo =
         document.getElementById(
             "unidadeProduto"
         );
 
 
-    if (unidade) {
+    if (
+        unidadeCampo
+    ) {
 
-        unidade.value =
+        unidadeCampo.value =
             "Unidade";
-
-    }
-
-
-    /* ================================================
-       PREÇO DE VENDA
-    ================================================ */
-
-    const preco =
-        document.getElementById(
-            "precoVenda"
-        );
-
-
-    if (preco) {
-
-        preco.value =
-            "";
-
-    }
-
-
-    /* ================================================
-       ESTOQUE INICIAL
-    ================================================ */
-
-    const estoque =
-        document.getElementById(
-            "estoqueInicial"
-        );
-
-
-    if (estoque) {
-
-        estoque.value =
-            "0";
 
     }
 
@@ -780,15 +846,17 @@ function novoProduto() {
        STATUS
     ================================================ */
 
-    const status =
+    const statusCampo =
         document.getElementById(
             "statusProduto"
         );
 
 
-    if (status) {
+    if (
+        statusCampo
+    ) {
 
-        status.value =
+        statusCampo.value =
             "Ativo";
 
     }
@@ -807,67 +875,60 @@ function salvarProduto() {
        LOCALIZAR CAMPOS
     ================================================ */
 
-    const campoCodigo =
+    const codigoCampo =
         document.getElementById(
-            "codigoInterno"
+            "codigoProduto"
         );
 
 
-    const campoBarras =
+    const eanCampo =
         document.getElementById(
-            "codigoBarras"
+            "eanProduto"
         );
 
 
-    const campoNome =
+    const nomeCampo =
         document.getElementById(
             "nomeProduto"
         );
 
 
-    const campoCategoria =
+    const categoriaCampo =
         document.getElementById(
             "categoriaProduto"
         );
 
 
-    const campoUnidade =
+    const unidadeCampo =
         document.getElementById(
             "unidadeProduto"
         );
 
 
-    const campoPreco =
-        document.getElementById(
-            "precoVenda"
-        );
-
-
-    const campoEstoque =
-        document.getElementById(
-            "estoqueInicial"
-        );
-
-
-    const campoStatus =
+    const statusCampo =
         document.getElementById(
             "statusProduto"
         );
 
 
     /* ================================================
-       VERIFICAR CAMPOS PRINCIPAIS
+       VERIFICAR CAMPOS
     ================================================ */
 
     if (
-        !campoCodigo ||
-        !campoBarras ||
-        !campoNome
+        !codigoCampo ||
+        !eanCampo ||
+        !nomeCampo ||
+        !categoriaCampo ||
+        !unidadeCampo ||
+        !statusCampo
     ) {
+
 
         alert(
             "Não foi possível localizar os campos do cadastro de produto."
         );
+
 
         return;
 
@@ -878,42 +939,28 @@ function salvarProduto() {
        PEGAR VALORES
     ================================================ */
 
+    const codigo =
+        codigoCampo.value.trim();
+
+
+    const codigoBarras =
+        eanCampo.value.trim();
+
+
     const nome =
-        campoNome.value.trim();
+        nomeCampo.value.trim();
 
 
     const categoria =
-        campoCategoria
-            ? campoCategoria.value
-            : "";
+        categoriaCampo.value;
 
 
     const unidade =
-        campoUnidade
-            ? campoUnidade.value
-            : "Unidade";
-
-
-    const precoVenda =
-        campoPreco
-            ? Number(
-                campoPreco.value
-              ) || 0
-            : 0;
-
-
-    const estoqueInicial =
-        campoEstoque
-            ? Number(
-                campoEstoque.value
-              ) || 0
-            : 0;
+        unidadeCampo.value;
 
 
     const status =
-        campoStatus
-            ? campoStatus.value
-            : "Ativo";
+        statusCampo.value;
 
 
     /* ================================================
@@ -924,11 +971,14 @@ function salvarProduto() {
         nome === ""
     ) {
 
+
         alert(
             "Informe o nome do produto."
         );
 
-        campoNome.focus();
+
+        nomeCampo.focus();
+
 
         return;
 
@@ -936,57 +986,7 @@ function salvarProduto() {
 
 
     /* ================================================
-       VALIDAR ESTOQUE
-    ================================================ */
-
-    if (
-        estoqueInicial < 0
-    ) {
-
-        alert(
-            "O estoque inicial não pode ser negativo."
-        );
-
-        return;
-
-    }
-
-
-    /* ================================================
-       CRIAR OBJETO DO PRODUTO
-    ================================================ */
-
-    const produto = {
-
-        codigo:
-            campoCodigo.value,
-
-        codigoBarras:
-            campoBarras.value,
-
-        nome:
-            nome,
-
-        categoria:
-            categoria,
-
-        unidade:
-            unidade,
-
-        precoVenda:
-            precoVenda,
-
-        estoque:
-            estoqueInicial,
-
-        status:
-            status
-
-    };
-
-
-    /* ================================================
-       GARANTIR ARRAY DE PRODUTOS
+       GARANTIR ARRAY
     ================================================ */
 
     if (
@@ -1001,14 +1001,70 @@ function salvarProduto() {
 
 
     /* ================================================
+       VERIFICAR SE ESTÁ EDITANDO
+    ================================================ */
+
+    if (
+        typeof produtoEditando !== "number"
+    ) {
+
+        produtoEditando =
+            -1;
+
+    }
+
+
+    /* ================================================
        NOVO PRODUTO
     ================================================ */
 
     if (
-        produtoEditando === -1 ||
-        produtoEditando === undefined ||
-        produtoEditando === null
+        produtoEditando === -1
     ) {
+
+
+        const produto = {
+
+
+            codigo:
+                codigo ||
+                gerarCodigoProduto(),
+
+
+            codigoBarras:
+                codigoBarras ||
+                gerarEAN(),
+
+
+            nome:
+                nome,
+
+
+            categoria:
+                categoria,
+
+
+            unidade:
+                unidade,
+
+
+            status:
+                status,
+
+
+            estoque:
+                0,
+
+
+            custo:
+                0,
+
+
+            precoVenda:
+                0
+
+        };
+
 
         produtos.push(
             produto
@@ -1023,10 +1079,94 @@ function salvarProduto() {
 
     else {
 
-        produtos[
-            produtoEditando
-        ] =
-            produto;
+
+        if (
+            !produtos[
+                produtoEditando
+            ]
+        ) {
+
+
+            alert(
+                "Produto não encontrado para edição."
+            );
+
+
+            produtoEditando =
+                -1;
+
+
+            return;
+
+        }
+
+
+        const produtoAtual =
+            produtos[
+                produtoEditando
+            ];
+
+
+        produtoAtual.codigo =
+            codigo ||
+            produtoAtual.codigo ||
+            gerarCodigoProduto();
+
+
+        produtoAtual.codigoBarras =
+            codigoBarras ||
+            produtoAtual.codigoBarras ||
+            gerarEAN();
+
+
+        produtoAtual.nome =
+            nome;
+
+
+        produtoAtual.categoria =
+            categoria;
+
+
+        produtoAtual.unidade =
+            unidade;
+
+
+        produtoAtual.status =
+            status;
+
+
+        /* ============================================
+           NÃO PERDER ESTOQUE E CUSTOS EXISTENTES
+        ============================================ */
+
+        if (
+            produtoAtual.estoque === undefined
+        ) {
+
+            produtoAtual.estoque =
+                0;
+
+        }
+
+
+        if (
+            produtoAtual.custo === undefined
+        ) {
+
+            produtoAtual.custo =
+                0;
+
+        }
+
+
+        if (
+            produtoAtual.precoVenda === undefined
+        ) {
+
+            produtoAtual.precoVenda =
+                0;
+
+        }
 
     }
 
@@ -1042,14 +1182,7 @@ function salvarProduto() {
        ATUALIZAR LISTA DE PRODUTOS
     ================================================ */
 
-    if (
-        typeof mostrarProdutos ===
-        "function"
-    ) {
-
-        mostrarProdutos();
-
-    }
+    mostrarProdutos();
 
 
     /* ================================================
@@ -1081,15 +1214,15 @@ function salvarProduto() {
 
 
     /* ================================================
-       ATUALIZAR PRODUÇÃO
+       ATUALIZAR ITENS DE MOVIMENTAÇÃO
     ================================================ */
 
     if (
-        typeof atualizarProdutosProducao ===
+        typeof atualizarItensMovimentacao ===
         "function"
     ) {
 
-        atualizarProdutosProducao();
+        atualizarItensMovimentacao();
 
     }
 
@@ -1104,10 +1237,170 @@ function salvarProduto() {
 
 
     /* ================================================
-       LIMPAR FORMULÁRIO
+       LIMPAR PARA NOVO CADASTRO
     ================================================ */
 
     novoProduto();
+
+}
+
+
+/* =====================================================
+   MOSTRAR PRODUTOS
+===================================================== */
+
+function mostrarProdutos() {
+
+
+    const tabela =
+        document.getElementById(
+            "listaProdutos"
+        );
+
+
+    if (
+        !tabela
+    ) {
+
+        return;
+
+    }
+
+
+    tabela.innerHTML =
+        "";
+
+
+    /* ================================================
+       VERIFICAR PRODUTOS
+    ================================================ */
+
+    if (
+        !Array.isArray(
+            produtos
+        ) ||
+        produtos.length === 0
+    ) {
+
+
+        tabela.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    class="text-center"
+                >
+
+                    Nenhum produto cadastrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    /* ================================================
+       LISTAR PRODUTOS
+    ================================================ */
+
+    produtos.forEach(
+        function(
+            produto,
+            indice
+        ) {
+
+
+            const estoque =
+                Number(
+                    produto.estoque
+                ) || 0;
+
+
+            const custo =
+                Number(
+                    produto.custo
+                ) || 0;
+
+
+            const valorTotal =
+                estoque *
+                custo;
+
+
+            tabela.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        ${produto.codigo || ""}
+                    </td>
+
+                    <td>
+                        ${produto.nome || ""}
+                    </td>
+
+                    <td>
+                        ${produto.categoria || ""}
+                    </td>
+
+                    <td>
+                        ${produto.unidade || ""}
+                    </td>
+
+                    <td>
+                        ${estoque}
+                    </td>
+
+                    <td>
+                        R$ ${custo
+                            .toFixed(2)
+                            .replace(".", ",")}
+                    </td>
+
+                    <td>
+                        R$ ${valorTotal
+                            .toFixed(2)
+                            .replace(".", ",")}
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            onclick="editarProduto(${indice})"
+                            class="btn btn-edit"
+                        >
+
+                            ✏️
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            onclick="excluirProduto(${indice})"
+                            class="btn btn-delete"
+                        >
+
+                            🗑️
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
 
 }
 
@@ -1122,8 +1415,14 @@ function editarProduto(
 
 
     if (
-        !produtos[indice]
+        !produtos[
+            indice
+        ]
     ) {
+
+        alert(
+            "Produto não encontrado."
+        );
 
         return;
 
@@ -1131,7 +1430,9 @@ function editarProduto(
 
 
     const produto =
-        produtos[indice];
+        produtos[
+            indice
+        ];
 
 
     produtoEditando =
@@ -1142,129 +1443,141 @@ function editarProduto(
        PREENCHER CAMPOS
     ================================================ */
 
-    const codigo =
+    const codigoCampo =
         document.getElementById(
-            "codigoInterno"
+            "codigoProduto"
         );
 
 
-    const barras =
+    const eanCampo =
         document.getElementById(
-            "codigoBarras"
+            "eanProduto"
         );
 
 
-    const nome =
+    const nomeCampo =
         document.getElementById(
             "nomeProduto"
         );
 
 
-    const categoria =
+    const categoriaCampo =
         document.getElementById(
             "categoriaProduto"
         );
 
 
-    const unidade =
+    const unidadeCampo =
         document.getElementById(
             "unidadeProduto"
         );
 
 
-    const preco =
-        document.getElementById(
-            "precoVenda"
-        );
-
-
-    const estoque =
-        document.getElementById(
-            "estoqueInicial"
-        );
-
-
-    const status =
+    const statusCampo =
         document.getElementById(
             "statusProduto"
         );
 
 
-    if (codigo) {
+    if (
+        codigoCampo
+    ) {
 
-        codigo.value =
-            produto.codigo || "";
-
-    }
-
-
-    if (barras) {
-
-        barras.value =
-            produto.codigoBarras || "";
+        codigoCampo.value =
+            produto.codigo ||
+            "";
 
     }
 
 
-    if (nome) {
+    if (
+        eanCampo
+    ) {
 
-        nome.value =
-            produto.nome || "";
-
-    }
-
-
-    if (categoria) {
-
-        categoria.value =
-            produto.categoria || "";
+        eanCampo.value =
+            produto.codigoBarras ||
+            "";
 
     }
 
 
-    if (unidade) {
+    if (
+        nomeCampo
+    ) {
 
-        unidade.value =
-            produto.unidade || "Unidade";
-
-    }
-
-
-    if (preco) {
-
-        preco.value =
-            produto.precoVenda || 0;
+        nomeCampo.value =
+            produto.nome ||
+            "";
 
     }
 
 
-    if (estoque) {
+    if (
+        categoriaCampo
+    ) {
 
-        estoque.value =
-            produto.estoque || 0;
+        categoriaCampo.value =
+            produto.categoria ||
+            "";
 
     }
 
 
-    if (status) {
+    if (
+        unidadeCampo
+    ) {
 
-        status.value =
-            produto.status || "Ativo";
+        unidadeCampo.value =
+            produto.unidade ||
+            "Unidade";
+
+    }
+
+
+    if (
+        statusCampo
+    ) {
+
+        statusCampo.value =
+            produto.status ||
+            "Ativo";
 
     }
 
 
     /* ================================================
-       VOLTAR PARA O TOPO
+       IR PARA ABA DE PRODUTOS
     ================================================ */
 
-    window.scrollTo({
+    if (
+        typeof mostrarAba ===
+        "function"
+    ) {
 
-        top: 0,
+        const aba =
+            document.getElementById(
+                "produtos"
+            );
 
-        behavior: "smooth"
 
-    });
+        const botao =
+            document.querySelector(
+                '[onclick*="produtos"]'
+            );
+
+
+        if (
+            aba
+        ) {
+
+            mostrarAba(
+                aba,
+                botao
+            );
+
+        }
+
+    }
 
 }
 
@@ -1279,8 +1592,14 @@ function excluirProduto(
 
 
     if (
-        !produtos[indice]
+        !produtos[
+            indice
+        ]
     ) {
+
+        alert(
+            "Produto não encontrado."
+        );
 
         return;
 
@@ -1288,14 +1607,16 @@ function excluirProduto(
 
 
     const produto =
-        produtos[indice];
+        produtos[
+            indice
+        ];
 
 
     const confirmar =
         confirm(
-            "Deseja realmente excluir o produto " +
+            "Deseja realmente excluir o produto \"" +
             produto.nome +
-            "?"
+            "\"?"
         );
 
 
@@ -1317,24 +1638,7 @@ function excluirProduto(
     salvarBanco();
 
 
-    if (
-        typeof mostrarProdutos ===
-        "function"
-    ) {
-
-        mostrarProdutos();
-
-    }
-
-
-    if (
-        typeof atualizarDashboard ===
-        "function"
-    ) {
-
-        atualizarDashboard();
-
-    }
+    mostrarProdutos();
 
 
     if (
@@ -1348,11 +1652,11 @@ function excluirProduto(
 
 
     if (
-        typeof atualizarProdutosProducao ===
+        typeof atualizarItensMovimentacao ===
         "function"
     ) {
 
-        atualizarProdutosProducao();
+        atualizarItensMovimentacao();
 
     }
 
@@ -1360,9 +1664,6 @@ function excluirProduto(
     alert(
         "Produto excluído com sucesso."
     );
-
-
-    novoProduto();
 
 }
 
@@ -1385,16 +1686,18 @@ function inicializarProdutos() {
     }
 
 
-    produtoEditando =
-        -1;
+    mostrarProdutos();
 
+
+    /* ================================================
+       PREPARAR NOVO CADASTRO
+    ================================================ */
 
     if (
-        typeof mostrarProdutos ===
-        "function"
+        produtos.length === 0
     ) {
 
-        mostrarProdutos();
+        novoProduto();
 
     }
 
@@ -1410,212 +1713,6 @@ document.addEventListener(
     function() {
 
         inicializarProdutos();
-
-    }
-);
-
-
-/* =====================================================
-   LISTAR PRODUTOS
-===================================================== */
-
-function mostrarProdutos() {
-
-
-    const tabela =
-        document.getElementById(
-            "listaProdutos"
-        );
-
-
-    if (!tabela) {
-
-        return;
-
-    }
-
-
-    tabela.innerHTML = "";
-
-
-    produtos.forEach(
-        function (
-            produto,
-            index
-        ) {
-
-
-            tabela.innerHTML += `
-
-                <tr>
-
-                    <td>
-                        ${produto.codigo || ""}
-                    </td>
-
-
-                    <td>
-                        ${produto.nome || ""}
-                    </td>
-
-
-                    <td>
-                        ${produto.codigoBarras || ""}
-                    </td>
-
-
-                    <td>
-                        ${produto.categoria || ""}
-                    </td>
-
-
-                    <td>
-                        ${produto.unidade || ""}
-                    </td>
-
-
-                    <td>
-                        ${produto.status || ""}
-                    </td>
-
-
-                    <td>
-
-                        <button
-                            class="btn btn-primary btn-sm"
-                            onclick="editarProduto(${index})">
-
-                            ✏️
-
-                        </button>
-
-
-                        <button
-                            class="btn btn-delete btn-sm"
-                            onclick="excluirProduto(${index})">
-
-                            🗑️
-
-                        </button>
-
-                    </td>
-
-                </tr>
-
-            `;
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   EDITAR PRODUTO
-===================================================== */
-
-function editarProduto(index) {
-
-
-    produtoEditando =
-        index;
-
-
-    const produto =
-        produtos[index];
-
-
-    if (!produto) {
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "codigoInterno"
-    ).value =
-        produto.codigo || "";
-
-
-    document.getElementById(
-        "codigoBarras"
-    ).value =
-        produto.codigoBarras || "";
-
-
-    document.getElementById(
-        "nomeProduto"
-    ).value =
-        produto.nome || "";
-
-
-    document.getElementById(
-        "categoriaProduto"
-    ).value =
-        produto.categoria || "";
-
-
-    document.getElementById(
-        "unidadeProduto"
-    ).value =
-        produto.unidade || "Unidade";
-
-
-    document.getElementById(
-        "statusProduto"
-    ).value =
-        produto.status || "Ativo";
-
-}
-
-
-/* =====================================================
-   EXCLUIR PRODUTO
-===================================================== */
-
-function excluirProduto(index) {
-
-
-    if (
-        !confirm(
-            "Excluir este produto?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    produtos.splice(
-        index,
-        1
-    );
-
-
-    salvarBanco();
-
-
-    mostrarProdutos();
-
-
-    atualizarDashboard();
-
-}
-
-
-/* =====================================================
-   INICIALIZAÇÃO DOS PRODUTOS
-===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        mostrarProdutos();
-
-        novoProduto();
 
     }
 );
