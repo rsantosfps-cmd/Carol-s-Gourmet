@@ -3,326 +3,225 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Carol's Gourmet</title>
 
-<title>
-Carol's Gourmet 
-</title>
-
-
-<link rel="stylesheet" href="css/style.css">
-
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
-
 
 
 <body>
 
 
-<!-- ==========================
-        CABEÇALHO
-========================== -->
-
+<!-- =========================================================
+     CABEÇALHO
+========================================================= -->
 
 <header class="header">
 
+    <div class="logo">
 
-<div class="logo">
+        <div class="logo-icon">
+            🍰
+        </div>
 
+        <div>
+            Carol's
+            <span>
+                Gourmet
+            </span>
+        </div>
 
-<div class="logo-icon">
-
-🍰
-
-</div>
-
-
-<div>
-
-Carol's
-
-<span>
-Gourmet
-</span>
+    </div>
 
 
-</div>
-
-
-</div>
-
-
-
-
-<button 
-class="menu-toggle"
-onclick="toggleMenu()">
-
-☰
-
-</button>
-
+    <button
+        class="menu-toggle"
+        onclick="toggleMenu()"
+    >
+        ☰
+    </button>
 
 </header>
 
 
 
-
-
-
-<!-- ==========================
-        MENU LATERAL
-========================== -->
-
+<!-- =========================================================
+     MENU LATERAL
+========================================================= -->
 
 <nav class="sidebar" id="sidebar">
 
 
-<button 
-class="menu-item ativo"
-onclick="mostrarAba('dashboard', this)">
-
-🏠 Dashboard
-
-</button>
-
+    <button
+        class="menu-item ativo"
+        onclick="mostrarAba('dashboard', this)"
+    >
+        🏠 Dashboard
+    </button>
 
 
-
-<button 
-class="menu-item"
-onclick="mostrarAba('produtos', this)">
-
-📦 Produtos
-
-</button>
+    <button
+        class="menu-item"
+        onclick="mostrarAba('produtos', this)"
+    >
+        📦 Produtos
+    </button>
 
 
+    <button
+        class="menu-item"
+        onclick="mostrarAba('materiaPrima', this)"
+    >
+        🥫 Matéria-Prima
+    </button>
 
 
-<button 
-class="menu-item"
-onclick="mostrarAba('materiaPrima', this)">
-
-🥫 Matéria-Prima
-
-</button>
-
+    <button
+        class="menu-item"
+        onclick="mostrarAba('estoque', this)"
+    >
+        📋 Estoque
+    </button>
 
 
+    <button
+        class="menu-item"
+        onclick="mostrarAba('producao', this)"
+    >
+        🏭 Produção
+    </button>
 
 
-<button 
-class="menu-item"
-onclick="mostrarAba('estoque', this)">
-
-📋 Estoque
-
-</button>
-
+    <button
+        class="menu-item"
+        onclick="mostrarAba('etiquetas', this)"
+    >
+        🏷️ Etiquetas
+    </button>
 
 
-
-
-<button 
-class="menu-item"
-onclick="mostrarAba('producao', this)">
-
-🏭 Produção
-
-</button>
-
-
-
-
-
-<button 
-class="menu-item"
-onclick="mostrarAba('etiquetas', this)">
-
-🏷️ Etiquetas
-
-</button>
-
-
-
-
-
-<button 
-class="menu-item"
-onclick="mostrarAba('configuracoes', this)">
-
-⚙️ Configurações
-
-</button>
-
+    <button
+        class="menu-item"
+        onclick="mostrarAba('configuracoes', this)"
+    >
+        ⚙️ Configurações
+    </button>
 
 
 </nav>
 
 
 
-
-
-
-
-<!-- ==========================
-        CONTEÚDO
-========================== -->
-
+<!-- =========================================================
+     CONTEÚDO PRINCIPAL
+========================================================= -->
 
 <div class="conteudo-principal">
 
-
 <main class="container">
-<!-- ==========================
-        DASHBOARD
-========================== -->
 
 
-<section 
-id="dashboard" 
-class="aba ativa">
 
+<!-- =========================================================
+     DASHBOARD
+========================================================= -->
 
-<div class="card">
+<section
+    id="dashboard"
+    class="aba ativa"
+>
 
+    <div class="card">
 
-<h2 class="section-title">
+        <h2 class="section-title">
+            🍰 Bem-vindo à Carol's Gourmet
+        </h2>
 
-🍰 Bem-vindo à Carol's Gourmet
 
-</h2>
+        <p class="page-subtitle">
+            Controle de produtos, produção, estoque e etiquetas.
+        </p>
 
 
+        <div class="cards">
 
-<p class="page-subtitle">
 
-Controle de produtos, produção, estoque e etiquetas.
+            <div class="card gold">
 
-</p>
+                <div class="card-icon">
+                    📦
+                </div>
 
+                <div class="card-title">
+                    Produtos cadastrados
+                </div>
 
+                <div
+                    class="card-value"
+                    id="totalProdutos"
+                >
+                    0
+                </div>
 
+            </div>
 
-<div class="cards">
 
+            <div class="card green">
 
+                <div class="card-icon">
+                    🥫
+                </div>
 
-<div class="card gold">
+                <div class="card-title">
+                    Matérias-primas
+                </div>
 
+                <div
+                    class="card-value"
+                    id="totalMateriaPrima"
+                >
+                    0
+                </div>
 
-<div class="card-icon">
+            </div>
 
-📦
 
-</div>
+            <div class="card">
 
+                <div class="card-icon">
+                    🕒
+                </div>
 
-<div class="card-title">
+                <div class="card-title">
+                    Última atualização
+                </div>
 
-Produtos cadastrados
+                <div
+                    class="card-value"
+                    id="ultimaAtualizacao"
+                >
+                    --
+                </div>
 
-</div>
+            </div>
 
 
-<div class="card-value"
-id="totalProdutos">
+        </div>
 
-0
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="card green">
-
-
-<div class="card-icon">
-
-🥫
-
-</div>
-
-
-<div class="card-title">
-
-Matérias-primas
-
-</div>
-
-
-<div class="card-value"
-id="totalMateriaPrima">
-
-0
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="card">
-
-
-<div class="card-icon">
-
-🕒
-
-</div>
-
-
-<div class="card-title">
-
-Última atualização
-
-</div>
-
-
-<div class="card-value"
-id="ultimaAtualizacao">
-
---
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
+    </div>
 
 </section>
 
 
 
-
-
-
-
-
-
-<!-- ==========================
-        PRODUTOS
-========================== -->
+<!-- =========================================================
+     PRODUTOS
+========================================================= -->
 
 <section
     id="produtos"
@@ -330,19 +229,13 @@ id="ultimaAtualizacao">
 >
 
 
-    <!-- =================================================
-         CADASTRO DE PRODUTOS
-    ================================================== -->
-
     <div class="section">
 
 
         <div class="section-header">
 
             <h2 class="section-title">
-
                 📦 Cadastro de Produtos
-
             </h2>
 
         </div>
@@ -354,18 +247,11 @@ id="ultimaAtualizacao">
             <div class="form-grid">
 
 
-                <!-- =====================================
-                     CÓDIGO INTERNO
-                ====================================== -->
-
                 <div class="form-group">
 
                     <label for="codigoProduto">
-
                         Código Interno
-
                     </label>
-
 
                     <input
                         type="text"
@@ -376,18 +262,11 @@ id="ultimaAtualizacao">
                 </div>
 
 
-                <!-- =====================================
-                     CÓDIGO DE BARRAS
-                ====================================== -->
-
                 <div class="form-group">
 
                     <label for="eanProduto">
-
                         Código de Barras
-
                     </label>
-
 
                     <input
                         type="text"
@@ -398,165 +277,98 @@ id="ultimaAtualizacao">
                 </div>
 
 
-                <!-- =====================================
-                     NOME DO PRODUTO
-                ====================================== -->
-
                 <div class="form-group full">
 
                     <label for="nomeProduto">
-
                         Nome do Produto
-
                     </label>
-
 
                     <input
                         type="text"
                         id="nomeProduto"
-                        placeholder="Ex: Palha Italiana Chocolate"
+                        placeholder="Ex: Brownie Chocolate"
                     >
 
                 </div>
 
-
-                <!-- =====================================
-                     CATEGORIA
-                ====================================== -->
 
                 <div class="form-group">
 
                     <label for="categoriaProduto">
-
                         Categoria
-
                     </label>
 
-
-                    <select
-                        id="categoriaProduto"
-                    >
+                    <select id="categoriaProduto">
 
                         <option value="">
-
                             Selecione a categoria
-
                         </option>
-
 
                         <option value="Palha Italiana">
-
                             Palha Italiana
-
                         </option>
-
 
                         <option value="Brownie">
-
                             Brownie
-
                         </option>
-
 
                         <option value="Sobremesa">
-
                             Sobremesa
-
                         </option>
-
 
                         <option value="Bolo de Pote">
-
                             Bolo de Pote
-
                         </option>
-
 
                     </select>
 
                 </div>
 
-
-                <!-- =====================================
-                     UNIDADE
-                ====================================== -->
 
                 <div class="form-group">
 
                     <label for="unidadeProduto">
-
                         Unidade
-
                     </label>
 
-
-                    <select
-                        id="unidadeProduto"
-                    >
+                    <select id="unidadeProduto">
 
                         <option value="Unidade">
-
                             Unidade
-
                         </option>
-
 
                         <option value="Kg">
-
                             Kg
-
                         </option>
-
 
                         <option value="Pote">
-
                             Pote
-
                         </option>
-
 
                         <option value="Caixa">
-
                             Caixa
-
                         </option>
-
 
                     </select>
 
                 </div>
 
 
-                <!-- =====================================
-                     STATUS
-                ====================================== -->
-
                 <div class="form-group">
 
                     <label for="statusProduto">
-
                         Status
-
                     </label>
 
-
-                    <select
-                        id="statusProduto"
-                    >
+                    <select id="statusProduto">
 
                         <option value="Ativo">
-
                             Ativo
-
                         </option>
-
 
                         <option value="Inativo">
-
                             Inativo
-
                         </option>
-
 
                     </select>
 
@@ -566,21 +378,14 @@ id="ultimaAtualizacao">
             </div>
 
 
-            <!-- =========================================
-                 BOTÕES
-            ========================================== -->
-
             <div class="btn-group">
-
 
                 <button
                     type="button"
                     class="btn btn-primary"
                     onclick="salvarProduto()"
                 >
-
                     💾 Salvar Produto
-
                 </button>
 
 
@@ -589,460 +394,297 @@ id="ultimaAtualizacao">
                     class="btn btn-cancel"
                     onclick="novoProduto()"
                 >
-
                     ➕ Novo
-
                 </button>
-
 
             </div>
 
 
         </div>
 
-
     </div>
 
 
-    <!-- =================================================
-         PRODUTOS CADASTRADOS
-    ================================================== -->
 
     <div class="section">
 
-
         <h2 class="section-title">
-
             📋 Produtos Cadastrados
-
         </h2>
 
 
         <div class="table-container">
 
-
             <table>
-
 
                 <thead>
 
                     <tr>
 
-                        <th>
-                            Código
-                        </th>
+                        <th>Código</th>
 
-                        <th>
-                            Nome
-                        </th>
+                        <th>Nome</th>
 
-                        <th>
-                            Categoria
-                        </th>
+                        <th>Categoria</th>
 
-                        <th>
-                            Unidade
-                        </th>
+                        <th>Unidade</th>
 
-                        <th>
-                            Estoque
-                        </th>
+                        <th>Estoque</th>
 
-                        <th>
-                            Custo Unitário
-                        </th>
+                        <th>Custo Unitário</th>
 
-                        <th>
-                            Valor Total
-                        </th>
+                        <th>Valor Total</th>
 
-                        <th>
-                            Ações
-                        </th>
+                        <th>Ações</th>
 
                     </tr>
 
                 </thead>
 
 
-                <tbody
-                    id="listaProdutos"
-                >
-
+                <tbody id="listaProdutos">
                 </tbody>
-
 
             </table>
 
-
         </div>
-
 
     </div>
 
 
 </section>
-<!-- ==========================
-        MATÉRIA-PRIMA
-========================== -->
 
 
-<section 
-id="materiaPrima" 
-class="aba">
 
+<!-- =========================================================
+     MATÉRIA-PRIMA
+========================================================= -->
 
-<div class="section">
+<section
+    id="materiaPrima"
+    class="aba"
+>
 
 
-<div class="section-header">
+    <div class="section">
 
+        <div class="section-header">
 
-<h2 class="section-title">
+            <h2 class="section-title">
+                🥫 Cadastro de Matéria-Prima
+            </h2>
 
-🥫 Cadastro de Matéria-Prima
+        </div>
 
-</h2>
 
+        <div class="form-box">
 
-</div>
 
+            <div class="form-grid">
 
 
+                <div class="form-group">
 
+                    <label>
+                        Código Interno
+                    </label>
 
-<div class="form-box">
+                    <input
+                        id="codigoMP"
+                        readonly
+                    >
 
+                </div>
 
-<div class="form-grid">
 
+                <div class="form-group full">
 
+                    <label>
+                        Nome da Matéria-Prima
+                    </label>
 
+                    <input
+                        id="nomeMP"
+                        placeholder="Ex: Leite condensado"
+                    >
 
+                </div>
 
-<div class="form-group">
 
+                <div class="form-group">
 
-<label>
+                    <label>
+                        Categoria
+                    </label>
 
-Código Interno
+                    <select id="categoriaMP">
 
-</label>
+                        <option>
+                            Ingrediente
+                        </option>
 
+                        <option>
+                            Embalagem
+                        </option>
 
-<input
-id="codigoMP"
-readonly>
+                        <option>
+                            Rótulo
+                        </option>
 
+                        <option>
+                            Outro
+                        </option>
 
-</div>
+                    </select>
 
+                </div>
 
 
+                <div class="form-group">
 
+                    <label>
+                        Unidade
+                    </label>
 
+                    <select id="unidadeMP">
 
-<div class="form-group full">
+                        <option>
+                            Kg
+                        </option>
 
+                        <option>
+                            g
+                        </option>
 
-<label>
+                        <option>
+                            Litro
+                        </option>
 
-Nome da Matéria-Prima
+                        <option>
+                            Unidade
+                        </option>
 
-</label>
+                    </select>
 
+                </div>
 
-<input
-id="nomeMP"
-placeholder="Ex: Leite condensado">
 
+                <div class="form-group">
 
-</div>
+                    <label>
+                        Quantidade Inicial
+                    </label>
 
+                    <input
+                        type="number"
+                        id="estoqueMP"
+                        value="0"
+                    >
 
+                </div>
 
 
+                <div class="form-group">
 
+                    <label>
+                        Custo de Compra
+                    </label>
 
-<div class="form-group">
+                    <input
+                        type="number"
+                        id="custoMP"
+                        step="0.01"
+                    >
 
+                </div>
 
-<label>
 
-Categoria
+            </div>
 
-</label>
 
+            <div class="btn-group">
 
-<select id="categoriaMP">
+                <button
+                    class="btn btn-primary"
+                    onclick="salvarMateriaPrima()"
+                >
+                    💾 Salvar Matéria-Prima
+                </button>
 
 
-<option>
+                <button
+                    class="btn btn-cancel"
+                    onclick="novaMateriaPrima()"
+                >
+                    ➕ Novo
+                </button>
 
-Ingrediente
+            </div>
 
-</option>
 
+        </div>
 
-<option>
+    </div>
 
-Embalagem
 
-</option>
 
+    <div class="section">
 
-<option>
+        <h2 class="section-title">
+            📋 Estoque de Matéria-Prima
+        </h2>
 
-Rótulo
 
-</option>
+        <div class="table-container">
 
+            <table>
 
-<option>
+                <thead>
 
-Outro
+                    <tr>
 
-</option>
+                        <th>Código</th>
 
+                        <th>Nome</th>
 
-</select>
+                        <th>Categoria</th>
 
+                        <th>Unidade</th>
 
-</div>
+                        <th>Estoque</th>
 
+                        <th>Custo</th>
 
+                        <th>Custo total</th>
 
+                    </tr>
 
+                </thead>
 
 
-<div class="form-group">
+                <tbody id="listaMateriaPrima">
+                </tbody>
 
+            </table>
 
-<label>
+        </div>
 
-Unidade
-
-</label>
-
-
-<select id="unidadeMP">
-
-
-<option>
-
-Kg
-
-</option>
-
-
-<option>
-
-g
-
-</option>
-
-
-<option>
-
-Litro
-
-</option>
-
-
-<option>
-
-Unidade
-
-</option>
-
-
-</select>
-
-
-</div>
-
-
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Quantidade Inicial
-
-</label>
-
-
-<input
-type="number"
-id="estoqueMP"
-value="0">
-
-
-</div>
-
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Custo de Compra
-
-</label>
-
-
-<input
-type="number"
-id="custoMP"
-step="0.01">
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-<div class="btn-group">
-
-
-<button
-class="btn btn-primary"
-onclick="salvarMateriaPrima()">
-
-💾 Salvar Matéria-Prima
-
-</button>
-
-
-
-<button
-class="btn btn-cancel"
-onclick="novaMateriaPrima()">
-
-➕ Novo
-
-</button>
-
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-<div class="section">
-
-
-<h2 class="section-title">
-
-📋 Estoque de Matéria-Prima
-
-</h2>
-
-
-
-<div class="table-container">
-
-
-<table>
-
-
-<thead>
-
-
-<tr>
-
-<th>
-Código
-</th>
-
-
-<th>
-Nome
-</th>
-
-
-<th>
-Categoria
-</th>
-
-
-<th>
-Unidade
-</th>
-
-
-<th>
-Estoque
-</th>
-
-
-<th>
-Custo
-</th>
-
-
-<th>
-Custo total
-</th>
-
-
-</tr>
-
-
-</thead>
-
-
-<tbody id="listaMateriaPrima">
-
-
-</tbody>
-
-
-</table>
-
-
-</div>
-
-
-</div>
-
+    </div>
 
 
 </section>
 
 
 
-<!-- =====================================================
-     ABA ESTOQUE
-===================================================== -->
+<!-- =========================================================
+     ESTOQUE
+========================================================= -->
 
-<section id="estoque" class="aba">
+<section
+    id="estoque"
+    class="aba"
+>
+
 
     <div class="content">
 
@@ -1050,15 +692,12 @@ Custo total
             Estoque
         </h1>
 
+
         <p class="page-subtitle">
             Consulte e controle o estoque de matérias-primas
             e produtos acabados.
         </p>
 
-
-        <!-- =================================================
-             CONSULTA DE ESTOQUE
-        ================================================== -->
 
         <div class="section">
 
@@ -1078,6 +717,7 @@ Custo total
                     <label for="tipoEstoque">
                         Tipo de Estoque
                     </label>
+
 
                     <select
                         id="tipoEstoque"
@@ -1101,10 +741,6 @@ Custo total
         </div>
 
 
-        <!-- =================================================
-             TABELA DE ESTOQUE
-        ================================================== -->
-
         <div class="section">
 
             <div class="table-container">
@@ -1124,10 +760,6 @@ Custo total
         </div>
 
 
-        <!-- =================================================
-             MOVIMENTAÇÃO DE ESTOQUE
-        ================================================== -->
-
         <div class="section">
 
             <div class="section-header">
@@ -1142,15 +774,12 @@ Custo total
             <div class="form-grid">
 
 
-                <!-- =================================================
-                     TIPO DE ESTOQUE PARA MOVIMENTAÇÃO
-                ================================================== -->
-
                 <div class="form-group">
 
                     <label for="tipoEstoqueMovimentacao">
                         Tipo de Estoque
                     </label>
+
 
                     <select
                         id="tipoEstoqueMovimentacao"
@@ -1170,15 +799,12 @@ Custo total
                 </div>
 
 
-                <!-- =================================================
-                     OPERAÇÃO
-                ================================================== -->
-
                 <div class="form-group">
 
                     <label for="tipoMovimentacao">
                         Operação
                     </label>
+
 
                     <select id="tipoMovimentacao">
 
@@ -1195,15 +821,12 @@ Custo total
                 </div>
 
 
-                <!-- =================================================
-                     ITEM
-                ================================================== -->
-
                 <div class="form-group">
 
                     <label for="itemMovimentacao">
                         Item
                     </label>
+
 
                     <select id="itemMovimentacao">
 
@@ -1216,15 +839,12 @@ Custo total
                 </div>
 
 
-                <!-- =================================================
-                     QUANTIDADE
-                ================================================== -->
-
                 <div class="form-group">
 
                     <label for="quantidadeMovimentacao">
                         Quantidade
                     </label>
+
 
                     <input
                         type="number"
@@ -1237,15 +857,12 @@ Custo total
                 </div>
 
 
-                <!-- =================================================
-                     DATA
-                ================================================== -->
-
                 <div class="form-group">
 
                     <label for="dataMovimentacao">
                         Data
                     </label>
+
 
                     <input
                         type="date"
@@ -1255,15 +872,12 @@ Custo total
                 </div>
 
 
-                <!-- =================================================
-                     OBSERVAÇÃO
-                ================================================== -->
-
                 <div class="form-group full">
 
                     <label for="observacaoMovimentacao">
                         Observação
                     </label>
+
 
                     <textarea
                         id="observacaoMovimentacao"
@@ -1276,10 +890,6 @@ Custo total
             </div>
 
 
-            <!-- =================================================
-                 BOTÃO
-            ================================================== -->
-
             <div class="btn-group">
 
                 <button
@@ -1287,19 +897,14 @@ Custo total
                     class="btn btn-save"
                     onclick="registrarMovimentacao()"
                 >
-
                     Registrar Movimentação
-
                 </button>
 
             </div>
 
+
         </div>
 
-
-        <!-- =================================================
-             HISTÓRICO DE MOVIMENTAÇÕES
-        ================================================== -->
 
         <div class="section">
 
@@ -1320,29 +925,17 @@ Custo total
 
                         <tr>
 
-                            <th>
-                                Data
-                            </th>
+                            <th>Data</th>
 
-                            <th>
-                                Tipo
-                            </th>
+                            <th>Tipo</th>
 
-                            <th>
-                                Item
-                            </th>
+                            <th>Item</th>
 
-                            <th>
-                                Quantidade
-                            </th>
+                            <th>Quantidade</th>
 
-                            <th>
-                                Operação
-                            </th>
+                            <th>Operação</th>
 
-                            <th>
-                                Observação
-                            </th>
+                            <th>Observação</th>
 
                         </tr>
 
@@ -1350,7 +943,6 @@ Custo total
 
 
                     <tbody id="historicoMovimentacoes">
-
                     </tbody>
 
                 </table>
@@ -1359,925 +951,825 @@ Custo total
 
         </div>
 
+
     </div>
 
 </section>
 
 
 
+<!-- =========================================================
+     PRODUÇÃO
+========================================================= -->
 
-<!-- ==========================
-        PRODUÇÃO
-========================== -->
+<section
+    id="producao"
+    class="aba"
+>
 
 
-<section 
-id="producao" 
-class="aba">
+    <div class="section">
 
+        <h2 class="section-title">
+            🏭 Produção
+        </h2>
 
 
-<div class="section">
+        <div class="form-box">
 
 
-<h2 class="section-title">
+            <div class="form-grid">
 
-🏭 Produção
 
-</h2>
+                <div class="form-group full">
 
+                    <label>
+                        Produto
+                    </label>
 
 
+                    <select id="produtoProducao">
+                    </select>
 
-<div class="form-box">
+                </div>
 
 
-<div class="form-grid">
+                <div class="form-group">
 
+                    <label>
+                        Quantidade Produzida
+                    </label>
 
 
+                    <input
+                        type="number"
+                        id="quantidadeProducao"
+                        value="1"
+                    >
 
+                </div>
 
-<div class="form-group full">
 
+                <div class="form-group">
 
-<label>
+                    <label>
+                        Data Fabricação
+                    </label>
 
-Produto
 
-</label>
+                    <input
+                        type="date"
+                        id="fabricacaoProducao"
+                    >
 
+                </div>
 
-<select id="produtoProducao">
 
+                <div class="form-group">
 
-</select>
+                    <label>
+                        Validade
+                    </label>
 
 
-</div>
+                    <input
+                        type="date"
+                        id="validadeProducao"
+                        readonly
+                    >
 
+                </div>
 
 
+                <div class="form-group full">
 
+                    <label>
+                        Observação
+                    </label>
 
 
+                    <textarea
+                        id="observacaoProducao"
+                    ></textarea>
 
-<div class="form-group">
+                </div>
 
 
-<label>
+            </div>
 
-Quantidade Produzida
 
-</label>
+            <div class="btn-group">
 
+                <button
+                    class="btn btn-primary"
+                    onclick="registrarProducao()"
+                >
+                    🏭 Registrar Produção
+                </button>
 
-<input
-type="number"
-id="quantidadeProducao"
-value="1">
+            </div>
 
 
-</div>
+        </div>
 
+    </div>
 
 
 
+    <div class="section">
 
+        <h2 class="section-title">
+            📋 Produções Registradas
+        </h2>
 
 
-<div class="form-group">
+        <div class="table-container">
 
+            <table>
 
-<label>
+                <thead>
 
-Data Fabricação
+                    <tr>
 
-</label>
+                        <th>Produto</th>
 
+                        <th>Quantidade</th>
 
-<input
-type="date"
-id="fabricacaoProducao">
+                        <th>Fabricação</th>
 
+                        <th>Validade</th>
 
-</div>
+                    </tr>
 
+                </thead>
 
 
+                <tbody id="listaProducao">
+                </tbody>
 
+            </table>
 
+        </div>
 
-
-<div class="form-group">
-
-
-<label>
-
-Validade
-
-</label>
-
-
-<input
-type="date"
-id="validadeProducao"
-readonly>
-
-
-</div>
-
-
-
-
-
-
-
-<div class="form-group full">
-
-
-<label>
-
-Observação
-
-</label>
-
-
-<textarea
-id="observacaoProducao"></textarea>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-<div class="btn-group">
-
-
-<button
-class="btn btn-primary"
-onclick="registrarProducao()">
-
-
-🏭 Registrar Produção
-
-
-</button>
-
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="section">
-
-
-<h2 class="section-title">
-
-📋 Produções Registradas
-
-</h2>
-
-
-
-
-<div class="table-container">
-
-
-<table>
-
-
-<thead>
-
-
-<tr>
-
-
-<th>
-Produto
-</th>
-
-
-<th>
-Quantidade
-</th>
-
-
-<th>
-Fabricação
-</th>
-
-
-<th>
-Validade
-</th>
-
-
-</tr>
-
-
-</thead>
-
-
-<tbody id="listaProducao">
-
-
-</tbody>
-
-
-</table>
-
-
-</div>
-
-
-
-</div>
-
-
-
-</section> 
-<!-- ==========================
-        PRECIFICAÇÃO
-========================== -->
-
-
-<section 
-id="precificacao" 
-class="aba">
-
-
-
-<div class="section">
-
-
-<h2 class="section-title">
-
-💰 Precificação
-
-</h2>
-
-
-
-<div class="form-box">
-
-
-<div class="form-grid">
-
-
-
-<div class="form-group full">
-
-
-<label>
-
-Produto
-
-</label>
-
-
-<select id="produtoPreco">
-
-
-</select>
-
-
-</div>
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Custo Matéria-Prima
-
-</label>
-
-
-<input
-type="number"
-id="custoMateria"
-step="0.01">
-
-
-</div>
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Embalagem
-
-</label>
-
-
-<input
-type="number"
-id="custoEmbalagem"
-step="0.01">
-
-
-</div>
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Outros Custos
-
-</label>
-
-
-<input
-type="number"
-id="outrosCustos"
-step="0.01">
-
-
-</div>
-
-
-
-
-
-<div class="form-group">
-
-
-<label>
-
-Margem (%)
-
-</label>
-
-
-<input
-type="number"
-id="margemLucro"
-value="50">
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-<button
-class="btn btn-primary"
-onclick="calcularPreco()">
-
-
-💰 Calcular
-
-
-</button>
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-<div class="section">
-
-
-<h2 class="section-title">
-
-Resultado
-
-</h2>
-
-
-<div class="cards">
-
-
-<div class="card">
-
-Custo Total
-
-<strong
-id="resultadoCusto">
-
-R$ 0,00
-
-</strong>
-
-</div>
-
-
-
-<div class="card gold">
-
-Preço Venda
-
-<strong
-id="resultadoVenda">
-
-R$ 0,00
-
-</strong>
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
+    </div>
 
 
 </section>
 
 
 
+<!-- =========================================================
+     PRECIFICAÇÃO
+========================================================= -->
 
+<section
+    id="precificacao"
+    class="aba"
+>
 
 
+    <div class="section">
 
+        <h2 class="section-title">
+            💰 Precificação
+        </h2>
 
 
-<!-- ==========================
-        ETIQUETAS
-========================== -->
+        <div class="form-box">
 
 
-<section 
-id="etiquetas" 
-class="aba">
+            <div class="form-grid">
 
 
+                <div class="form-group full">
 
-<div class="section">
+                    <label>
+                        Produto
+                    </label>
 
 
-<h2 class="section-title">
+                    <select id="produtoPreco">
+                    </select>
 
-🏷️ Gerar Etiqueta
+                </div>
 
-</h2>
 
+                <div class="form-group">
 
+                    <label>
+                        Custo Matéria-Prima
+                    </label>
 
 
-<div class="form-box">
+                    <input
+                        type="number"
+                        id="custoMateria"
+                        step="0.01"
+                    >
 
+                </div>
 
-<div class="form-grid">
 
+                <div class="form-group">
 
+                    <label>
+                        Embalagem
+                    </label>
 
 
+                    <input
+                        type="number"
+                        id="custoEmbalagem"
+                        step="0.01"
+                    >
 
-<div class="form-group full">
+                </div>
 
 
-<label>
+                <div class="form-group">
 
-Produto
+                    <label>
+                        Outros Custos
+                    </label>
 
-</label>
 
+                    <input
+                        type="number"
+                        id="outrosCustos"
+                        step="0.01"
+                    >
 
-<select id="produtoEtiqueta">
+                </div>
 
 
-</select>
+                <div class="form-group">
 
+                    <label>
+                        Margem (%)
+                    </label>
 
-</div>
 
+                    <input
+                        type="number"
+                        id="margemLucro"
+                        value="50"
+                    >
 
+                </div>
 
 
+            </div>
 
 
-<div class="form-group">
+            <button
+                class="btn btn-primary"
+                onclick="calcularPreco()"
+            >
+                💰 Calcular
+            </button>
 
 
-<label>
+        </div>
 
-Data Fabricação
+    </div>
 
-</label>
 
 
-<input
-type="date"
-id="fabricacaoEtiqueta">
+    <div class="section">
 
+        <h2 class="section-title">
+            Resultado
+        </h2>
 
-</div>
 
+        <div class="cards">
 
 
+            <div class="card">
 
+                Custo Total
 
+                <strong id="resultadoCusto">
+                    R$ 0,00
+                </strong>
 
+            </div>
 
-<div class="form-group">
 
+            <div class="card gold">
 
-<label>
+                Preço Venda
 
-Validade
+                <strong id="resultadoVenda">
+                    R$ 0,00
+                </strong>
 
-</label>
+            </div>
 
 
-<input
-type="date"
-id="validadeEtiqueta"
-readonly>
+        </div>
 
-
-</div>
-
-
-
-
-
-</div>
-
-
-
-
-
-<div class="btn-group">
-
-
-<button
-class="btn btn-primary"
-onclick="gerarEtiqueta()">
-
-
-👁️ Gerar Visualização
-
-
-</button>
-
-
-
-
-<button
-class="btn btn-print"
-onclick="salvarEtiquetaPNG()">
-
-
-🖼️ Gerar Imagem
-
-
-</button>
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="section">
-
-
-<h2 class="section-title">
-
-Pré-visualização
-
-</h2>
-
-
-
-
-
-<div class="print-area">
-
-
-
-<div 
-id="etiquetaGerada"
-class="etiqueta">
-
-
-
-
-
-<div class="etiqueta-logo">
-
-Carol's Gourmet
-
-</div>
-
-
-
-
-
-
-<div 
-id="codigoBarrasEtiqueta"
-class="codigo-barras">
-
-
-</div>
-
-
-
-
-
-
-<div class="etiqueta-info">
-
-
-<span>
-
-Fab:
-
-<span id="mostrarFabricacao">
-
---/--/----
-
-</span>
-
-</span>
-
-
-
-
-
-<span>
-
-Val:
-
-<span id="mostrarValidade">
-
---/--/----
-
-</span>
-
-</span>
-
-
-</div>
-
-
-
-
-
-
-<div 
-class="etiqueta-produto"
-id="mostrarProduto">
-
-
-Produto
-
-</div>
-
-
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
+    </div>
 
 
 </section>
 
 
 
+<!-- =========================================================
+     ETIQUETAS
+========================================================= -->
 
+<section
+    id="etiquetas"
+    class="aba"
+>
 
 
+    <!-- =====================================================
+         ETIQUETA EAN-13 — MANTIDA
+    ====================================================== -->
 
+    <div class="section">
 
 
-<!-- ==========================
-        CONFIGURAÇÕES
-========================== -->
+        <h2 class="section-title">
+            🏷️ Gerar Etiqueta
+        </h2>
 
 
-<section 
-id="configuracoes" 
-class="aba">
+        <div class="form-box">
 
 
+            <div class="form-grid">
 
-<div class="section">
 
+                <div class="form-group full">
 
-<h2 class="section-title">
+                    <label>
+                        Produto
+                    </label>
 
-⚙️ Configurações
 
-</h2>
+                    <select id="produtoEtiqueta">
+                    </select>
 
+                </div>
 
 
-<div class="cards">
+                <div class="form-group">
 
+                    <label>
+                        Data Fabricação
+                    </label>
 
 
-<div class="card">
+                    <input
+                        type="date"
+                        id="fabricacaoEtiqueta"
+                    >
 
+                </div>
 
-<div class="card-icon">
 
-💾
+                <div class="form-group">
 
-</div>
+                    <label>
+                        Validade
+                    </label>
 
 
-<h3>
+                    <input
+                        type="date"
+                        id="validadeEtiqueta"
+                        readonly
+                    >
 
-Backup
+                </div>
 
-</h3>
 
+            </div>
 
-<button
-class="btn btn-primary"
-onclick="exportarBackup()">
 
+            <div class="btn-group">
 
-Exportar
 
+                <button
+                    class="btn btn-primary"
+                    onclick="gerarEtiqueta()"
+                >
+                    👁️ Gerar Visualização
+                </button>
 
-</button>
 
+                <button
+                    class="btn btn-print"
+                    onclick="salvarEtiquetaPNG()"
+                >
+                    🖼️ Gerar Imagem
+                </button>
 
-</div>
 
+            </div>
 
 
+        </div>
 
+    </div>
 
 
-<div class="card">
 
+    <!-- =====================================================
+         PRÉ-VISUALIZAÇÃO DA ETIQUETA EAN-13
+         NÃO ALTERAR A ESTRUTURA
+    ====================================================== -->
 
-<div class="card-icon">
+    <div class="section">
 
-📂
 
-</div>
+        <h2 class="section-title">
+            Pré-visualização
+        </h2>
 
 
-<h3>
+        <div class="print-area">
 
-Restaurar
 
-</h3>
+            <div
+                id="etiquetaGerada"
+                class="etiqueta"
+            >
 
 
-<button
-class="btn btn-primary"
-onclick="importarBackup()">
+                <div class="etiqueta-logo">
+                    Carol's Gourmet
+                </div>
 
 
-Importar
+                <div
+                    id="codigoBarrasEtiqueta"
+                    class="codigo-barras"
+                >
+                </div>
 
 
-</button>
+                <div class="etiqueta-info">
 
 
-</div>
+                    <span>
 
+                        Fab:
 
+                        <span id="mostrarFabricacao">
+                            --/--/----
+                        </span>
 
+                    </span>
 
-</div>
 
+                    <span>
 
-</div>
+                        Val:
 
+                        <span id="mostrarValidade">
+                            --/--/----
+                        </span>
+
+                    </span>
+
+
+                </div>
+
+
+                <div
+                    class="etiqueta-produto"
+                    id="mostrarProduto"
+                >
+                    Produto
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NOVA TARJETA — BROWNIE / PALHA ITALIANA
+    ====================================================== -->
+
+    <div class="section">
+
+
+        <h2 class="section-title">
+            🎀 Tarjeta para Brownie / Palha Italiana
+        </h2>
+
+
+        <p class="page-subtitle">
+
+            Gere a faixa de embalagem de
+            <strong>21 cm × 5 cm</strong>.
+            Esta opção será utilizada somente para
+            Brownie e Palha Italiana.
+
+        </p>
+
+
+        <div class="form-box">
+
+
+            <div class="form-grid">
+
+
+                <!-- PRODUTO DA TARJETA -->
+
+                <div class="form-group full">
+
+                    <label for="produtoTarjeta">
+                        Produto
+                    </label>
+
+
+                    <select
+                        id="produtoTarjeta"
+                        onchange="atualizarTarjetaProduto()"
+                    >
+
+                        <option value="">
+                            Selecione um Brownie ou Palha Italiana
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- QUANTIDADE -->
+
+                <div class="form-group">
+
+                    <label for="quantidadeTarjeta">
+                        Quantidade de Tarjetas
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="quantidadeTarjeta"
+                        min="1"
+                        max="100"
+                        value="3"
+                    >
+
+                </div>
+
+
+                <!-- FABRICAÇÃO -->
+
+                <div class="form-group">
+
+                    <label for="fabricacaoTarjeta">
+                        Data Fabricação
+                    </label>
+
+
+                    <input
+                        type="date"
+                        id="fabricacaoTarjeta"
+                    >
+
+                </div>
+
+
+                <!-- VALIDADE -->
+
+                <div class="form-group">
+
+                    <label for="validadeTarjeta">
+                        Validade
+                    </label>
+
+
+                    <input
+                        type="date"
+                        id="validadeTarjeta"
+                        readonly
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <div class="btn-group">
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="gerarTarjetas()"
+                >
+                    🎀 Gerar Tarjetas
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-print"
+                    onclick="imprimirTarjetas()"
+                >
+                    🖨️ Imprimir Tarjetas
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PRÉ-VISUALIZAÇÃO DAS TARJETAS
+    ====================================================== -->
+
+    <div class="section">
+
+
+        <h2 class="section-title">
+            Pré-visualização das Tarjetas
+        </h2>
+
+
+        <div
+            id="areaTarjetas"
+            class="area-tarjetas"
+        >
+
+
+            <!--
+                O APP.JS irá inserir aqui as tarjetas.
+
+                Cada tarjeta terá exatamente:
+                21 cm × 5 cm
+
+                O EAN-13 utilizado será o mesmo
+                cadastrado para o produto.
+            -->
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ÁREA EXCLUSIVA PARA IMPRESSÃO A4
+    ====================================================== -->
+
+    <div
+        id="folhaTarjetas"
+        class="folha-tarjetas"
+    >
+
+        <!--
+            O APP.JS irá montar aqui a folha A4.
+
+            As tarjetas serão organizadas
+            automaticamente para impressão.
+
+            Cada tarjeta:
+            21 cm × 5 cm
+        -->
+
+    </div>
 
 
 </section>
 
 
 
+<!-- =========================================================
+     CONFIGURAÇÕES
+========================================================= -->
+
+<section
+    id="configuracoes"
+    class="aba"
+>
 
 
+    <div class="section">
+
+
+        <h2 class="section-title">
+            ⚙️ Configurações
+        </h2>
+
+
+        <div class="cards">
+
+
+            <div class="card">
+
+                <div class="card-icon">
+                    💾
+                </div>
+
+
+                <h3>
+                    Backup
+                </h3>
+
+
+                <button
+                    class="btn btn-primary"
+                    onclick="exportarBackup()"
+                >
+                    Exportar
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-icon">
+                    📂
+                </div>
+
+
+                <h3>
+                    Restaurar
+                </h3>
+
+
+                <button
+                    class="btn btn-primary"
+                    onclick="importarBackup()"
+                >
+                    Importar
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</section>
 
 
 
 </main>
 
-
 </div>
 
 
 
-
-
-
-
-
+<!-- =========================================================
+     RODAPÉ
+========================================================= -->
 
 <footer class="footer">
 
-
-<p>
-
-© 2026 Carol's Gourmet
-
-</p>
-
+    <p>
+        © 2026 Carol's Gourmet
+    </p>
 
 </footer>
 
 
 
-
-
-
-
-
-
-<!-- ==========================
-        BIBLIOTECAS
-========================== -->
-
+<!-- =========================================================
+     BIBLIOTECAS
+========================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 
 
-
-
-
-
-
-<!-- ==========================
-        JAVASCRIPT
-========================== -->
-
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 
 <script src="js/app.js"></script>
 
 
 </body>
 
-
-</html>            
+</html>
