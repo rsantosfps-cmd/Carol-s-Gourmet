@@ -1,11 +1,16 @@
 /* =========================================================
    CAROL'S GOURMET
    APP.JS
-   ERP 4.0
-   VERSÃO COMPLETA E CORRIGIDA
-
-   Compatível com o index.html enviado
-========================================================= */
+   VERSÃO COMPLETA
+   ---------------------------------------------------------
+   - Produtos
+   - Matéria-prima
+   - Estoque
+   - Produção
+   - Precificação
+   - Etiquetas EAN-13
+   - Tarjetas 5 x 21 cm
+   ========================================================= */
 
 "use strict";
 
@@ -25,7 +30,7 @@ let materiaPrimaEditando = null;
 
 
 /* =========================================================
-   CHAVES DO LOCALSTORAGE
+   LOCAL STORAGE
 ========================================================= */
 
 const STORAGE_PRODUTOS =
@@ -62,6 +67,8 @@ document.addEventListener(
         configurarDatas();
 
         atualizarTudo();
+
+        atualizarProdutosTarjeta();
 
     }
 );
@@ -114,14 +121,14 @@ function carregarDados() {
                 )
             ) || [];
 
-    }
 
-    catch (erro) {
+    } catch (erro) {
 
         console.error(
             "Erro ao carregar dados:",
             erro
         );
+
 
         produtos = [];
 
@@ -174,15 +181,11 @@ function salvarDados() {
     );
 
 
-    const agora =
-        new Date().toLocaleString(
-            "pt-BR"
-        );
-
-
     localStorage.setItem(
         STORAGE_ULTIMA_ATUALIZACAO,
-        agora
+        new Date().toLocaleString(
+            "pt-BR"
+        )
     );
 
 
@@ -216,10 +219,7 @@ function inicializarSistema() {
    MENU LATERAL
 ========================================================= */
 
-function mostrarAba(
-    idAba,
-    botao
-) {
+function mostrarAba(idAba, botao) {
 
     const abas =
         document.querySelectorAll(
@@ -331,7 +331,7 @@ function toggleMenu() {
 
 
 /* =========================================================
-   GERAR CÓDIGO INTERNO
+   CÓDIGO INTERNO
 ========================================================= */
 
 function gerarCodigoInterno(
@@ -367,8 +367,7 @@ function gerarCodigoInterno(
                 numero > maiorNumero
             ) {
 
-                maiorNumero =
-                    numero;
+                maiorNumero = numero;
 
             }
 
@@ -376,13 +375,11 @@ function gerarCodigoInterno(
     );
 
 
-    const proximo =
-        maiorNumero + 1;
-
-
     return (
         prefixo +
-        String(proximo).padStart(
+        String(
+            maiorNumero + 1
+        ).padStart(
             4,
             "0"
         )
@@ -420,7 +417,9 @@ function gerarNovoCodigoProduto() {
 
 
 /* =========================================================
-   GERAR EAN-13
+   EAN-13
+   ---------------------------------------------------------
+   NÃO ALTERAR A ESTRUTURA
 ========================================================= */
 
 function gerarEAN13() {
@@ -464,9 +463,7 @@ function gerarEAN13() {
 
             soma += numero;
 
-        }
-
-        else {
+        } else {
 
             soma +=
                 numero * 3;
@@ -583,14 +580,12 @@ function salvarProduto() {
         }
 
 
-        produtoEditando =
-            null;
+        produtoEditando = null;
 
-    }
 
-    else {
+    } else {
 
-        const novoProdutoObjeto = {
+        produtos.push({
 
             id:
                 Date.now(),
@@ -623,18 +618,10 @@ function salvarProduto() {
             custoUnitario:
                 0,
 
-            precoVenda:
-                0,
-
             dataCadastro:
                 new Date().toISOString()
 
-        };
-
-
-        produtos.push(
-            novoProdutoObjeto
-        );
+        });
 
     }
 
@@ -644,6 +631,8 @@ function salvarProduto() {
     atualizarTudo();
 
     novoProduto();
+
+    atualizarProdutosTarjeta();
 
 
     alert(
@@ -659,8 +648,7 @@ function salvarProduto() {
 
 function novoProduto() {
 
-    produtoEditando =
-        null;
+    produtoEditando = null;
 
 
     const codigo =
@@ -750,7 +738,7 @@ function novoProduto() {
 
 
 /* =========================================================
-   LISTAR PRODUTOS
+   LISTA DE PRODUTOS
 ========================================================= */
 
 function atualizarListaProdutos() {
@@ -818,15 +806,13 @@ function atualizarListaProdutos() {
                 </td>
 
                 <td>
-                    ${formatarMoeda(
+                    R$ ${Number(
                         produto.custoUnitario || 0
-                    )}
+                    ).toFixed(2)}
                 </td>
 
                 <td>
-                    ${formatarMoeda(
-                        valorTotal
-                    )}
+                    R$ ${valorTotal.toFixed(2)}
                 </td>
 
                 <td>
@@ -883,46 +869,88 @@ function editarProduto(id) {
     }
 
 
-    produtoEditando =
-        id;
+    produtoEditando = id;
 
 
-    document.getElementById(
-        "codigoProduto"
-    ).value =
-        produto.codigo || "";
+    const codigo =
+        document.getElementById(
+            "codigoProduto"
+        );
+
+    const ean =
+        document.getElementById(
+            "eanProduto"
+        );
+
+    const nome =
+        document.getElementById(
+            "nomeProduto"
+        );
+
+    const categoria =
+        document.getElementById(
+            "categoriaProduto"
+        );
+
+    const unidade =
+        document.getElementById(
+            "unidadeProduto"
+        );
+
+    const status =
+        document.getElementById(
+            "statusProduto"
+        );
 
 
-    document.getElementById(
-        "eanProduto"
-    ).value =
-        produto.ean || "";
+    if (codigo) {
+
+        codigo.value =
+            produto.codigo || "";
+
+    }
 
 
-    document.getElementById(
-        "nomeProduto"
-    ).value =
-        produto.nome || "";
+    if (ean) {
+
+        ean.value =
+            produto.ean || "";
+
+    }
 
 
-    document.getElementById(
-        "categoriaProduto"
-    ).value =
-        produto.categoria || "";
+    if (nome) {
+
+        nome.value =
+            produto.nome || "";
+
+    }
 
 
-    document.getElementById(
-        "unidadeProduto"
-    ).value =
-        produto.unidade ||
-        "Unidade";
+    if (categoria) {
+
+        categoria.value =
+            produto.categoria || "";
+
+    }
 
 
-    document.getElementById(
-        "statusProduto"
-    ).value =
-        produto.status ||
-        "Ativo";
+    if (unidade) {
+
+        unidade.value =
+            produto.unidade ||
+            "Unidade";
+
+    }
+
+
+    if (status) {
+
+        status.value =
+            produto.status ||
+            "Ativo";
+
+    }
 
 
     mostrarAba(
@@ -941,13 +969,11 @@ function editarProduto(id) {
 
 function excluirProduto(id) {
 
-    const confirmar =
-        confirm(
+    if (
+        !confirm(
             "Deseja realmente excluir este produto?"
-        );
-
-
-    if (!confirmar) {
+        )
+    ) {
 
         return;
 
@@ -958,9 +984,7 @@ function excluirProduto(id) {
         produtos.filter(
             function (produto) {
 
-                return (
-                    produto.id !== id
-                );
+                return produto.id !== id;
 
             }
         );
@@ -969,6 +993,8 @@ function excluirProduto(id) {
     salvarDados();
 
     atualizarTudo();
+
+    atualizarProdutosTarjeta();
 
 }
 
@@ -1093,9 +1119,8 @@ function salvarMateriaPrima() {
         materiaPrimaEditando =
             null;
 
-    }
 
-    else {
+    } else {
 
         materiasPrimas.push({
 
@@ -1152,8 +1177,7 @@ function salvarMateriaPrima() {
 
 function novaMateriaPrima() {
 
-    materiaPrimaEditando =
-        null;
+    materiaPrimaEditando = null;
 
 
     const codigo =
@@ -1215,7 +1239,7 @@ function novaMateriaPrima() {
 
 
 /* =========================================================
-   LISTAR MATÉRIA-PRIMA
+   LISTA MATÉRIA-PRIMA
 ========================================================= */
 
 function atualizarListaMateriaPrima() {
@@ -1260,21 +1284,13 @@ function atualizarListaMateriaPrima() {
 
             linha.innerHTML = `
 
-                <td>
-                    ${materia.codigo || ""}
-                </td>
+                <td>${materia.codigo || ""}</td>
 
-                <td>
-                    ${materia.nome || ""}
-                </td>
+                <td>${materia.nome || ""}</td>
 
-                <td>
-                    ${materia.categoria || ""}
-                </td>
+                <td>${materia.categoria || ""}</td>
 
-                <td>
-                    ${materia.unidade || ""}
-                </td>
+                <td>${materia.unidade || ""}</td>
 
                 <td>
                     ${Number(
@@ -1283,15 +1299,13 @@ function atualizarListaMateriaPrima() {
                 </td>
 
                 <td>
-                    ${formatarMoeda(
+                    R$ ${Number(
                         materia.custo || 0
-                    )}
+                    ).toFixed(2)}
                 </td>
 
                 <td>
-                    ${formatarMoeda(
-                        custoTotal
-                    )}
+                    R$ ${custoTotal.toFixed(2)}
                 </td>
 
             `;
@@ -1309,7 +1323,6 @@ function atualizarListaMateriaPrima() {
 
 /* =========================================================
    ESTOQUE
-   CONSULTA E MOVIMENTAÇÃO MANUAL
 ========================================================= */
 
 function alterarTipoEstoque() {
@@ -1343,10 +1356,7 @@ function alterarTipoEstoque() {
         );
 
 
-    if (
-        !cabecalho ||
-        !tabela
-    ) {
+    if (!cabecalho || !tabela) {
 
         return;
 
@@ -1368,17 +1378,11 @@ function alterarTipoEstoque() {
             <tr>
 
                 <th>Código</th>
-
                 <th>Nome</th>
-
                 <th>Categoria</th>
-
                 <th>Unidade</th>
-
                 <th>Estoque</th>
-
                 <th>Custo</th>
-
                 <th>Valor Total</th>
 
             </tr>
@@ -1406,21 +1410,13 @@ function alterarTipoEstoque() {
 
                     <tr>
 
-                        <td>
-                            ${item.codigo || ""}
-                        </td>
+                        <td>${item.codigo}</td>
 
-                        <td>
-                            ${item.nome || ""}
-                        </td>
+                        <td>${item.nome}</td>
 
-                        <td>
-                            ${item.categoria || ""}
-                        </td>
+                        <td>${item.categoria}</td>
 
-                        <td>
-                            ${item.unidade || ""}
-                        </td>
+                        <td>${item.unidade}</td>
 
                         <td>
                             ${Number(
@@ -1429,15 +1425,13 @@ function alterarTipoEstoque() {
                         </td>
 
                         <td>
-                            ${formatarMoeda(
+                            R$ ${Number(
                                 item.custo || 0
-                            )}
+                            ).toFixed(2)}
                         </td>
 
                         <td>
-                            ${formatarMoeda(
-                                valorTotal
-                            )}
+                            R$ ${valorTotal.toFixed(2)}
                         </td>
 
                     </tr>
@@ -1447,24 +1441,18 @@ function alterarTipoEstoque() {
             }
         );
 
-    }
 
-    else {
+    } else {
 
         cabecalho.innerHTML = `
 
             <tr>
 
                 <th>Código</th>
-
                 <th>Nome</th>
-
                 <th>Categoria</th>
-
                 <th>Unidade</th>
-
-                <th>Estoque Atual</th>
-
+                <th>Estoque</th>
                 <th>Status</th>
 
             </tr>
@@ -1479,21 +1467,13 @@ function alterarTipoEstoque() {
 
                     <tr>
 
-                        <td>
-                            ${item.codigo || ""}
-                        </td>
+                        <td>${item.codigo}</td>
 
-                        <td>
-                            ${item.nome || ""}
-                        </td>
+                        <td>${item.nome}</td>
 
-                        <td>
-                            ${item.categoria || ""}
-                        </td>
+                        <td>${item.categoria}</td>
 
-                        <td>
-                            ${item.unidade || ""}
-                        </td>
+                        <td>${item.unidade}</td>
 
                         <td>
                             ${Number(
@@ -1501,9 +1481,7 @@ function alterarTipoEstoque() {
                             ).toFixed(2)}
                         </td>
 
-                        <td>
-                            ${item.status || ""}
-                        </td>
+                        <td>${item.status}</td>
 
                     </tr>
 
@@ -1518,7 +1496,7 @@ function alterarTipoEstoque() {
 
 
 /* =========================================================
-   ATUALIZAR ITENS PARA MOVIMENTAÇÃO
+   MOVIMENTAÇÃO
 ========================================================= */
 
 function atualizarItensMovimentacao() {
@@ -1535,10 +1513,7 @@ function atualizarItensMovimentacao() {
         );
 
 
-    if (
-        !tipo ||
-        !select
-    ) {
+    if (!tipo || !select) {
 
         return;
 
@@ -1575,15 +1550,9 @@ function atualizarItensMovimentacao() {
 
 
             option.textContent =
-                (
-                    item.codigo ||
-                    ""
-                ) +
+                item.codigo +
                 " - " +
-                (
-                    item.nome ||
-                    ""
-                );
+                item.nome;
 
 
             select.appendChild(
@@ -1597,7 +1566,7 @@ function atualizarItensMovimentacao() {
 
 
 /* =========================================================
-   REGISTRAR MOVIMENTAÇÃO MANUAL
+   REGISTRAR MOVIMENTAÇÃO
 ========================================================= */
 
 function registrarMovimentacao() {
@@ -1688,9 +1657,8 @@ function registrarMovimentacao() {
                 }
             );
 
-    }
 
-    else {
+    } else {
 
         item =
             produtos.find(
@@ -1723,8 +1691,7 @@ function registrarMovimentacao() {
         "saida" &&
         Number(
             item.estoque || 0
-        ) <
-        quantidade
+        ) < quantidade
     ) {
 
         alert(
@@ -1747,9 +1714,8 @@ function registrarMovimentacao() {
             ) +
             quantidade;
 
-    }
 
-    else {
+    } else {
 
         item.estoque =
             Number(
@@ -1784,10 +1750,7 @@ function registrarMovimentacao() {
             operacao,
 
         observacao:
-            observacao,
-
-        origem:
-            "manual"
+            observacao
 
     });
 
@@ -1797,14 +1760,30 @@ function registrarMovimentacao() {
     atualizarTudo();
 
 
-    document.getElementById(
-        "quantidadeMovimentacao"
-    ).value = "";
+    const quantidadeCampo =
+        document.getElementById(
+            "quantidadeMovimentacao"
+        );
 
 
-    document.getElementById(
-        "observacaoMovimentacao"
-    ).value = "";
+    const observacaoCampo =
+        document.getElementById(
+            "observacaoMovimentacao"
+        );
+
+
+    if (quantidadeCampo) {
+
+        quantidadeCampo.value = "";
+
+    }
+
+
+    if (observacaoCampo) {
+
+        observacaoCampo.value = "";
+
+    }
 
 
     alert(
@@ -1815,7 +1794,7 @@ function registrarMovimentacao() {
 
 
 /* =========================================================
-   HISTÓRICO DE MOVIMENTAÇÕES
+   HISTÓRICO
 ========================================================= */
 
 function atualizarHistoricoMovimentacoes() {
@@ -1866,16 +1845,12 @@ function atualizarHistoricoMovimentacoes() {
                     </td>
 
                     <td>
-                        ${
-                            movimento.itemNome ||
-                            ""
-                        }
+                        ${movimento.itemNome || ""}
                     </td>
 
                     <td>
                         ${Number(
-                            movimento.quantidade ||
-                            0
+                            movimento.quantidade || 0
                         ).toFixed(2)}
                     </td>
 
@@ -1889,10 +1864,7 @@ function atualizarHistoricoMovimentacoes() {
                     </td>
 
                     <td>
-                        ${
-                            movimento.observacao ||
-                            ""
-                        }
+                        ${movimento.observacao || ""}
                     </td>
 
                 `;
@@ -1910,15 +1882,6 @@ function atualizarHistoricoMovimentacoes() {
 
 /* =========================================================
    PRODUÇÃO
-   PRODUÇÃO = ENTRADA AUTOMÁTICA DE PRODUTO ACABADO
-
-   IMPORTANTE:
-   Ao registrar produção:
-   1. A quantidade produzida é adicionada ao estoque.
-   2. A produção é salva no histórico de produção.
-   3. É criada uma movimentação automática de entrada.
-   4. O usuário NÃO precisa registrar outra entrada
-      manualmente no Estoque.
 ========================================================= */
 
 function registrarProducao() {
@@ -1946,16 +1909,10 @@ function registrarProducao() {
         obterDataHoje();
 
 
-    const validadeCampo =
+    const validade =
         document.getElementById(
             "validadeProducao"
-        );
-
-
-    const validade =
-        validadeCampo
-            ? validadeCampo.value
-            : "";
+        ).value;
 
 
     const observacao =
@@ -2013,23 +1970,12 @@ function registrarProducao() {
     }
 
 
-    /*
-       UMA ÚNICA ALTERAÇÃO DE ESTOQUE
-
-       A produção entra diretamente
-       como produto acabado.
-    */
-
     produto.estoque =
         Number(
             produto.estoque || 0
         ) +
         quantidade;
 
-
-    /*
-       REGISTRA A PRODUÇÃO
-    */
 
     producoes.push({
 
@@ -2057,13 +2003,6 @@ function registrarProducao() {
     });
 
 
-    /*
-       REGISTRA NO HISTÓRICO DE ESTOQUE
-
-       Isso é apenas histórico/auditoria.
-       Não altera o estoque novamente.
-    */
-
     movimentacoes.push({
 
         id:
@@ -2088,13 +2027,7 @@ function registrarProducao() {
             "entrada",
 
         observacao:
-            observacao
-                ? "Produção: " +
-                  observacao
-                : "Produção registrada",
-
-        origem:
-            "producao"
+            "Produção registrada"
 
     });
 
@@ -2104,48 +2037,41 @@ function registrarProducao() {
     atualizarTudo();
 
 
-    alert(
-        "Produção registrada com sucesso!\n\n" +
-        "Quantidade produzida: " +
-        quantidade +
-        "\n" +
-        "Produto adicionado ao estoque de produtos acabados."
-    );
-
-
-    document.getElementById(
-        "quantidadeProducao"
-    ).value =
-        "1";
-
-
-    document.getElementById(
-        "observacaoProducao"
-    ).value =
-        "";
-
-
-    const fabricacaoCampo =
+    const quantidadeCampo =
         document.getElementById(
-            "fabricacaoProducao"
+            "quantidadeProducao"
         );
 
 
-    if (fabricacaoCampo) {
+    const observacaoCampo =
+        document.getElementById(
+            "observacaoProducao"
+        );
 
-        fabricacaoCampo.value =
-            obterDataHoje();
+
+    if (quantidadeCampo) {
+
+        quantidadeCampo.value = "1";
 
     }
 
 
-    calcularValidadeProducao();
+    if (observacaoCampo) {
+
+        observacaoCampo.value = "";
+
+    }
+
+
+    alert(
+        "Produção registrada com sucesso!"
+    );
 
 }
 
 
 /* =========================================================
-   LISTA DE PRODUÇÕES
+   LISTA PRODUÇÃO
 ========================================================= */
 
 function atualizarListaProducao() {
@@ -2177,16 +2103,12 @@ function atualizarListaProducao() {
                     <tr>
 
                         <td>
-                            ${
-                                producao.produtoNome ||
-                                ""
-                            }
+                            ${producao.produtoNome || ""}
                         </td>
 
                         <td>
                             ${Number(
-                                producao.quantidade ||
-                                0
+                                producao.quantidade || 0
                             ).toFixed(2)}
                         </td>
 
@@ -2369,8 +2291,9 @@ function calcularPreco() {
 
 
 /* =========================================================
-   ETIQUETAS
-   MANTIDA A LÓGICA PROFISSIONAL EAN-13
+   ETIQUETA
+   ---------------------------------------------------------
+   ESTA PARTE CONTINUA SEPARADA DA TARJETA
 ========================================================= */
 
 function gerarEtiqueta() {
@@ -2419,32 +2342,63 @@ function gerarEtiqueta() {
     }
 
 
-    document.getElementById(
-        "mostrarProduto"
-    ).textContent =
-        produto.nome;
-
-
-    document.getElementById(
-        "mostrarFabricacao"
-    ).textContent =
-        formatarData(
-            fabricacao
+    const mostrarProduto =
+        document.getElementById(
+            "mostrarProduto"
         );
 
 
-    document.getElementById(
-        "mostrarValidade"
-    ).textContent =
-        formatarData(
-            validade
+    const mostrarFabricacao =
+        document.getElementById(
+            "mostrarFabricacao"
         );
+
+
+    const mostrarValidade =
+        document.getElementById(
+            "mostrarValidade"
+        );
+
+
+    if (mostrarProduto) {
+
+        mostrarProduto.textContent =
+            produto.nome;
+
+    }
+
+
+    if (mostrarFabricacao) {
+
+        mostrarFabricacao.textContent =
+            formatarData(
+                fabricacao
+            );
+
+    }
+
+
+    if (mostrarValidade) {
+
+        mostrarValidade.textContent =
+            formatarData(
+                validade
+            );
+
+    }
 
 
     const areaCodigo =
         document.getElementById(
             "codigoBarrasEtiqueta"
         );
+
+
+    if (!areaCodigo) {
+
+        return;
+
+    }
 
 
     areaCodigo.innerHTML = "";
@@ -2470,7 +2424,7 @@ function gerarEtiqueta() {
         JsBarcode(
             svg,
             produto.ean ||
-            gerarEAN13(),
+                gerarEAN13(),
             {
 
                 format:
@@ -2491,9 +2445,8 @@ function gerarEtiqueta() {
             }
         );
 
-    }
 
-    else {
+    } else {
 
         areaCodigo.textContent =
             produto.ean || "";
@@ -2504,7 +2457,7 @@ function gerarEtiqueta() {
 
 
 /* =========================================================
-   SALVAR ETIQUETA COMO PNG
+   SALVAR ETIQUETA PNG
 ========================================================= */
 
 function salvarEtiquetaPNG() {
@@ -2581,7 +2534,9 @@ function configurarDatas() {
 
         "fabricacaoProducao",
 
-        "fabricacaoEtiqueta"
+        "fabricacaoEtiqueta",
+
+        "fabricacaoTarjeta"
 
     ];
 
@@ -2613,11 +2568,13 @@ function configurarDatas() {
 
     calcularValidadeEtiqueta();
 
+    calcularValidadeTarjeta();
+
 }
 
 
 /* =========================================================
-   OBTER DATA DE HOJE
+   DATA DE HOJE
 ========================================================= */
 
 function obterDataHoje() {
@@ -2660,13 +2617,12 @@ function obterDataHoje() {
 
 
 /* =========================================================
-   DETERMINAR PRAZO DE VALIDADE
-=========================================================
-
+   VALIDADE PRODUÇÃO
+   ---------------------------------------------------------
    Palha Italiana = 20 dias
-   Brownie        = 20 dias
-   Bolo de Pote   = 7 dias
-   Outros         = manual
+   Brownie = 20 dias
+   Bolo de pote = 7 dias
+   Outros = manual
 ========================================================= */
 
 function obterDiasValidadeProduto(
@@ -2684,28 +2640,16 @@ function obterDiasValidadeProduto(
         String(
             produto.nome || ""
         )
-        .toLowerCase()
-        .normalize(
-            "NFD"
-        )
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        );
+        .trim()
+        .toLowerCase();
 
 
     const categoria =
         String(
             produto.categoria || ""
         )
-        .toLowerCase()
-        .normalize(
-            "NFD"
-        )
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        );
+        .trim()
+        .toLowerCase();
 
 
     if (
@@ -2755,8 +2699,45 @@ function obterDiasValidadeProduto(
 }
 
 
+function calcularDataValidade(
+    dataFabricacao,
+    dias
+) {
+
+    if (
+        !dataFabricacao ||
+        dias === null
+    ) {
+
+        return "";
+
+    }
+
+
+    const data =
+        new Date(
+            dataFabricacao +
+            "T00:00:00"
+        );
+
+
+    data.setDate(
+        data.getDate() +
+        dias
+    );
+
+
+    return (
+        data
+            .toISOString()
+            .split("T")[0]
+    );
+
+}
+
+
 /* =========================================================
-   CALCULAR VALIDADE DE PRODUÇÃO
+   VALIDADE PRODUÇÃO
 ========================================================= */
 
 function calcularValidadeProducao() {
@@ -2798,25 +2779,29 @@ function calcularValidadeProducao() {
     }
 
 
-    const produtoId =
-        produtoSelect
-            ? Number(
-                produtoSelect.value
-            )
-            : 0;
+    let produto = null;
 
 
-    const produto =
-        produtos.find(
-            function (item) {
+    if (
+        produtoSelect &&
+        produtoSelect.value
+    ) {
 
-                return (
-                    item.id ===
-                    produtoId
-                );
+        produto =
+            produtos.find(
+                function (item) {
 
-            }
-        );
+                    return String(
+                        item.id
+                    ) ===
+                    String(
+                        produtoSelect.value
+                    );
+
+                }
+            );
+
+    }
 
 
     const dias =
@@ -2825,57 +2810,29 @@ function calcularValidadeProducao() {
         );
 
 
-    /*
-       OUTROS PRODUTOS:
-       validade manual.
-    */
+    if (dias === null) {
 
-    if (
-        dias === null
-    ) {
-
-        validade.readOnly =
-            false;
+        /*
+         * Outros produtos:
+         * não altera automaticamente.
+         */
 
         return;
 
     }
 
 
-    /*
-       PALHA / BROWNIE / BOLO:
-       cálculo automático.
-    */
-
-    validade.readOnly =
-        true;
-
-
-    const data =
-        new Date(
-            fabricacao.value +
-            "T00:00:00"
-        );
-
-
-    data.setDate(
-        data.getDate() +
-        dias
-    );
-
-
     validade.value =
-        data
-            .toISOString()
-            .split(
-                "T"
-            )[0];
+        calcularDataValidade(
+            fabricacao.value,
+            dias
+        );
 
 }
 
 
 /* =========================================================
-   CALCULAR VALIDADE DA ETIQUETA
+   VALIDADE ETIQUETA
 ========================================================= */
 
 function calcularValidadeEtiqueta() {
@@ -2917,25 +2874,29 @@ function calcularValidadeEtiqueta() {
     }
 
 
-    const produtoId =
-        produtoSelect
-            ? Number(
-                produtoSelect.value
-            )
-            : 0;
+    let produto = null;
 
 
-    const produto =
-        produtos.find(
-            function (item) {
+    if (
+        produtoSelect &&
+        produtoSelect.value
+    ) {
 
-                return (
-                    item.id ===
-                    produtoId
-                );
+        produto =
+            produtos.find(
+                function (item) {
 
-            }
-        );
+                    return String(
+                        item.id
+                    ) ===
+                    String(
+                        produtoSelect.value
+                    );
+
+                }
+            );
+
+    }
 
 
     const dias =
@@ -2944,66 +2905,43 @@ function calcularValidadeEtiqueta() {
         );
 
 
-    /*
-       OUTROS PRODUTOS:
-       validade manual.
-    */
+    if (dias === null) {
 
-    if (
-        dias === null
-    ) {
-
-        validade.readOnly =
-            false;
+        /*
+         * Outros produtos:
+         * validade manual.
+         */
 
         return;
 
     }
 
 
-    /*
-       PRODUTOS COM PRAZO PADRÃO
-    */
-
-    validade.readOnly =
-        true;
-
-
-    const data =
-        new Date(
-            fabricacao.value +
-            "T00:00:00"
-        );
-
-
-    data.setDate(
-        data.getDate() +
-        dias
-    );
-
-
     validade.value =
-        data
-            .toISOString()
-            .split(
-                "T"
-            )[0];
+        calcularDataValidade(
+            fabricacao.value,
+            dias
+        );
 
 }
 
 
 /* =========================================================
-   EVENTOS DE DATA E PRODUTO
+   EVENTOS DE DATA / PRODUTO
 ========================================================= */
 
 document.addEventListener(
     "change",
     function (evento) {
 
+        const id =
+            evento.target.id;
+
+
         if (
-            evento.target.id ===
+            id ===
             "fabricacaoProducao" ||
-            evento.target.id ===
+            id ===
             "produtoProducao"
         ) {
 
@@ -3013,13 +2951,35 @@ document.addEventListener(
 
 
         if (
-            evento.target.id ===
+            id ===
             "fabricacaoEtiqueta" ||
-            evento.target.id ===
+            id ===
             "produtoEtiqueta"
         ) {
 
             calcularValidadeEtiqueta();
+
+        }
+
+
+        if (
+            id ===
+            "fabricacaoTarjeta" ||
+            id ===
+            "produtoTarjeta"
+        ) {
+
+            calcularValidadeTarjeta();
+
+        }
+
+
+        if (
+            id ===
+            "tipoEstoqueMovimentacao"
+        ) {
+
+            atualizarItensMovimentacao();
 
         }
 
@@ -3087,15 +3047,9 @@ function atualizarSelectsProdutos() {
 
 
                     option.textContent =
-                        (
-                            produto.codigo ||
-                            ""
-                        ) +
+                        produto.codigo +
                         " - " +
-                        (
-                            produto.nome ||
-                            ""
-                        );
+                        produto.nome;
 
 
                     select.appendChild(
@@ -3110,13 +3064,11 @@ function atualizarSelectsProdutos() {
                 produtos.some(
                     function (produto) {
 
-                        return (
-                            String(
-                                produto.id
-                            ) ===
-                            String(
-                                valorAtual
-                            )
+                        return String(
+                            produto.id
+                        ) ===
+                        String(
+                            valorAtual
                         );
 
                     }
@@ -3131,21 +3083,242 @@ function atualizarSelectsProdutos() {
         }
     );
 
+}
 
-    /*
-       Depois de atualizar os produtos,
-       recalcula as validades.
-    */
 
-    calcularValidadeProducao();
+/* =========================================================
+   SELECT DA TARJETA
+   ---------------------------------------------------------
+   SOMENTE:
+   - Palha Italiana
+   - Brownie
+========================================================= */
 
-    calcularValidadeEtiqueta();
+function produtoPodeTerTarjeta(
+    produto
+) {
+
+    if (!produto) {
+
+        return false;
+
+    }
+
+
+    const nome =
+        String(
+            produto.nome || ""
+        )
+        .toLowerCase();
+
+
+    const categoria =
+        String(
+            produto.categoria || ""
+        )
+        .toLowerCase();
+
+
+    return (
+        nome.includes(
+            "palha italiana"
+        ) ||
+        nome.includes(
+            "brownie"
+        ) ||
+        categoria.includes(
+            "palha italiana"
+        ) ||
+        categoria.includes(
+            "brownie"
+        )
+    );
+
+}
+
+
+function atualizarProdutosTarjeta() {
+
+    const select =
+        document.getElementById(
+            "produtoTarjeta"
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    const valorAtual =
+        select.value;
+
+
+    select.innerHTML = `
+
+        <option value="">
+            Selecione Brownie ou Palha Italiana
+        </option>
+
+    `;
+
+
+    produtos
+        .filter(
+            produtoPodeTerTarjeta
+        )
+        .forEach(
+            function (produto) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    produto.id;
+
+
+                option.textContent =
+                    produto.codigo +
+                    " - " +
+                    produto.nome;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+    if (
+        produtos.some(
+            function (produto) {
+
+                return (
+                    produtoPodeTerTarjeta(
+                        produto
+                    ) &&
+                    String(
+                        produto.id
+                    ) ===
+                    String(
+                        valorAtual
+                    )
+                );
+
+            }
+        )
+    ) {
+
+        select.value =
+            valorAtual;
+
+    }
+
+
+    calcularValidadeTarjeta();
 
 }
 
 
 /* =========================================================
-   SELECTS DE MATÉRIA-PRIMA
+   VALIDADE DA TARJETA
+========================================================= */
+
+function calcularValidadeTarjeta() {
+
+    const fabricacao =
+        document.getElementById(
+            "fabricacaoTarjeta"
+        );
+
+
+    const validade =
+        document.getElementById(
+            "validadeTarjeta"
+        );
+
+
+    const produtoSelect =
+        document.getElementById(
+            "produtoTarjeta"
+        );
+
+
+    if (
+        !fabricacao ||
+        !validade
+    ) {
+
+        return;
+
+    }
+
+
+    if (!fabricacao.value) {
+
+        validade.value = "";
+
+        return;
+
+    }
+
+
+    let produto = null;
+
+
+    if (
+        produtoSelect &&
+        produtoSelect.value
+    ) {
+
+        produto =
+            produtos.find(
+                function (item) {
+
+                    return String(
+                        item.id
+                    ) ===
+                    String(
+                        produtoSelect.value
+                    );
+
+                }
+            );
+
+    }
+
+
+    const dias =
+        obterDiasValidadeProduto(
+            produto
+        );
+
+
+    if (dias === null) {
+
+        return;
+
+    }
+
+
+    validade.value =
+        calcularDataValidade(
+            fabricacao.value,
+            dias
+        );
+
+}
+
+
+/* =========================================================
+   ATUALIZAR MATÉRIA-PRIMA
 ========================================================= */
 
 function atualizarSelectsMateriaPrima() {
@@ -3220,8 +3393,7 @@ function atualizarUltimaAtualizacao() {
 
 
     campo.textContent =
-        ultima ||
-        "--";
+        ultima || "--";
 
 }
 
@@ -3235,7 +3407,7 @@ function exportarBackup() {
     const backup = {
 
         versao:
-            "4.0",
+            "1.0",
 
         data:
             new Date().toISOString(),
@@ -3306,10 +3478,6 @@ function exportarBackup() {
 }
 
 
-/* =========================================================
-   IMPORTAR BACKUP
-========================================================= */
-
 function importarBackup() {
 
     const input =
@@ -3371,13 +3539,11 @@ function importarBackup() {
                         }
 
 
-                        const confirmar =
-                            confirm(
+                        if (
+                            !confirm(
                                 "Restaurar este backup irá substituir os dados atuais. Deseja continuar?"
-                            );
-
-
-                        if (!confirmar) {
+                            )
+                        ) {
 
                             return;
 
@@ -3385,42 +3551,38 @@ function importarBackup() {
 
 
                         produtos =
-                            backup.produtos ||
-                            [];
+                            backup.produtos || [];
 
 
                         materiasPrimas =
-                            backup.materiasPrimas ||
-                            [];
+                            backup.materiasPrimas || [];
 
 
                         movimentacoes =
-                            backup.movimentacoes ||
-                            [];
+                            backup.movimentacoes || [];
 
 
                         producoes =
-                            backup.producoes ||
-                            [];
+                            backup.producoes || [];
 
 
                         precificacoes =
-                            backup.precificacoes ||
-                            [];
+                            backup.precificacoes || [];
 
 
                         salvarDados();
 
                         atualizarTudo();
 
+                        atualizarProdutosTarjeta();
+
 
                         alert(
                             "Backup restaurado com sucesso!"
                         );
 
-                    }
 
-                    catch (erro) {
+                    } catch (erro) {
 
                         console.error(
                             erro
@@ -3449,6 +3611,1086 @@ function importarBackup() {
 
 
 /* =========================================================
+   =========================================================
+   TARJETAS
+   =========================================================
+   ---------------------------------------------------------
+   SOMENTE:
+   - PALHA ITALIANA
+   - BROWNIE
+   ---------------------------------------------------------
+   Cada produto mantém seu próprio EAN-13.
+   Cada sabor de brownie continua com seu próprio código.
+   =========================================================
+========================================================= */
+
+
+/* =========================================================
+   GERAR UMA TARJETA
+========================================================= */
+
+function criarTarjetaHTML(
+    produto,
+    fabricacao,
+    validade
+) {
+
+    if (!produto) {
+
+        return "";
+
+    }
+
+
+    /*
+     * O EAN já pertence ao produto.
+     * Não criamos outro código.
+     */
+
+    const ean =
+        produto.ean ||
+        gerarEAN13();
+
+
+    /*
+     * A estrutura visual da tarjeta é controlada
+     * pelo CSS enviado anteriormente.
+     *
+     * Aqui apenas montamos os elementos.
+     */
+
+    return `
+
+        <div
+            class="tarjeta-impressao"
+            data-produto-id="${produto.id}"
+        >
+
+            <div class="tarjeta-topo">
+
+                <div class="tarjeta-xadrez">
+                </div>
+
+                <div class="tarjeta-onda-topo">
+                </div>
+
+            </div>
+
+
+            <div class="tarjeta-conteudo">
+
+                <div class="tarjeta-codigo">
+
+                    <svg
+                        class="barcode-tarjeta"
+                        data-ean="${ean}"
+                    ></svg>
+
+                    <div class="tarjeta-datas">
+
+                        <span>
+                            FAB:
+                            ${formatarData(
+                                fabricacao
+                            )}
+                        </span>
+
+                        <span>
+                            VAL:
+                            ${formatarData(
+                                validade
+                            )}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="tarjeta-logo">
+
+                    <img
+                        src="assets/logo.png"
+                        alt="Carol's Gourmet"
+                    >
+
+                </div>
+
+
+                <div class="tarjeta-frase">
+
+                    <div class="tarjeta-linha">
+
+                        <span></span>
+
+                        <strong>♥</strong>
+
+                        <span></span>
+
+                    </div>
+
+                    <div class="tarjeta-frase-destaque">
+                        Feito com amor,
+                    </div>
+
+                    <div class="tarjeta-frase-normal">
+                        pra adoçar seus dias!
+                    </div>
+
+                    <div class="tarjeta-coracao">
+                        ♥
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="tarjeta-base">
+
+                <div class="tarjeta-onda-base">
+                </div>
+
+                <div class="tarjeta-xadrez">
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   GERAR TARJETAS
+   ---------------------------------------------------------
+   O botão pode ser usado várias vezes.
+   Isso permite misturar sabores.
+========================================================= */
+
+function gerarTarjetas() {
+
+    const produtoSelect =
+        document.getElementById(
+            "produtoTarjeta"
+        );
+
+
+    const quantidadeCampo =
+        document.getElementById(
+            "quantidadeTarjeta"
+        );
+
+
+    const fabricacaoCampo =
+        document.getElementById(
+            "fabricacaoTarjeta"
+        );
+
+
+    const validadeCampo =
+        document.getElementById(
+            "validadeTarjeta"
+        );
+
+
+    const area =
+        document.getElementById(
+            "areaTarjetas"
+        );
+
+
+    if (!produtoSelect) {
+
+        alert(
+            "Campo de produto da tarjeta não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    const produtoId =
+        Number(
+            produtoSelect.value
+        );
+
+
+    const quantidade =
+        Number(
+            quantidadeCampo
+                ? quantidadeCampo.value
+                : 1
+        ) || 1;
+
+
+    const fabricacao =
+        fabricacaoCampo
+            ? fabricacaoCampo.value
+            : obterDataHoje();
+
+
+    let validade =
+        validadeCampo
+            ? validadeCampo.value
+            : "";
+
+
+    if (!produtoId) {
+
+        alert(
+            "Selecione o Brownie ou a Palha Italiana."
+        );
+
+        return;
+
+    }
+
+
+    const produto =
+        produtos.find(
+            function (item) {
+
+                return (
+                    item.id ===
+                    produtoId
+                );
+
+            }
+        );
+
+
+    if (!produto) {
+
+        alert(
+            "Produto não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !produtoPodeTerTarjeta(
+            produto
+        )
+    ) {
+
+        alert(
+            "A tarjeta está disponível somente para Brownie e Palha Italiana."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !quantidade ||
+        quantidade < 1
+    ) {
+
+        alert(
+            "Informe uma quantidade válida."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Se a validade estiver vazia,
+     * calculamos automaticamente.
+     */
+
+    if (!validade) {
+
+        const dias =
+            obterDiasValidadeProduto(
+                produto
+            );
+
+
+        if (dias !== null) {
+
+            validade =
+                calcularDataValidade(
+                    fabricacao,
+                    dias
+                );
+
+        }
+
+    }
+
+
+    if (!area) {
+
+        alert(
+            "Área de tarjetas não encontrada."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Não apagamos as tarjetas anteriores.
+     *
+     * Isso permite:
+     *
+     * 5 Brownie Chocolate
+     * + 5 Brownie Ninho
+     * + 3 Palha Italiana
+     *
+     * na mesma folha.
+     */
+
+    for (
+        let i = 0;
+        i < quantidade;
+        i++
+    ) {
+
+        area.insertAdjacentHTML(
+            "beforeend",
+            criarTarjetaHTML(
+                produto,
+                fabricacao,
+                validade
+            )
+        );
+
+    }
+
+
+    gerarCodigosTarjetas();
+
+
+    atualizarResumoTarjetas();
+
+}
+
+
+/* =========================================================
+   GERAR CÓDIGOS DE BARRAS DAS TARJETAS
+========================================================= */
+
+function gerarCodigosTarjetas() {
+
+    if (
+        typeof JsBarcode ===
+        "undefined"
+    ) {
+
+        return;
+
+    }
+
+
+    const codigos =
+        document.querySelectorAll(
+            ".barcode-tarjeta"
+        );
+
+
+    codigos.forEach(
+        function (svg) {
+
+            const ean =
+                svg.dataset.ean;
+
+
+            if (!ean) {
+
+                return;
+
+            }
+
+
+            svg.innerHTML = "";
+
+
+            try {
+
+                JsBarcode(
+                    svg,
+                    ean,
+                    {
+
+                        format:
+                            "EAN13",
+
+                        displayValue:
+                            true,
+
+                        width:
+                            1.35,
+
+                        height:
+                            32,
+
+                        margin:
+                            2,
+
+                        fontSize:
+                            9,
+
+                        textMargin:
+                            1
+
+                    }
+                );
+
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro no EAN da tarjeta:",
+                    erro
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RESUMO DAS TARJETAS
+========================================================= */
+
+function atualizarResumoTarjetas() {
+
+    const area =
+        document.getElementById(
+            "areaTarjetas"
+        );
+
+
+    const resumo =
+        document.getElementById(
+            "folhaTarjetas"
+        );
+
+
+    if (!area || !resumo) {
+
+        return;
+
+    }
+
+
+    const tarjetas =
+        area.querySelectorAll(
+            ".tarjeta-impressao"
+        );
+
+
+    resumo.textContent =
+        tarjetas.length +
+        (
+            tarjetas.length === 1
+                ? " tarjeta pronta"
+                : " tarjetas prontas"
+        );
+
+}
+
+
+/* =========================================================
+   LIMPAR TARJETAS
+========================================================= */
+
+function limparTarjetas() {
+
+    const area =
+        document.getElementById(
+            "areaTarjetas"
+        );
+
+
+    if (!area) {
+
+        return;
+
+    }
+
+
+    area.innerHTML = "";
+
+
+    atualizarResumoTarjetas();
+
+}
+
+
+/* =========================================================
+   IMPRIMIR TARJETAS
+========================================================= */
+
+function imprimirTarjetas() {
+
+    const area =
+        document.getElementById(
+            "areaTarjetas"
+        );
+
+
+    if (!area) {
+
+        alert(
+            "Área de tarjetas não encontrada."
+        );
+
+        return;
+
+    }
+
+
+    const tarjetas =
+        area.querySelectorAll(
+            ".tarjeta-impressao"
+        );
+
+
+    if (!tarjetas.length) {
+
+        alert(
+            "Gere pelo menos uma tarjeta antes de imprimir."
+        );
+
+        return;
+
+    }
+
+
+    gerarCodigosTarjetas();
+
+
+    const conteudo =
+        area.innerHTML;
+
+
+    const janela =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    if (!janela) {
+
+        alert(
+            "O navegador bloqueou a janela de impressão. Permita pop-ups para este sistema."
+        );
+
+        return;
+
+    }
+
+
+    janela.document.open();
+
+
+    janela.document.write(`
+
+        <!DOCTYPE html>
+
+        <html lang="pt-BR">
+
+        <head>
+
+            <meta charset="UTF-8">
+
+            <title>
+                Tarjetas - Carol's Gourmet
+            </title>
+
+
+            <style>
+
+                @page {
+
+                    size: A4 portrait;
+
+                    margin: 0.5cm;
+
+                }
+
+
+                * {
+
+                    box-sizing:
+                        border-box;
+
+                }
+
+
+                html,
+                body {
+
+                    margin: 0;
+
+                    padding: 0;
+
+                    background:
+                        white;
+
+                }
+
+
+                body {
+
+                    font-family:
+                        Arial,
+                        sans-serif;
+
+                }
+
+
+                .folha-impressao {
+
+                    width:
+                        100%;
+
+                    display:
+                        flex;
+
+                    flex-wrap:
+                        wrap;
+
+                    align-content:
+                        flex-start;
+
+                    gap:
+                        0;
+
+                }
+
+
+                .tarjeta-impressao {
+
+                    width:
+                        5cm;
+
+                    height:
+                        21cm;
+
+                    position:
+                        relative;
+
+                    overflow:
+                        hidden;
+
+                    background:
+                        #fff;
+
+                    page-break-inside:
+                        avoid;
+
+                    break-inside:
+                        avoid;
+
+                    margin-right:
+                        0.15cm;
+
+                    margin-bottom:
+                        0.15cm;
+
+                    border:
+                        1px solid
+                        #ddd;
+
+                }
+
+
+                .tarjeta-topo,
+                .tarjeta-base {
+
+                    position:
+                        absolute;
+
+                    left: 0;
+
+                    width: 100%;
+
+                    overflow:
+                        hidden;
+
+                }
+
+
+                .tarjeta-topo {
+
+                    top: 0;
+
+                    height:
+                        3.1cm;
+
+                }
+
+
+                .tarjeta-base {
+
+                    bottom: 0;
+
+                    height:
+                        3.1cm;
+
+                }
+
+
+                .tarjeta-xadrez {
+
+                    position:
+                        absolute;
+
+                    left: 0;
+
+                    width: 100%;
+
+                    height: 100%;
+
+                    background-color:
+                        #c51414;
+
+                    background-image:
+                        linear-gradient(
+                            45deg,
+                            #ffc928 25%,
+                            transparent 25%,
+                            transparent 75%,
+                            #ffc928 75%
+                        ),
+                        linear-gradient(
+                            45deg,
+                            #ffc928 25%,
+                            transparent 25%,
+                            transparent 75%,
+                            #ffc928 75%
+                        );
+
+                    background-position:
+                        0 0,
+                        12px 12px;
+
+                    background-size:
+                        24px 24px;
+
+                }
+
+
+                .tarjeta-conteudo {
+
+                    position:
+                        absolute;
+
+                    top:
+                        2.65cm;
+
+                    bottom:
+                        2.65cm;
+
+                    left: 0;
+
+                    right: 0;
+
+                    background:
+                        white;
+
+                    display:
+                        flex;
+
+                    flex-direction:
+                        column;
+
+                    align-items:
+                        center;
+
+                }
+
+
+                .tarjeta-codigo {
+
+                    width:
+                        90%;
+
+                    margin-top:
+                        0.25cm;
+
+                    text-align:
+                        center;
+
+                }
+
+
+                .barcode-tarjeta {
+
+                    width:
+                        100%;
+
+                    max-width:
+                        4.5cm;
+
+                    height:
+                        auto;
+
+                }
+
+
+                .tarjeta-datas {
+
+                    display:
+                        flex;
+
+                    justify-content:
+                        space-between;
+
+                    width:
+                        90%;
+
+                    font-size:
+                        7px;
+
+                    color:
+                        #555;
+
+                }
+
+
+                .tarjeta-logo {
+
+                    flex:
+                        1;
+
+                    display:
+                        flex;
+
+                    align-items:
+                        center;
+
+                    justify-content:
+                        center;
+
+                    width:
+                        100%;
+
+                }
+
+
+                .tarjeta-logo img {
+
+                    width:
+                        4.35cm;
+
+                    height:
+                        auto;
+
+                    object-fit:
+                        contain;
+
+                }
+
+
+                .tarjeta-frase {
+
+                    width:
+                        100%;
+
+                    text-align:
+                        center;
+
+                    margin-bottom:
+                        0.7cm;
+
+                }
+
+
+                .tarjeta-linha {
+
+                    display:
+                        flex;
+
+                    align-items:
+                        center;
+
+                    justify-content:
+                        center;
+
+                    gap:
+                        0.12cm;
+
+                    margin-bottom:
+                        0.08cm;
+
+                }
+
+
+                .tarjeta-linha span {
+
+                    width:
+                        0.9cm;
+
+                    height:
+                        1px;
+
+                    background:
+                        #b40000;
+
+                }
+
+
+                .tarjeta-linha strong {
+
+                    color:
+                        #b40000;
+
+                    font-size:
+                        15px;
+
+                }
+
+
+                .tarjeta-frase-destaque {
+
+                    color:
+                        #b40000;
+
+                    font-family:
+                        Georgia,
+                        serif;
+
+                    font-style:
+                        italic;
+
+                    font-weight:
+                        bold;
+
+                    font-size:
+                        12px;
+
+                }
+
+
+                .tarjeta-frase-normal {
+
+                    color:
+                        #222;
+
+                    font-size:
+                        10px;
+
+                    margin-top:
+                        2px;
+
+                }
+
+
+                .tarjeta-coracao {
+
+                    color:
+                        #b40000;
+
+                    font-size:
+                        13px;
+
+                    margin-top:
+                        5px;
+
+                }
+
+
+                .tarjeta-onda-topo,
+                .tarjeta-onda-base {
+
+                    position:
+                        absolute;
+
+                    left: -5%;
+
+                    width: 110%;
+
+                    height:
+                        0.55cm;
+
+                    background:
+                        white;
+
+                    border-radius:
+                        50%;
+
+                }
+
+
+                .tarjeta-onda-topo {
+
+                    bottom:
+                        -0.22cm;
+
+                }
+
+
+                .tarjeta-onda-base {
+
+                    top:
+                        -0.22cm;
+
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+            <div class="folha-impressao">
+
+                ${conteudo}
+
+            </div>
+
+
+            <script>
+
+                window.onload =
+                    function () {
+
+                        setTimeout(
+                            function () {
+
+                                window.print();
+
+                            },
+                            500
+                        );
+
+                    };
+
+            <\/script>
+
+        </body>
+
+        </html>
+
+    `);
+
+
+    janela.document.close();
+
+}
+
+
+/* =========================================================
    ATUALIZAÇÃO GERAL
 ========================================================= */
 
@@ -3472,16 +4714,16 @@ function atualizarTudo() {
 
     atualizarListaProducao();
 
+    atualizarProdutosTarjeta();
+
 }
 
 
 /* =========================================================
-   FORMATAÇÃO DE DATA
+   FORMATAÇÃO
 ========================================================= */
 
-function formatarData(
-    data
-) {
+function formatarData(data) {
 
     if (!data) {
 
@@ -3491,11 +4733,7 @@ function formatarData(
 
 
     const partes =
-        String(
-            data
-        ).split(
-            "-"
-        );
+        String(data).split("-");
 
 
     if (
@@ -3518,13 +4756,7 @@ function formatarData(
 }
 
 
-/* =========================================================
-   FORMATAÇÃO DE MOEDA
-========================================================= */
-
-function formatarMoeda(
-    valor
-) {
+function formatarMoeda(valor) {
 
     return Number(
         valor || 0
@@ -3545,72 +4777,76 @@ function formatarMoeda(
 
 
 /* =========================================================
-   COMPATIBILIDADE COM INDEX.HTML
+   COMPATIBILIDADE GLOBAL
 ========================================================= */
 
 window.mostrarAba =
     mostrarAba;
 
-
 window.toggleMenu =
     toggleMenu;
-
 
 window.salvarProduto =
     salvarProduto;
 
-
 window.novoProduto =
     novoProduto;
-
 
 window.editarProduto =
     editarProduto;
 
-
 window.excluirProduto =
     excluirProduto;
-
 
 window.salvarMateriaPrima =
     salvarMateriaPrima;
 
-
 window.novaMateriaPrima =
     novaMateriaPrima;
-
 
 window.alterarTipoEstoque =
     alterarTipoEstoque;
 
-
 window.atualizarItensMovimentacao =
     atualizarItensMovimentacao;
-
 
 window.registrarMovimentacao =
     registrarMovimentacao;
 
-
 window.registrarProducao =
     registrarProducao;
-
 
 window.calcularPreco =
     calcularPreco;
 
-
 window.gerarEtiqueta =
     gerarEtiqueta;
-
 
 window.salvarEtiquetaPNG =
     salvarEtiquetaPNG;
 
-
 window.exportarBackup =
     exportarBackup;
 
-
 window.importarBackup =
     importarBackup;
+
+
+/* =========================================================
+   TARJETAS - FUNÇÕES GLOBAIS
+========================================================= */
+
+window.gerarTarjetas =
+    gerarTarjetas;
+
+window.imprimirTarjetas =
+    imprimirTarjetas;
+
+window.limparTarjetas =
+    limparTarjetas;
+
+window.atualizarProdutosTarjeta =
+    atualizarProdutosTarjeta;
+
+window.calcularValidadeTarjeta =
+    calcularValidadeTarjeta;
