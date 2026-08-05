@@ -546,47 +546,48 @@ function excluirProduto(index){
 }
 // ======================================================
 // CAROL'S GOURMET ERP 4.0
-// PARTE 2/4
+// PARTE 2/4 CORRIGIDA
 // MATÉRIA-PRIMA + ESTOQUE + MOVIMENTAÇÃO
 // ======================================================
 
 
-
 // ================================
-// MATÉRIA-PRIMA
+// GARANTIR BANCO
 // ================================
 
+if (typeof materias === "undefined") {
 
-function gerarCodigoMP(){
+    let materias = JSON.parse(
+        localStorage.getItem("carols_materias")
+    ) || [];
 
-
-    let maior = 0;
-
-
-    materias.forEach(function(mp){
-
-
-        let numero = Number(
-            String(mp.codigo)
-            .replace("MP-","")
-        );
+}
 
 
-        if(numero > maior){
+if (typeof movimentacoes === "undefined") {
 
-            maior = numero;
+    let movimentacoes = JSON.parse(
+        localStorage.getItem("carols_movimentacoes")
+    ) || [];
 
-        }
-
-
-    });
+}
 
 
 
-    return "MP-" +
-    String(maior + 1)
-    .padStart(4,"0");
 
+
+function salvarMateriasBanco(){
+
+    localStorage.setItem(
+        "carols_materias",
+        JSON.stringify(materias)
+    );
+
+
+    localStorage.setItem(
+        "carols_movimentacoes",
+        JSON.stringify(movimentacoes)
+    );
 
 }
 
@@ -596,28 +597,42 @@ function gerarCodigoMP(){
 
 
 
-function novaMateriaPrima(){
+// ======================================================
+// MATÉRIA PRIMA
+// ======================================================
 
+
+
+function gerarCodigoMP(){
+
+
+    return "MP-" +
+    String(materias.length + 1)
+    .padStart(4,"0");
+
+
+}
+
+
+
+
+
+function novaMateriaPrima(){
 
 
     let codigo =
     document.getElementById("codigoMP");
 
 
-
     if(codigo){
 
-        codigo.value =
-        gerarCodigoMP();
+        codigo.value = gerarCodigoMP();
 
     }
 
 
-
-
     let nome =
     document.getElementById("nomeMP");
-
 
 
     if(nome){
@@ -627,11 +642,8 @@ function novaMateriaPrima(){
     }
 
 
-
-
     let estoque =
     document.getElementById("estoqueMP");
-
 
 
     if(estoque){
@@ -641,10 +653,8 @@ function novaMateriaPrima(){
     }
 
 
-
     let custo =
     document.getElementById("custoMP");
-
 
 
     if(custo){
@@ -666,12 +676,24 @@ function novaMateriaPrima(){
 function salvarMateriaPrima(){
 
 
-
     let nome =
-    document
-    .getElementById("nomeMP")
-    .value
-    .trim();
+    document.getElementById("nomeMP");
+
+
+    if(!nome){
+
+        console.log(
+            "Campo nomeMP não encontrado"
+        );
+
+        return;
+
+    }
+
+
+
+    nome = nome.value.trim();
+
 
 
 
@@ -685,7 +707,6 @@ function salvarMateriaPrima(){
 
         return;
 
-
     }
 
 
@@ -696,9 +717,10 @@ function salvarMateriaPrima(){
 
 
         codigo:
-        document.getElementById("codigoMP").value
-        ||
-        gerarCodigoMP(),
+
+        document.getElementById(
+            "codigoMP"
+        )?.value || gerarCodigoMP(),
 
 
 
@@ -707,34 +729,40 @@ function salvarMateriaPrima(){
 
 
         categoria:
-        document.getElementById("categoriaMP").value,
+
+        document.getElementById(
+            "categoriaMP"
+        )?.value || "",
 
 
 
         unidade:
-        document.getElementById("unidadeMP").value,
+
+        document.getElementById(
+            "unidadeMP"
+        )?.value || "",
 
 
 
         estoque:
+
         Number(
-            document.getElementById("estoqueMP").value
-        ) || 0,
+            document.getElementById(
+                "estoqueMP"
+            )?.value || 0
+        ),
 
 
 
         custo:
+
         Number(
-            document.getElementById("custoMP").value
-        ) || 0,
-
-
-        data:
-        new Date().toLocaleString()
-
+            document.getElementById(
+                "custoMP"
+            )?.value || 0
+        )
 
     };
-
 
 
 
@@ -744,7 +772,7 @@ function salvarMateriaPrima(){
 
 
 
-    salvarBanco();
+    salvarMateriasBanco();
 
 
 
@@ -752,22 +780,18 @@ function salvarMateriaPrima(){
 
 
 
-    carregarEstoque();
-
-
-
     atualizarDashboard();
+
+
+
+    novaMateriaPrima();
+
 
 
 
     alert(
         "Matéria-prima salva!"
     );
-
-
-
-    novaMateriaPrima();
-
 
 
 }
@@ -779,9 +803,7 @@ function salvarMateriaPrima(){
 
 
 
-
 function carregarMaterias(){
-
 
 
     let tabela =
@@ -799,7 +821,6 @@ function carregarMaterias(){
 
 
 
-
     tabela.innerHTML="";
 
 
@@ -809,14 +830,10 @@ function carregarMaterias(){
     materias.forEach(function(mp){
 
 
-
-        let linha =
-        document.createElement("tr");
+        tabela.innerHTML += `
 
 
-
-        linha.innerHTML=`
-
+<tr>
 
 <td>${mp.codigo}</td>
 
@@ -828,25 +845,20 @@ function carregarMaterias(){
 
 <td>${mp.estoque}</td>
 
-<td>
-R$ ${Number(mp.custo).toFixed(2)}
-</td>
+<td>R$ ${mp.custo.toFixed(2)}</td>
 
 <td>
 R$ ${(mp.estoque * mp.custo).toFixed(2)}
 </td>
 
 
+</tr>
+
+
 `;
 
 
-
-        tabela.appendChild(linha);
-
-
-
     });
-
 
 
 }
@@ -858,10 +870,10 @@ R$ ${(mp.estoque * mp.custo).toFixed(2)}
 
 
 
-
-// ================================
+// ======================================================
 // ESTOQUE
-// ================================
+// ======================================================
+
 
 
 function alterarTipoEstoque(){
@@ -879,16 +891,13 @@ function alterarTipoEstoque(){
 
 
 
-
 function carregarEstoque(){
-
 
 
     let tabela =
     document.getElementById(
         "listaEstoque"
     );
-
 
 
     let cabecalho =
@@ -898,7 +907,11 @@ function carregarEstoque(){
 
 
 
-    if(!tabela || !cabecalho){
+    if(!tabela){
+
+        console.log(
+            "listaEstoque não encontrado"
+        );
 
         return;
 
@@ -907,87 +920,29 @@ function carregarEstoque(){
 
 
 
-
     tabela.innerHTML="";
 
 
 
+    if(cabecalho){
+
+        cabecalho.innerHTML = `
 
 
-    let tipo =
-    document.getElementById(
-        "tipoEstoque"
-    );
+<tr>
+
+<th>Código</th>
+
+<th>Nome</th>
+
+<th>Unidade</th>
+
+<th>Quantidade</th>
+
+</tr>
 
 
-
-
-
-    let escolha =
-    tipo ? tipo.value : "materiaPrima";
-
-
-
-
-
-
-
-    // ==========================
-    // MATÉRIA-PRIMA
-    // ==========================
-
-
-    if(escolha==="materiaPrima"){
-
-
-
-        cabecalho.innerHTML=`
-
-        <tr>
-
-        <th>Código</th>
-        <th>Nome</th>
-        <th>Unidade</th>
-        <th>Quantidade</th>
-
-        </tr>
-
-        `;
-
-
-
-
-
-        materias.forEach(function(mp){
-
-
-
-            let linha =
-            document.createElement("tr");
-
-
-
-            linha.innerHTML=`
-
-            <td>${mp.codigo}</td>
-
-            <td>${mp.nome}</td>
-
-            <td>${mp.unidade}</td>
-
-            <td>${mp.estoque}</td>
-
-            `;
-
-
-
-            tabela.appendChild(linha);
-
-
-
-        });
-
-
+`;
 
     }
 
@@ -996,68 +951,32 @@ function carregarEstoque(){
 
 
 
+    materias.forEach(function(mp){
 
 
 
-    // ==========================
-    // PRODUTO ACABADO
-    // ==========================
+        tabela.innerHTML += `
 
 
-    if(escolha==="produtoAcabado"){
+<tr>
+
+<td>${mp.codigo}</td>
+
+<td>${mp.nome}</td>
+
+<td>${mp.unidade}</td>
+
+<td>${mp.estoque}</td>
 
 
+</tr>
 
-        cabecalho.innerHTML=`
 
-        <tr>
-
-        <th>Código</th>
-        <th>Nome</th>
-        <th>Unidade</th>
-        <th>Quantidade</th>
-
-        </tr>
-
-        `;
+`;
 
 
 
-
-
-        produtos.forEach(function(produto){
-
-
-
-            let linha =
-            document.createElement("tr");
-
-
-
-            linha.innerHTML=`
-
-            <td>${produto.codigo}</td>
-
-            <td>${produto.nome}</td>
-
-            <td>${produto.unidade}</td>
-
-            <td>${produto.estoque || 0}</td>
-
-
-            `;
-
-
-
-            tabela.appendChild(linha);
-
-
-
-        });
-
-
-
-    }
+    });
 
 
 
@@ -1071,9 +990,83 @@ function carregarEstoque(){
 
 
 
-// ================================
+// ======================================================
+// PRODUTO ACABADO NO ESTOQUE
+// ======================================================
+
+
+function carregarProdutoAcabadoEstoque(){
+
+
+    let tabela =
+    document.getElementById(
+        "listaEstoque"
+    );
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+    tabela.innerHTML="";
+
+
+
+    if(typeof produtos === "undefined"){
+
+        return;
+
+    }
+
+
+
+
+
+    produtos.forEach(function(produto){
+
+
+
+        tabela.innerHTML += `
+
+
+<tr>
+
+<td>${produto.codigo}</td>
+
+<td>${produto.nome}</td>
+
+<td>${produto.unidade}</td>
+
+<td>${produto.estoque || 0}</td>
+
+
+</tr>
+
+
+`;
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+// ======================================================
 // MOVIMENTAÇÃO
-// ================================
+// ======================================================
+
 
 
 function atualizarItensMovimentacao(){
@@ -1095,9 +1088,7 @@ function atualizarItensMovimentacao(){
 
 
 
-
-
-    select.innerHTML=`
+    select.innerHTML = `
 
 <option value="">
 Selecione um item
@@ -1108,100 +1099,29 @@ Selecione um item
 
 
 
+    materias.forEach(function(mp){
 
 
-    let tipo =
-    document.getElementById(
-        "tipoEstoqueMovimentacao"
-    );
+        let option =
+        document.createElement("option");
 
 
 
+        option.value =
+        mp.codigo;
 
 
-    let escolha =
-    tipo ? tipo.value : "materiaPrima";
 
+        option.textContent =
+        mp.nome;
 
 
 
+        select.appendChild(option);
 
 
 
-
-    if(escolha==="materiaPrima"){
-
-
-
-        materias.forEach(function(mp){
-
-
-
-            let option =
-            document.createElement("option");
-
-
-
-            option.value =
-            mp.codigo;
-
-
-
-            option.textContent =
-            mp.nome;
-
-
-
-            select.appendChild(option);
-
-
-
-        });
-
-
-
-    }
-
-
-
-
-
-
-
-
-    if(escolha==="produtoAcabado"){
-
-
-
-        produtos.forEach(function(produto){
-
-
-
-            let option =
-            document.createElement("option");
-
-
-
-            option.value =
-            produto.codigo;
-
-
-
-            option.textContent =
-            produto.nome;
-
-
-
-            select.appendChild(option);
-
-
-
-        });
-
-
-
-    }
-
+    });
 
 
 
@@ -1214,23 +1134,14 @@ Selecione um item
 
 
 
-
 function registrarMovimentacao(){
 
 
 
-    let tipo =
-    document.getElementById(
-        "tipoEstoqueMovimentacao"
-    ).value;
-
-
-
-
-    let codigo =
+    let item =
     document.getElementById(
         "itemMovimentacao"
-    ).value;
+    )?.value;
 
 
 
@@ -1239,7 +1150,7 @@ function registrarMovimentacao(){
     Number(
         document.getElementById(
             "quantidadeMovimentacao"
-        ).value
+        )?.value || 0
     );
 
 
@@ -1248,13 +1159,12 @@ function registrarMovimentacao(){
     let operacao =
     document.getElementById(
         "tipoMovimentacao"
-    ).value;
+    )?.value;
 
 
 
 
-
-    if(!codigo || quantidade<=0){
+    if(!item || quantidade <=0){
 
 
         alert(
@@ -1270,57 +1180,24 @@ function registrarMovimentacao(){
 
 
 
+    let materia =
+    materias.find(
+        function(mp){
 
-    let item;
+            return mp.codigo === item;
 
-
-
-    if(tipo==="materiaPrima"){
-
-
-        item =
-        materias.find(function(mp){
-
-
-            return mp.codigo===codigo;
-
-
-        });
-
-
-    }else{
-
-
-        item =
-        produtos.find(function(produto){
-
-
-            return produto.codigo===codigo;
-
-
-        });
-
-
-    }
+        }
+    );
 
 
 
 
 
-
-    if(!item){
-
-
-        alert(
-            "Item não encontrado"
-        );
-
+    if(!materia){
 
         return;
 
-
     }
-
 
 
 
@@ -1329,19 +1206,13 @@ function registrarMovimentacao(){
     if(operacao==="entrada"){
 
 
-        item.estoque =
-        Number(item.estoque || 0)
-        + quantidade;
-
+        materia.estoque += quantidade;
 
 
     }else{
 
 
-        item.estoque =
-        Number(item.estoque || 0)
-        - quantidade;
-
+        materia.estoque -= quantidade;
 
 
     }
@@ -1351,35 +1222,17 @@ function registrarMovimentacao(){
 
 
 
-
-
     movimentacoes.push({
 
-
-        tipo:tipo,
-
-
-        item:item.nome,
-
+        item:materia.nome,
 
         quantidade:quantidade,
 
-
         operacao:operacao,
 
-
         data:
-        document.getElementById(
-            "dataMovimentacao"
-        ).value,
-
-
-        observacao:
-        document.getElementById(
-            "observacaoMovimentacao"
-        ).value
-
-
+        new Date()
+        .toLocaleDateString()
 
     });
 
@@ -1387,25 +1240,19 @@ function registrarMovimentacao(){
 
 
 
-
-    salvarBanco();
+    salvarMateriasBanco();
 
 
 
     carregarMaterias();
 
 
-
     carregarEstoque();
 
 
 
-    atualizarItensMovimentacao();
-
-
-
     alert(
-        "Movimentação registrada!"
+        "Movimentação salva!"
     );
 
 
