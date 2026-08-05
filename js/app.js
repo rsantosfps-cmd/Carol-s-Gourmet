@@ -1842,42 +1842,38 @@ function iniciarProducao(){
 }
 // ======================================================
 // PARTE 4A
-// TARJETAS 21x5
+// TARJETAS
 // ======================================================
 
 
 // =========================================
-// PRODUTOS DA TARJETA
+// CARREGAR PRODUTOS
 // =========================================
 
-function carregarProdutosTarjeta(){
+function carregarProdutosTarjeta() {
 
-    const select =
-    document.getElementById("produtoTarjeta");
+    const select = document.getElementById("produtoTarjeta");
 
-    if(!select) return;
+    if (!select) return;
 
     select.innerHTML =
-    '<option value="">Selecione...</option>';
+        '<option value="">Selecione...</option>';
 
-    produtos.forEach(function(produto){
+    produtos.forEach(function (produto) {
 
         const categoria =
-        (produto.categoria || "").toLowerCase();
+            (produto.categoria || "").toLowerCase();
 
-        if(
+        if (
             categoria.includes("brownie") ||
             categoria.includes("palha")
-        ){
+        ) {
 
-            let option =
-            document.createElement("option");
+            const option =
+                document.createElement("option");
 
-            option.value =
-            produto.codigo;
-
-            option.textContent =
-            produto.nome;
+            option.value = produto.codigo;
+            option.textContent = produto.nome;
 
             select.appendChild(option);
 
@@ -1890,40 +1886,30 @@ function carregarProdutosTarjeta(){
 
 
 // =========================================
-// VALIDADE TARJETA
+// ATUALIZAR VALIDADE
 // =========================================
 
-const campoFabTarjeta =
-document.getElementById(
-    "fabricacaoTarjeta"
-);
+const fabricacaoTarjeta =
+document.getElementById("fabricacaoTarjeta");
 
-if(campoFabTarjeta){
+if (fabricacaoTarjeta) {
 
-    campoFabTarjeta.addEventListener(
-        "change",
-        function(){
+    fabricacaoTarjeta.addEventListener("change", function () {
 
-            let validade =
-            document.getElementById(
-                "validadeTarjeta"
-            );
+        const validade =
+        document.getElementById("validadeTarjeta");
 
-            if(!validade) return;
+        if (!validade) return;
 
-            let data =
-            new Date(this.value);
+        const data =
+        new Date(this.value);
 
-            data.setDate(
-                data.getDate()+30
-            );
+        data.setDate(data.getDate() + 30);
 
-            validade.value =
-            data.toISOString()
-            .split("T")[0];
+        validade.value =
+        data.toISOString().split("T")[0];
 
-        }
-    );
+    });
 
 }
 
@@ -1933,49 +1919,49 @@ if(campoFabTarjeta){
 // GERAR TARJETAS
 // =========================================
 
-function gerarTarjetas(){
+function gerarTarjetas() {
 
     const area =
-    document.getElementById(
-        "areaTarjetas"
-    );
+    document.getElementById("areaTarjetas");
 
-    if(!area) return;
+    if (!area) return;
 
-    area.innerHTML="";
+    area.innerHTML = "";
 
 
 
     const codigo =
-    document.getElementById(
-        "produtoTarjeta"
-    ).value;
+    document.getElementById("produtoTarjeta").value;
+
+    if (codigo === "") {
+
+        alert("Selecione um produto.");
+
+        return;
+
+    }
 
 
 
     const quantidade =
     Number(
-        document.getElementById(
-            "quantidadeTarjeta"
-        ).value
+        document.getElementById("quantidadeTarjeta").value
     ) || 1;
 
 
 
     const produto =
-    produtos.find(function(p){
+    produtos.find(function (p) {
 
-        return p.codigo===codigo;
+        return p.codigo === codigo;
 
     });
 
 
 
-    if(!produto){
+    if (!produto) {
 
-        alert(
-            "Selecione um produto."
-        );
+        alert("Produto não encontrado.");
 
         return;
 
@@ -1984,163 +1970,39 @@ function gerarTarjetas(){
 
 
     let ean =
-    produto.ean;
+    produto.ean || produto.codigoBarras || "";
 
-    if(!ean || ean===""){
 
-        ean="7891234567895";
+
+    if (ean === "") {
+
+        alert(
+            "Este produto não possui código EAN cadastrado."
+        );
+
+        return;
 
     }
 
 
 
-    for(let i=0;i<quantidade;i++){
+    for (let i = 0; i < quantidade; i++) {
 
-        let tarjeta =
+        const tarjeta =
         document.createElement("div");
 
-        tarjeta.className =
-        "tarjeta";
+        tarjeta.className = "tarjeta";
 
 
 
         tarjeta.innerHTML = `
-
-        <div class="tarjeta-topo">
-
-            <div class="tarjeta-logo">
-
-                Carol's Gourmet
-
-            </div>
-
-        </div>
-
-
-        <div class="tarjeta-produto">
-
-            ${produto.nome}
-
-        </div>
-
-
-        <svg id="barcode_${i}"></svg>
-
-
-        <div class="tarjeta-datas">
-
-            <span>
-
-                Fab:
-                ${document.getElementById("fabricacaoTarjeta").value}
-
-            </span>
-
-            <span>
-
-                Val:
-                ${document.getElementById("validadeTarjeta").value}
-
-            </span>
-
-        </div>
-
-        `;
-
-
-
-        area.appendChild(tarjeta);
-
-
-
-        JsBarcode(
-
-            "#barcode_"+i,
-
-            ean,
-
-            {
-
-                format:"EAN13",
-
-                width:2,
-
-                height:55,
-
-                displayValue:true,
-
-                margin:0
-
-            }
-
-        );
-
-    }
-
-}
-
-
-
-// =========================================
-// INICIAR TARJETAS
-// =========================================
-
-window.addEventListener("load",function(){
-
-    carregarProdutosTarjeta();
-
-});
-// =====================================
-// TARJETAS VERTICAIS
-// =====================================
-
-function gerarTarjetas(){
-
-    const produto =
-    document.getElementById("produtoTarjeta");
-
-    if(!produto || produto.selectedIndex < 1){
-        alert("Selecione um produto.");
-        return;
-    }
-
-    const nome =
-    produto.options[produto.selectedIndex].text;
-
-    const codigo =
-    produto.value;
-
-    const quantidade =
-    Number(
-        document.getElementById("quantidadeTarjeta").value
-    ) || 1;
-
-    const fabricacao =
-    document.getElementById("fabricacaoTarjeta").value;
-
-    const validade =
-    document.getElementById("validadeTarjeta").value;
-
-    const area =
-    document.getElementById("areaTarjetas");
-
-    area.innerHTML="";
-
-    for(let i=0;i<quantidade;i++){
-
-        const div =
-        document.createElement("div");
-
-        div.className="tarjeta";
-
-        div.innerHTML=`
 
         <div class="tarjeta-logo">
             Carol's Gourmet
         </div>
 
         <div class="tarjeta-produto">
-            ${nome}
+            ${produto.nome}
         </div>
 
         <svg id="bc${i}"></svg>
@@ -2148,160 +2010,61 @@ function gerarTarjetas(){
         <div class="tarjeta-datas">
 
             <strong>Fab:</strong>
-            ${fabricacao}
+            ${document.getElementById("fabricacaoTarjeta").value}
 
             <br>
 
             <strong>Val:</strong>
-            ${validade}
+            ${document.getElementById("validadeTarjeta").value}
 
         </div>
 
         `;
 
-        area.appendChild(div);
+        area.appendChild(tarjeta);
 
-        JsBarcode(`#bc${i}`,codigo,{
-            format:"EAN13",
-            width:2,
-            height:55,
-            displayValue:true
+
+
+        JsBarcode(`#bc${i}`, ean, {
+
+            format: "EAN13",
+
+            width: 2,
+
+            height: 55,
+
+            displayValue: true,
+
+            margin: 0
+
         });
 
     }
 
 }
-function imprimirTarjetas(){
 
-    const conteudo =
-    document.getElementById("areaTarjetas").innerHTML;
 
-    const janela =
-    window.open("","","width=900,height=900");
 
-    janela.document.write(`
+// =========================================
+// INICIALIZAÇÃO
+// =========================================
 
-<html>
+window.addEventListener("load", function () {
 
-<head>
+    carregarProdutosTarjeta();
 
-<title>Tarjetas</title>
-
-<style>
-
-body{
-
-margin:0;
-padding:15mm;
-font-family:Arial;
-
-}
-
-.folha{
-
-display:grid;
-
-grid-template-columns:repeat(3,7cm);
-
-gap:6mm;
-
-}
-
-.tarjeta{
-
-width:7cm;
-
-height:21cm;
-
-border:1px solid #000;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:8mm;
-
-box-sizing:border-box;
-
-}
-
-.tarjeta-logo{
-
-font-size:20px;
-
-font-weight:bold;
-
-text-align:center;
-
-}
-
-.tarjeta-produto{
-
-font-size:18px;
-
-font-weight:bold;
-
-text-align:center;
-
-}
-
-.tarjeta-datas{
-
-font-size:13px;
-
-text-align:center;
-
-}
-
-svg{
-
-width:100%;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="folha">
-
-${conteudo}
-
-</div>
-
-<script>
-window.onload=function(){
-window.print();
-window.close();
-}
-</script>
-
-</body>
-
-</html>
-
-`);
-
-    janela.document.close();
-
-}
-// =====================================================
-// PARTE 4C
-// ACABAMENTO DAS TARJETAS
-// =====================================================
+});
+// ======================================================
+// PARTE 4B
+// IMPRESSÃO E EXPORTAÇÃO DAS TARJETAS
+// ======================================================
 
 
 // ========================================
 // ORGANIZAR FOLHA A4
 // ========================================
 
-function organizarFolhaTarjetas(){
+function organizarFolhaTarjetas() {
 
     const origem =
     document.getElementById("areaTarjetas");
@@ -2309,16 +2072,13 @@ function organizarFolhaTarjetas(){
     const folha =
     document.getElementById("folhaTarjetas");
 
-    if(!origem || !folha) return;
+    if (!origem || !folha) return;
 
-    folha.innerHTML="";
+    folha.innerHTML = "";
 
-    origem.querySelectorAll(".tarjeta")
-    .forEach(function(item){
+    origem.querySelectorAll(".tarjeta").forEach(function (item) {
 
-        folha.appendChild(
-            item.cloneNode(true)
-        );
+        folha.appendChild(item.cloneNode(true));
 
     });
 
@@ -2327,30 +2087,31 @@ function organizarFolhaTarjetas(){
 
 
 // ========================================
-// EXPORTAR TARJETAS PNG
+// EXPORTAR PNG
 // ========================================
 
-function salvarTarjetasPNG(){
+function salvarTarjetasPNG() {
 
     organizarFolhaTarjetas();
 
     const folha =
-    document.getElementById(
-        "folhaTarjetas"
-    );
+    document.getElementById("folhaTarjetas");
 
-    html2canvas(folha,{
-        scale:3,
-        backgroundColor:"#ffffff"
-    }).then(function(canvas){
+    html2canvas(folha, {
 
-        let link =
+        scale: 3,
+
+        backgroundColor: "#ffffff"
+
+    }).then(function (canvas) {
+
+        const link =
         document.createElement("a");
 
-        link.download=
+        link.download =
         "tarjetas-carols-gourmet.png";
 
-        link.href=
+        link.href =
         canvas.toDataURL("image/png");
 
         link.click();
@@ -2362,30 +2123,28 @@ function salvarTarjetasPNG(){
 
 
 // ========================================
-// IMPRESSÃO MELHORADA
+// IMPRESSÃO A4
 // ========================================
 
-function imprimirTarjetas(){
+function imprimirTarjetas() {
 
     organizarFolhaTarjetas();
 
-    let conteudo =
-    document.getElementById(
-        "folhaTarjetas"
-    ).innerHTML;
+    const conteudo =
+    document.getElementById("folhaTarjetas").innerHTML;
 
-    let janela =
-    window.open(
-        "",
-        "",
-        "width=900,height=900"
-    );
+    const janela =
+    window.open("", "", "width=1000,height=900");
 
     janela.document.write(`
+
+<!DOCTYPE html>
 
 <html>
 
 <head>
+
+<meta charset="UTF-8">
 
 <title>Tarjetas</title>
 
@@ -2415,9 +2174,9 @@ display:grid;
 
 grid-template-columns:repeat(3,5cm);
 
-gap:6mm;
-
 justify-content:center;
+
+gap:6mm;
 
 }
 
@@ -2431,6 +2190,10 @@ border:1px solid #000;
 
 border-radius:8px;
 
+padding:8px;
+
+box-sizing:border-box;
+
 display:flex;
 
 flex-direction:column;
@@ -2438,10 +2201,6 @@ flex-direction:column;
 justify-content:space-between;
 
 align-items:center;
-
-padding:8px;
-
-box-sizing:border-box;
 
 background:#fff;
 
@@ -2464,6 +2223,10 @@ font-size:16px;
 font-weight:bold;
 
 text-align:center;
+
+margin-top:10px;
+
+margin-bottom:10px;
 
 }
 
