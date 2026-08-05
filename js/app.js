@@ -1,13 +1,15 @@
-// =====================================================
+// ======================================================
 // CAROL'S GOURMET ERP 4.0
 // APP.JS NOVO
 // PARTE 1/4
-// =====================================================
+// ======================================================
+
 
 
 // ================================
-// BANCO LOCAL
+// BANCO DE DADOS
 // ================================
+
 
 let produtos = JSON.parse(
     localStorage.getItem("carols_produtos")
@@ -25,6 +27,50 @@ let movimentacoes = JSON.parse(
 
 
 
+let producoes = JSON.parse(
+    localStorage.getItem("carols_producoes")
+) || [];
+
+
+
+
+// ================================
+// SALVAR BANCO
+// ================================
+
+
+function salvarBanco(){
+
+
+    localStorage.setItem(
+        "carols_produtos",
+        JSON.stringify(produtos)
+    );
+
+
+    localStorage.setItem(
+        "carols_materias",
+        JSON.stringify(materias)
+    );
+
+
+    localStorage.setItem(
+        "carols_movimentacoes",
+        JSON.stringify(movimentacoes)
+    );
+
+
+    localStorage.setItem(
+        "carols_producoes",
+        JSON.stringify(producoes)
+    );
+
+
+}
+
+
+
+
 // ================================
 // INICIALIZAÇÃO
 // ================================
@@ -32,13 +78,17 @@ let movimentacoes = JSON.parse(
 
 window.onload = function(){
 
+
     carregarProdutos();
+
 
     atualizarDashboard();
 
-    novoProduto();
 
 };
+
+
+
 
 
 
@@ -49,21 +99,33 @@ window.onload = function(){
 
 function toggleMenu(){
 
-    const sidebar =
+
+    const menu =
     document.getElementById("sidebar");
 
 
-    sidebar.classList.toggle("fechado");
+    if(menu){
+
+        menu.classList.toggle("aberto");
+
+    }
+
 
 }
 
 
 
 
+
+
+
 function mostrarAba(id, botao){
+
+
 
     const abas =
     document.querySelectorAll(".aba");
+
 
 
     abas.forEach(function(aba){
@@ -74,16 +136,21 @@ function mostrarAba(id, botao){
 
 
 
-    const selecionada =
+
+
+    const novaAba =
     document.getElementById(id);
 
 
 
-    if(selecionada){
+    if(novaAba){
 
-        selecionada.classList.add("ativa");
+        novaAba.classList.add("ativa");
 
     }
+
+
+
 
 
 
@@ -91,11 +158,14 @@ function mostrarAba(id, botao){
     document.querySelectorAll(".menu-item");
 
 
-    botoes.forEach(function(btn){
 
-        btn.classList.remove("ativo");
+    botoes.forEach(function(item){
+
+        item.classList.remove("ativo");
 
     });
+
+
 
 
 
@@ -105,7 +175,13 @@ function mostrarAba(id, botao){
 
     }
 
+
+
 }
+
+
+
+
 
 
 
@@ -116,6 +192,7 @@ function mostrarAba(id, botao){
 // ================================
 
 
+
 function gerarCodigoProduto(){
 
 
@@ -123,10 +200,15 @@ function gerarCodigoProduto(){
     produtos.length + 1;
 
 
+
     return "PROD-" +
-    numero.toString().padStart(4,"0");
+    String(numero).padStart(4,"0");
+
 
 }
+
+
+
 
 
 
@@ -135,35 +217,52 @@ function gerarCodigoProduto(){
 function novoProduto(){
 
 
+
+    let codigo =
     document.getElementById(
         "codigoProduto"
-    ).value =
-    gerarCodigoProduto();
+    );
 
 
+
+    if(codigo){
+
+        codigo.value =
+        gerarCodigoProduto();
+
+    }
+
+
+
+
+    let ean =
     document.getElementById(
         "eanProduto"
-    ).value="";
+    );
 
 
+    if(ean){
+
+        ean.value="";
+
+    }
+
+
+
+    let nome =
     document.getElementById(
         "nomeProduto"
-    ).value="";
+    );
 
 
-    document.getElementById(
-        "categoriaProduto"
-    ).value="";
+    if(nome){
+
+        nome.value="";
+
+    }
 
 
-    document.getElementById(
-        "unidadeProduto"
-    ).value="Unidade";
 
-
-    document.getElementById(
-        "statusProduto"
-    ).value="Ativo";
 
 
 }
@@ -172,7 +271,12 @@ function novoProduto(){
 
 
 
+
+
+
+
 function salvarProduto(){
+
 
 
     let nome =
@@ -182,20 +286,26 @@ function salvarProduto(){
 
 
 
+
+
     if(nome===""){
+
 
         alert(
             "Digite o nome do produto"
         );
 
+
         return;
+
 
     }
 
 
 
 
-    let produto={
+
+    let produto = {
 
 
         codigo:
@@ -204,13 +314,16 @@ function salvarProduto(){
         ).value,
 
 
+
         ean:
         document.getElementById(
             "eanProduto"
         ).value,
 
 
+
         nome:nome,
+
 
 
         categoria:
@@ -219,10 +332,12 @@ function salvarProduto(){
         ).value,
 
 
+
         unidade:
         document.getElementById(
             "unidadeProduto"
         ).value,
+
 
 
         status:
@@ -231,16 +346,22 @@ function salvarProduto(){
         ).value,
 
 
+
         estoque:0,
+
 
 
         custo:0,
 
 
+
         data:
         new Date().toLocaleString()
 
+
     };
+
+
 
 
 
@@ -250,17 +371,20 @@ function salvarProduto(){
 
 
 
-    salvarDados();
+    salvarBanco();
 
 
 
     carregarProdutos();
 
 
+
     atualizarDashboard();
 
 
+
     novoProduto();
+
 
 
 
@@ -269,7 +393,11 @@ function salvarProduto(){
     );
 
 
+
 }
+
+
+
 
 
 
@@ -280,18 +408,28 @@ function salvarProduto(){
 function carregarProdutos(){
 
 
+
     const tabela =
     document.getElementById(
         "listaProdutos"
     );
 
 
-    if(!tabela)
-    return;
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
 
 
 
     tabela.innerHTML="";
+
+
 
 
 
@@ -305,35 +443,38 @@ function carregarProdutos(){
 
 
 
-        linha.innerHTML=`
 
 
-        <td>${produto.codigo}</td>
-
-        <td>${produto.nome}</td>
-
-        <td>${produto.categoria}</td>
-
-        <td>${produto.unidade}</td>
-
-        <td>${produto.estoque}</td>
-
-        <td>R$ ${produto.custo.toFixed(2)}</td>
-
-        <td>R$ ${(produto.estoque * produto.custo).toFixed(2)}</td>
+        linha.innerHTML = `
 
 
-        <td>
+<td>${produto.codigo || ""}</td>
 
-        <button onclick="excluirProduto(${index})">
-        🗑️
-        </button>
+<td>${produto.nome || ""}</td>
+
+<td>${produto.categoria || ""}</td>
+
+<td>${produto.unidade || ""}</td>
+
+<td>${produto.estoque || 0}</td>
+
+<td>R$ ${Number(produto.custo || 0).toFixed(2)}</td>
+
+<td>
+R$ ${(Number(produto.estoque || 0) * Number(produto.custo || 0)).toFixed(2)}
+</td>
 
 
-        </td>
+<td>
+
+<button onclick="excluirProduto(${index})">
+🗑️
+</button>
+
+</td>
 
 
-        `;
+`;
 
 
 
@@ -353,12 +494,13 @@ function carregarProdutos(){
 
 
 
+
+
 function excluirProduto(index){
 
 
-    if(confirm(
-        "Excluir produto?"
-    )){
+
+    if(confirm("Excluir produto?")){
 
 
         produtos.splice(
@@ -367,19 +509,27 @@ function excluirProduto(index){
         );
 
 
-        salvarDados();
+
+        salvarBanco();
+
 
 
         carregarProdutos();
 
 
+
         atualizarDashboard();
+
 
 
     }
 
 
+
 }
+
+
+
 
 
 
@@ -395,10 +545,12 @@ function excluirProduto(index){
 function atualizarDashboard(){
 
 
-    let total =
+
+    const total =
     document.getElementById(
         "totalProdutos"
     );
+
 
 
     if(total){
@@ -411,10 +563,13 @@ function atualizarDashboard(){
 
 
 
-    let mp =
+
+
+    const mp =
     document.getElementById(
         "totalMateriaPrima"
     );
+
 
 
     if(mp){
@@ -428,10 +583,13 @@ function atualizarDashboard(){
 
 
 
-    let data =
+
+
+    const data =
     document.getElementById(
         "ultimaAtualizacao"
     );
+
 
 
     if(data){
@@ -441,41 +599,6 @@ function atualizarDashboard(){
         .toLocaleDateString();
 
     }
-
-
-}
-
-
-
-
-
-
-// ================================
-// SALVAR BANCO
-// ================================
-
-
-function salvarDados(){
-
-
-localStorage.setItem(
-"carols_produtos",
-JSON.stringify(produtos)
-);
-
-
-
-localStorage.setItem(
-"carols_materias",
-JSON.stringify(materias)
-);
-
-
-
-localStorage.setItem(
-"carols_movimentacoes",
-JSON.stringify(movimentacoes)
-);
 
 
 
