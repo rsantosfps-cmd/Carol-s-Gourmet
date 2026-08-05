@@ -1,86 +1,93 @@
-/* =========================================================
+/* =====================================================
    CAROL'S GOURMET ERP 4.0
-   APP.JS - PARTE 1
-========================================================= */
+   APP.JS NOVO
+===================================================== */
 
 
-/* =========================================================
+/* =====================================================
    BANCO LOCAL
-========================================================= */
+===================================================== */
 
-const DB = {
-
-    produtos: "carols_gourmet_produtos",
-    materias: "carols_gourmet_materias",
-    estoque: "carols_gourmet_estoque",
-    producao: "carols_gourmet_producao",
-    etiquetas: "carols_gourmet_etiquetas"
-
-};
+let produtos = JSON.parse(
+    localStorage.getItem("carols_produtos")
+) || [];
 
 
-
-function carregarBanco(chave) {
-
-    return JSON.parse(
-        localStorage.getItem(chave)
-    ) || [];
-
-}
+let materias = JSON.parse(
+    localStorage.getItem("carols_materias")
+) || [];
 
 
+let movimentacoes = JSON.parse(
+    localStorage.getItem("carols_movimentacoes")
+) || [];
 
-function salvarBanco(chave, dados) {
+
+let producoes = JSON.parse(
+    localStorage.getItem("carols_producoes")
+) || [];
+
+
+
+function salvarBanco(){
 
     localStorage.setItem(
-        chave,
-        JSON.stringify(dados)
+        "carols_produtos",
+        JSON.stringify(produtos)
+    );
+
+
+    localStorage.setItem(
+        "carols_materias",
+        JSON.stringify(materias)
+    );
+
+
+    localStorage.setItem(
+        "carols_movimentacoes",
+        JSON.stringify(movimentacoes)
+    );
+
+
+    localStorage.setItem(
+        "carols_producoes",
+        JSON.stringify(producoes)
     );
 
 }
 
 
 
-/* =========================================================
-   VARIÁVEIS GLOBAIS
-========================================================= */
-
-
-let produtos = carregarBanco(DB.produtos);
-
-let materias = carregarBanco(DB.materias);
-
-let estoque = carregarBanco(DB.estoque);
-
-let producao = carregarBanco(DB.producao);
-
-let etiquetas = carregarBanco(DB.etiquetas);
-
-
-
-/* =========================================================
-   MENU / NAVEGAÇÃO
-========================================================= */
+/* =====================================================
+   MENU LATERAL
+===================================================== */
 
 
 function toggleMenu(){
 
-    const sidebar =
-        document.getElementById("sidebar");
+    const menu =
+    document.getElementById("sidebar");
 
 
-    sidebar.classList.toggle("aberto");
+    if(menu){
+
+        menu.classList.toggle("aberto");
+
+    }
 
 }
+
 
 
 
 function mostrarAba(id, botao){
 
 
-    document
-    .querySelectorAll(".aba")
-    .forEach(function(aba){
+    const abas =
+    document.querySelectorAll(".aba");
+
+
+    abas.forEach(function(aba){
 
         aba.classList.remove("ativa");
 
@@ -88,24 +95,26 @@ function mostrarAba(id, botao){
 
 
 
-    const aba =
+    const selecionada =
     document.getElementById(id);
 
 
 
-    if(aba){
+    if(selecionada){
 
-        aba.classList.add("ativa");
+        selecionada.classList.add("ativa");
 
     }
 
 
 
-    document
-    .querySelectorAll(".menu-item")
-    .forEach(function(item){
+    const botoes =
+    document.querySelectorAll(".menu-item");
 
-        item.classList.remove("ativo");
+
+    botoes.forEach(function(btn){
+
+        btn.classList.remove("ativo");
 
     });
 
@@ -119,28 +128,75 @@ function mostrarAba(id, botao){
 
 
 
-    atualizarTudo();
+    if(
+        window.innerWidth < 800
+    ){
+
+        document
+        .getElementById("sidebar")
+        ?.classList.remove("aberto");
+
+    }
+
 
 
 }
 
 
 
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
 
-/* =========================================================
+
+window.onload = function(){
+
+
+    gerarCodigoProduto();
+
+    gerarCodigoMateria();
+
+
+    atualizarProdutos();
+
+
+    atualizarMaterias();
+
+
+    atualizarDashboard();
+
+
+    carregarEstoque();
+
+
+};
+
+
+
+
+/* =====================================================
    PRODUTOS
-========================================================= */
-
+===================================================== */
 
 
 function gerarCodigoProduto(){
+
+
+    const campo =
+    document.getElementById("codigoProduto");
+
+
+    if(!campo) return;
+
 
 
     let numero =
     produtos.length + 1;
 
 
-    return "PROD-" +
+
+    campo.value =
+    "PROD-" +
     String(numero).padStart(4,"0");
 
 
@@ -148,45 +204,19 @@ function gerarCodigoProduto(){
 
 
 
-function gerarEAN(){
-
-
-    let numero = "";
-
-
-    for(let i = 0; i < 12; i++){
-
-        numero +=
-        Math.floor(
-            Math.random()*10
-        );
-
-    }
-
-
-    return numero;
-
-
-}
-
-
-
-
 function salvarProduto(){
 
 
-
     const nome =
-    document.getElementById(
-        "nomeProduto"
-    ).value.trim();
+    document.getElementById("nomeProduto")
+    .value.trim();
 
 
 
     if(!nome){
 
         alert(
-            "Digite o nome do produto"
+        "Digite o nome do produto"
         );
 
         return;
@@ -195,51 +225,33 @@ function salvarProduto(){
 
 
 
+    const produto = {
 
-    let produto = {
+
+        id:
+        Date.now(),
 
 
         codigo:
-        document.getElementById(
-            "codigoProduto"
-        ).value
-        ||
-        gerarCodigoProduto(),
+        document.getElementById("codigoProduto").value,
 
 
-
-        ean:
-        document.getElementById(
-            "eanProduto"
-        ).value
-        ||
-        gerarEAN(),
+        nome:
 
 
-
-        nome:nome,
-
+        nome,
 
 
         categoria:
-        document.getElementById(
-            "categoriaProduto"
-        ).value,
-
+        document.getElementById("categoriaProduto").value,
 
 
         unidade:
-        document.getElementById(
-            "unidadeProduto"
-        ).value,
-
+        document.getElementById("unidadeProduto").value,
 
 
         status:
-        document.getElementById(
-            "statusProduto"
-        ).value,
-
+        document.getElementById("statusProduto").value,
 
 
         estoque:0,
@@ -248,10 +260,15 @@ function salvarProduto(){
         custo:0,
 
 
-        valor:0
+        valor:0,
+
+
+        ean:
+        gerarEAN()
+
+
 
     };
-
 
 
 
@@ -259,23 +276,42 @@ function salvarProduto(){
 
 
 
-    salvarBanco(
-        DB.produtos,
-        produtos
-    );
+    salvarBanco();
 
+
+    atualizarProdutos();
+
+
+    atualizarDashboard();
 
 
     alert(
-        "Produto cadastrado!"
+    "Produto salvo com sucesso!"
     );
-
 
 
     novoProduto();
 
 
-    atualizarTudo();
+}
+
+
+
+
+
+function gerarEAN(){
+
+
+    let numero =
+    Math.floor(
+    Math.random()*900000000000
+    )
+    +
+    100000000000;
+
+
+
+    return numero.toString();
 
 
 
@@ -288,313 +324,17 @@ function salvarProduto(){
 function novoProduto(){
 
 
-    const codigo =
-    document.getElementById(
-        "codigoProduto"
-    );
+    document
+    .getElementById("nomeProduto")
+    .value="";
 
 
-    const ean =
-    document.getElementById(
-        "eanProduto"
-    );
+    document
+    .getElementById("categoriaProduto")
+    .value="";
 
 
-
-    if(codigo){
-
-        codigo.value =
-        gerarCodigoProduto();
-
-    }
-
-
-
-    if(ean){
-
-        ean.value =
-        gerarEAN();
-
-    }
-
-
-
-
-    document.getElementById(
-        "nomeProduto"
-    ).value="";
-
-
-
-    document.getElementById(
-        "categoriaProduto"
-    ).value="";
-
+    gerarCodigoProduto();
 
 
 }
-
-
-
-
-
-
-function atualizarProdutos(){
-
-
-    const tabela =
-    document.getElementById(
-        "listaProdutos"
-    );
-
-
-
-    if(!tabela){
-
-        return;
-
-    }
-
-
-
-    tabela.innerHTML="";
-
-
-
-
-    produtos.forEach(function(produto,index){
-
-
-
-        tabela.innerHTML += `
-
-
-        <tr>
-
-
-        <td>${produto.codigo}</td>
-
-
-        <td>${produto.nome}</td>
-
-
-        <td>${produto.categoria}</td>
-
-
-        <td>${produto.unidade}</td>
-
-
-        <td>${produto.estoque || 0}</td>
-
-
-        <td>
-        R$ ${(produto.custo || 0)
-        .toFixed(2)}
-        </td>
-
-
-        <td>
-        R$ ${(produto.valor || 0)
-        .toFixed(2)}
-        </td>
-
-
-
-        <td>
-
-        <button
-        onclick="excluirProduto(${index})">
-        🗑️
-        </button>
-
-
-        </td>
-
-
-
-        </tr>
-
-
-        `;
-
-
-
-    });
-
-
-
-}
-
-
-
-
-
-function excluirProduto(index){
-
-
-    if(confirm(
-        "Excluir produto?"
-    )){
-
-
-        produtos.splice(
-            index,
-            1
-        );
-
-
-        salvarBanco(
-            DB.produtos,
-            produtos
-        );
-
-
-        atualizarTudo();
-
-
-    }
-
-
-
-}
-
-
-
-
-
-
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-
-function atualizarDashboard(){
-
-
-
-    const totalProdutos =
-    document.getElementById(
-        "totalProdutos"
-    );
-
-
-
-    if(totalProdutos){
-
-        totalProdutos.innerText =
-        produtos.length;
-
-    }
-
-
-
-
-
-    const totalMateria =
-    document.getElementById(
-        "totalMateriaPrima"
-    );
-
-
-
-    if(totalMateria){
-
-        totalMateria.innerText =
-        materias.length;
-
-    }
-
-
-
-
-    const data =
-    document.getElementById(
-        "ultimaAtualizacao"
-    );
-
-
-
-    if(data){
-
-        data.innerText =
-        new Date()
-        .toLocaleDateString(
-            "pt-BR"
-        );
-
-    }
-
-
-
-}
-
-
-
-
-
-
-
-/* =========================================================
-   ATUALIZAÇÃO GERAL
-========================================================= */
-
-
-function atualizarTudo(){
-
-
-    produtos =
-    carregarBanco(DB.produtos);
-
-
-
-    materias =
-    carregarBanco(DB.materias);
-
-
-
-    estoque =
-    carregarBanco(DB.estoque);
-
-
-
-    producao =
-    carregarBanco(DB.producao);
-
-
-
-    etiquetas =
-    carregarBanco(DB.etiquetas);
-
-
-
-    atualizarProdutos();
-
-
-    atualizarDashboard();
-
-
-
-}
-
-
-
-
-
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
-
-
-document.addEventListener(
-"DOMContentLoaded",
-function(){
-
-
-    atualizarTudo();
-
-
-    novoProduto();
-
-
-});
