@@ -598,3 +598,813 @@ function(){
 
 
 });
+/* =========================================================
+   MATÉRIA-PRIMA
+========================================================= */
+
+
+function gerarCodigoMP(){
+
+
+    let numero =
+    materias.length + 1;
+
+
+    return "MP-" +
+    String(numero).padStart(4,"0");
+
+
+}
+
+
+
+
+
+
+function salvarMateriaPrima(){
+
+
+
+    const nome =
+    document.getElementById(
+        "nomeMP"
+    ).value.trim();
+
+
+
+
+    if(!nome){
+
+
+        alert(
+            "Digite o nome da matéria-prima"
+        );
+
+
+        return;
+
+
+    }
+
+
+
+
+
+    let materia = {
+
+
+        codigo:
+        document.getElementById(
+            "codigoMP"
+        ).value
+        ||
+        gerarCodigoMP(),
+
+
+
+        nome:nome,
+
+
+
+        categoria:
+        document.getElementById(
+            "categoriaMP"
+        ).value,
+
+
+
+        unidade:
+        document.getElementById(
+            "unidadeMP"
+        ).value,
+
+
+
+        quantidade:
+        Number(
+            document.getElementById(
+                "estoqueMP"
+            ).value
+        ),
+
+
+
+        custo:
+        Number(
+            document.getElementById(
+                "custoMP"
+            ).value
+        )
+
+
+
+    };
+
+
+
+
+
+    materias.push(materia);
+
+
+
+    salvarBanco(
+        DB.materias,
+        materias
+    );
+
+
+
+
+    alert(
+        "Matéria-prima cadastrada!"
+    );
+
+
+
+
+    novaMateriaPrima();
+
+
+
+    atualizarTudo();
+
+
+
+}
+
+
+
+
+
+
+function novaMateriaPrima(){
+
+
+
+    const codigo =
+    document.getElementById(
+        "codigoMP"
+    );
+
+
+
+    if(codigo){
+
+
+        codigo.value =
+        gerarCodigoMP();
+
+
+    }
+
+
+
+    document.getElementById(
+        "nomeMP"
+    ).value="";
+
+
+
+    document.getElementById(
+        "estoqueMP"
+    ).value=0;
+
+
+
+    document.getElementById(
+        "custoMP"
+    ).value="";
+
+
+
+}
+
+
+
+
+
+
+function atualizarMateriaPrima(){
+
+
+
+    const tabela =
+    document.getElementById(
+        "listaMateriaPrima"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+    tabela.innerHTML="";
+
+
+
+
+    materias.forEach(function(mp,index){
+
+
+
+        let total =
+        mp.quantidade *
+        mp.custo;
+
+
+
+        tabela.innerHTML += `
+
+
+        <tr>
+
+
+        <td>${mp.codigo}</td>
+
+
+        <td>${mp.nome}</td>
+
+
+        <td>${mp.categoria}</td>
+
+
+        <td>${mp.unidade}</td>
+
+
+        <td>${mp.quantidade}</td>
+
+
+        <td>
+        R$ ${mp.custo.toFixed(2)}
+        </td>
+
+
+        <td>
+        R$ ${total.toFixed(2)}
+        </td>
+
+
+
+        </tr>
+
+
+
+        `;
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+/* =========================================================
+   ESTOQUE
+========================================================= */
+
+
+function alterarTipoEstoque(){
+
+
+    atualizarEstoque();
+
+
+}
+
+
+
+
+
+function atualizarEstoque(){
+
+
+
+    const tabela =
+    document.getElementById(
+        "listaEstoque"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+    tabela.innerHTML="";
+
+
+
+
+    let tipo =
+    document.getElementById(
+        "tipoEstoque"
+    );
+
+
+
+    if(!tipo){
+
+        return;
+
+    }
+
+
+
+
+    if(tipo.value==="materiaPrima"){
+
+
+
+        materias.forEach(function(mp){
+
+
+
+            tabela.innerHTML += `
+
+
+            <tr>
+
+            <td>${mp.nome}</td>
+
+            <td>${mp.unidade}</td>
+
+            <td>${mp.quantidade}</td>
+
+            <td>
+            R$ ${mp.custo.toFixed(2)}
+            </td>
+
+
+            </tr>
+
+
+            `;
+
+
+
+        });
+
+
+
+    }
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   MOVIMENTAÇÃO ESTOQUE
+========================================================= */
+
+
+
+
+
+function atualizarItensMovimentacao(){
+
+
+
+    const select =
+    document.getElementById(
+        "itemMovimentacao"
+    );
+
+
+
+    if(!select){
+
+        return;
+
+    }
+
+
+
+    select.innerHTML =
+    `<option value="">
+    Selecione um item
+    </option>`;
+
+
+
+
+
+    let tipo =
+    document.getElementById(
+        "tipoEstoqueMovimentacao"
+    ).value;
+
+
+
+
+    if(tipo==="materiaPrima"){
+
+
+
+        materias.forEach(function(mp,index){
+
+
+
+            select.innerHTML += `
+
+
+            <option value="${index}">
+
+            ${mp.nome}
+
+            </option>
+
+
+            `;
+
+
+
+        });
+
+
+
+    }
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function registrarMovimentacao(){
+
+
+
+    let tipo =
+    document.getElementById(
+        "tipoEstoqueMovimentacao"
+    ).value;
+
+
+
+    let operacao =
+    document.getElementById(
+        "tipoMovimentacao"
+    ).value;
+
+
+
+
+    let indice =
+    document.getElementById(
+        "itemMovimentacao"
+    ).value;
+
+
+
+
+
+    let quantidade =
+    Number(
+        document.getElementById(
+            "quantidadeMovimentacao"
+        ).value
+    );
+
+
+
+
+
+    if(indice===""){
+
+        alert(
+            "Selecione um item"
+        );
+
+        return;
+
+    }
+
+
+
+
+
+    if(tipo==="materiaPrima"){
+
+
+
+        let mp =
+        materias[indice];
+
+
+
+
+        if(operacao==="entrada"){
+
+
+            mp.quantidade += quantidade;
+
+
+        }else{
+
+
+            mp.quantidade -= quantidade;
+
+
+            if(mp.quantidade < 0){
+
+                mp.quantidade = 0;
+
+            }
+
+
+        }
+
+
+
+        salvarBanco(
+            DB.materias,
+            materias
+        );
+
+
+
+    }
+
+
+
+
+
+
+    atualizarTudo();
+
+
+
+    alert(
+        "Movimentação registrada!"
+    );
+
+
+
+}
+
+
+
+
+
+
+
+
+/* =========================================================
+   HISTÓRICO
+========================================================= */
+
+
+function atualizarHistorico(){
+
+
+    const tabela =
+    document.getElementById(
+        "historicoMovimentacoes"
+    );
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+    tabela.innerHTML="";
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   PRODUÇÃO
+========================================================= */
+
+
+function atualizarProdutosProducao(){
+
+
+
+    const select =
+    document.getElementById(
+        "produtoProducao"
+    );
+
+
+
+    if(!select){
+
+        return;
+
+    }
+
+
+
+    select.innerHTML="";
+
+
+
+    produtos.forEach(function(produto,index){
+
+
+
+        select.innerHTML += `
+
+
+        <option value="${index}">
+
+        ${produto.nome}
+
+        </option>
+
+
+        `;
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+function registrarProducao(){
+
+
+
+    let produto =
+    document.getElementById(
+        "produtoProducao"
+    ).value;
+
+
+
+
+    let quantidade =
+    Number(
+        document.getElementById(
+            "quantidadeProducao"
+        ).value
+    );
+
+
+
+
+
+    if(produto===""){
+
+        return;
+
+    }
+
+
+
+
+    let item =
+    produtos[produto];
+
+
+
+
+    item.estoque =
+    Number(item.estoque)
+    +
+    quantidade;
+
+
+
+
+    salvarBanco(
+        DB.produtos,
+        produtos
+    );
+
+
+
+
+    producao.push({
+
+
+        produto:item.nome,
+
+
+        quantidade:quantidade,
+
+
+        fabricacao:
+        document.getElementById(
+            "fabricacaoProducao"
+        ).value,
+
+
+        validade:
+        document.getElementById(
+            "validadeProducao"
+        ).value
+
+
+
+    });
+
+
+
+
+    salvarBanco(
+        DB.producao,
+        producao
+    );
+
+
+
+
+    atualizarTudo();
+
+
+
+    alert(
+        "Produção registrada!"
+    );
+
+
+
+}
+
+
+
+
+
+
+
+
+/* =========================================================
+   COMPLEMENTO DO ATUALIZAR TUDO
+========================================================= */
+
+
+const atualizarTudoOriginal =
+atualizarTudo;
+
+
+
+atualizarTudo =
+function(){
+
+
+
+    atualizarTudoOriginal();
+
+
+
+    atualizarMateriaPrima();
+
+
+    atualizarEstoque();
+
+
+    atualizarProdutosProducao();
+
+
+};
