@@ -599,19 +599,49 @@ function(){
 
 });
 /* =========================================================
-   MATÉRIA-PRIMA
+   PARTE 2 - MATÉRIA PRIMA / ESTOQUE / PRODUÇÃO
 ========================================================= */
 
 
-function gerarCodigoMP(){
+/* =========================================================
+   CARREGAMENTO
+========================================================= */
 
 
-    let numero =
-    materias.length + 1;
+let materias = JSON.parse(
+    localStorage.getItem(
+        "carols_gourmet_materias"
+    )
+) || [];
 
 
-    return "MP-" +
-    String(numero).padStart(4,"0");
+
+let movimentacoes = JSON.parse(
+    localStorage.getItem(
+        "carols_gourmet_movimentacoes"
+    )
+) || [];
+
+
+
+let producoes = JSON.parse(
+    localStorage.getItem(
+        "carols_gourmet_producoes"
+    )
+) || [];
+
+
+
+
+
+
+function salvarMaterias(){
+
+
+    localStorage.setItem(
+        "carols_gourmet_materias",
+        JSON.stringify(materias)
+    );
 
 
 }
@@ -621,114 +651,51 @@ function gerarCodigoMP(){
 
 
 
-function salvarMateriaPrima(){
+function salvarMovimentacoes(){
 
 
-
-    const nome =
-    document.getElementById(
-        "nomeMP"
-    ).value.trim();
-
-
-
-
-    if(!nome){
-
-
-        alert(
-            "Digite o nome da matéria-prima"
-        );
-
-
-        return;
-
-
-    }
-
-
-
-
-
-    let materia = {
-
-
-        codigo:
-        document.getElementById(
-            "codigoMP"
-        ).value
-        ||
-        gerarCodigoMP(),
-
-
-
-        nome:nome,
-
-
-
-        categoria:
-        document.getElementById(
-            "categoriaMP"
-        ).value,
-
-
-
-        unidade:
-        document.getElementById(
-            "unidadeMP"
-        ).value,
-
-
-
-        quantidade:
-        Number(
-            document.getElementById(
-                "estoqueMP"
-            ).value
-        ),
-
-
-
-        custo:
-        Number(
-            document.getElementById(
-                "custoMP"
-            ).value
-        )
-
-
-
-    };
-
-
-
-
-
-    materias.push(materia);
-
-
-
-    salvarBanco(
-        DB.materias,
-        materias
+    localStorage.setItem(
+        "carols_gourmet_movimentacoes",
+        JSON.stringify(movimentacoes)
     );
 
 
+}
 
 
-    alert(
-        "Matéria-prima cadastrada!"
+
+
+
+
+function salvarProducoes(){
+
+
+    localStorage.setItem(
+        "carols_gourmet_producoes",
+        JSON.stringify(producoes)
     );
 
 
+}
 
 
-    novaMateriaPrima();
 
 
 
-    atualizarTudo();
+/* =========================================================
+   MATÉRIA PRIMA
+========================================================= */
 
+
+
+function gerarCodigoMP(){
+
+
+    return "MP-" +
+    String(
+        materias.length + 1
+    )
+    .padStart(4,"0");
 
 
 }
@@ -742,7 +709,7 @@ function novaMateriaPrima(){
 
 
 
-    const codigo =
+    let codigo =
     document.getElementById(
         "codigoMP"
     );
@@ -751,12 +718,11 @@ function novaMateriaPrima(){
 
     if(codigo){
 
-
         codigo.value =
         gerarCodigoMP();
 
-
     }
+
 
 
 
@@ -768,13 +734,135 @@ function novaMateriaPrima(){
 
     document.getElementById(
         "estoqueMP"
-    ).value=0;
+    ).value="0";
 
 
 
     document.getElementById(
         "custoMP"
     ).value="";
+
+
+}
+
+
+
+
+
+
+function salvarMateriaPrima(){
+
+
+
+    let nome =
+    document.getElementById(
+        "nomeMP"
+    )
+    .value
+    .trim();
+
+
+
+
+    if(nome===""){
+
+
+        alert(
+            "Informe o nome da matéria-prima"
+        );
+
+
+        return;
+
+    }
+
+
+
+
+
+    let mp = {
+
+
+
+        codigo:
+        document.getElementById(
+            "codigoMP"
+        )
+        .value
+        ||
+        gerarCodigoMP(),
+
+
+
+        nome:nome,
+
+
+
+        categoria:
+        document.getElementById(
+            "categoriaMP"
+        )
+        .value,
+
+
+
+        unidade:
+        document.getElementById(
+            "unidadeMP"
+        )
+        .value,
+
+
+
+        quantidade:
+        Number(
+            document.getElementById(
+                "estoqueMP"
+            )
+            .value
+        )
+        ||
+        0,
+
+
+
+        custo:
+        Number(
+            document.getElementById(
+                "custoMP"
+            )
+            .value
+        )
+        ||
+        0
+
+
+
+    };
+
+
+
+
+
+    materias.push(mp);
+
+
+
+    salvarMaterias();
+
+
+
+    atualizarMateriaPrima();
+
+
+
+    novaMateriaPrima();
+
+
+
+    alert(
+        "Matéria-prima salva!"
+    );
 
 
 
@@ -785,11 +873,12 @@ function novaMateriaPrima(){
 
 
 
+
 function atualizarMateriaPrima(){
 
 
 
-    const tabela =
+    let tabela =
     document.getElementById(
         "listaMateriaPrima"
     );
@@ -804,18 +893,106 @@ function atualizarMateriaPrima(){
 
 
 
+
+
     tabela.innerHTML="";
 
 
 
 
-    materias.forEach(function(mp,index){
+    materias.forEach(
+    function(mp){
 
 
 
-        let total =
-        mp.quantidade *
-        mp.custo;
+        tabela.innerHTML += `
+
+
+        <tr>
+
+        <td>${mp.codigo}</td>
+
+        <td>${mp.nome}</td>
+
+        <td>${mp.categoria}</td>
+
+        <td>${mp.unidade}</td>
+
+        <td>${mp.quantidade}</td>
+
+        <td>
+        R$ ${mp.custo.toFixed(2)}
+        </td>
+
+        <td>
+        R$ ${(mp.quantidade * mp.custo).toFixed(2)}
+        </td>
+
+
+        </tr>
+
+
+        `;
+
+
+
+    });
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   ESTOQUE
+========================================================= */
+
+
+
+function alterarTipoEstoque(){
+
+
+    atualizarEstoque();
+
+
+}
+
+
+
+
+
+
+function atualizarEstoque(){
+
+
+
+    let tabela =
+    document.getElementById(
+        "listaEstoque"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+
+    tabela.innerHTML="";
+
+
+
+
+    materias.forEach(
+    function(mp){
 
 
 
@@ -825,17 +1002,9 @@ function atualizarMateriaPrima(){
         <tr>
 
 
-        <td>${mp.codigo}</td>
-
-
         <td>${mp.nome}</td>
 
-
-        <td>${mp.categoria}</td>
-
-
         <td>${mp.unidade}</td>
-
 
         <td>${mp.quantidade}</td>
 
@@ -845,14 +1014,72 @@ function atualizarMateriaPrima(){
         </td>
 
 
-        <td>
-        R$ ${total.toFixed(2)}
-        </td>
-
-
-
         </tr>
 
+
+        `;
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+   MOVIMENTAÇÃO
+========================================================= */
+
+
+
+function atualizarItensMovimentacao(){
+
+
+
+    let select =
+    document.getElementById(
+        "itemMovimentacao"
+    );
+
+
+
+    if(!select){
+
+        return;
+
+    }
+
+
+
+
+    select.innerHTML =
+    `
+    <option value="">
+    Selecione um item
+    </option>
+    `;
+
+
+
+    materias.forEach(
+    function(mp,index){
+
+
+
+        select.innerHTML += `
+
+
+        <option value="${index}">
+
+        ${mp.nome}
+
+        </option>
 
 
         `;
@@ -871,218 +1098,15 @@ function atualizarMateriaPrima(){
 
 
 
-/* =========================================================
-   ESTOQUE
-========================================================= */
-
-
-function alterarTipoEstoque(){
-
-
-    atualizarEstoque();
-
-
-}
-
-
-
-
-
-function atualizarEstoque(){
-
-
-
-    const tabela =
-    document.getElementById(
-        "listaEstoque"
-    );
-
-
-
-    if(!tabela){
-
-        return;
-
-    }
-
-
-
-    tabela.innerHTML="";
-
-
-
-
-    let tipo =
-    document.getElementById(
-        "tipoEstoque"
-    );
-
-
-
-    if(!tipo){
-
-        return;
-
-    }
-
-
-
-
-    if(tipo.value==="materiaPrima"){
-
-
-
-        materias.forEach(function(mp){
-
-
-
-            tabela.innerHTML += `
-
-
-            <tr>
-
-            <td>${mp.nome}</td>
-
-            <td>${mp.unidade}</td>
-
-            <td>${mp.quantidade}</td>
-
-            <td>
-            R$ ${mp.custo.toFixed(2)}
-            </td>
-
-
-            </tr>
-
-
-            `;
-
-
-
-        });
-
-
-
-    }
-
-}
-
-
-
-
-
-
-
-/* =========================================================
-   MOVIMENTAÇÃO ESTOQUE
-========================================================= */
-
-
-
-
-
-function atualizarItensMovimentacao(){
-
-
-
-    const select =
-    document.getElementById(
-        "itemMovimentacao"
-    );
-
-
-
-    if(!select){
-
-        return;
-
-    }
-
-
-
-    select.innerHTML =
-    `<option value="">
-    Selecione um item
-    </option>`;
-
-
-
-
-
-    let tipo =
-    document.getElementById(
-        "tipoEstoqueMovimentacao"
-    ).value;
-
-
-
-
-    if(tipo==="materiaPrima"){
-
-
-
-        materias.forEach(function(mp,index){
-
-
-
-            select.innerHTML += `
-
-
-            <option value="${index}">
-
-            ${mp.nome}
-
-            </option>
-
-
-            `;
-
-
-
-        });
-
-
-
-    }
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
 function registrarMovimentacao(){
-
-
-
-    let tipo =
-    document.getElementById(
-        "tipoEstoqueMovimentacao"
-    ).value;
-
-
-
-    let operacao =
-    document.getElementById(
-        "tipoMovimentacao"
-    ).value;
-
 
 
 
     let indice =
     document.getElementById(
         "itemMovimentacao"
-    ).value;
-
-
+    )
+    .value;
 
 
 
@@ -1090,18 +1114,28 @@ function registrarMovimentacao(){
     Number(
         document.getElementById(
             "quantidadeMovimentacao"
-        ).value
+        )
+        .value
     );
 
+
+
+    let operacao =
+    document.getElementById(
+        "tipoMovimentacao"
+    )
+    .value;
 
 
 
 
     if(indice===""){
 
+
         alert(
-            "Selecione um item"
+            "Selecione o item"
         );
+
 
         return;
 
@@ -1111,101 +1145,82 @@ function registrarMovimentacao(){
 
 
 
-    if(tipo==="materiaPrima"){
 
-
-
-        let mp =
-        materias[indice];
+    let mp =
+    materias[indice];
 
 
 
 
-        if(operacao==="entrada"){
+
+    if(operacao==="entrada"){
 
 
-            mp.quantidade += quantidade;
+        mp.quantidade += quantidade;
 
 
-        }else{
+    }
+    else{
 
 
-            mp.quantidade -= quantidade;
+        mp.quantidade -= quantidade;
 
 
-            if(mp.quantidade < 0){
+        if(mp.quantidade < 0){
 
-                mp.quantidade = 0;
-
-            }
-
+            mp.quantidade=0;
 
         }
-
-
-
-        salvarBanco(
-            DB.materias,
-            materias
-        );
-
-
 
     }
 
 
 
 
+    movimentacoes.push({
 
 
-    atualizarTudo();
+        data:
+        new Date()
+        .toLocaleDateString(),
+
+
+        item:mp.nome,
+
+
+        quantidade:quantidade,
+
+
+        operacao:operacao
+
+
+    });
+
+
+
+
+
+    salvarMaterias();
+
+
+    salvarMovimentacoes();
+
+
+
+    atualizarMateriaPrima();
+
+
+    atualizarEstoque();
 
 
 
     alert(
-        "Movimentação registrada!"
+        "Movimentação realizada!"
     );
 
 
 
 }
-
-
-
-
-
-
-
-
-/* =========================================================
-   HISTÓRICO
-========================================================= */
-
-
-function atualizarHistorico(){
-
-
-    const tabela =
-    document.getElementById(
-        "historicoMovimentacoes"
-    );
-
-
-    if(!tabela){
-
-        return;
-
-    }
-
-
-    tabela.innerHTML="";
-
-
-
-}
-
-
-
 
 
 
@@ -1221,7 +1236,7 @@ function atualizarProdutosProducao(){
 
 
 
-    const select =
+    let select =
     document.getElementById(
         "produtoProducao"
     );
@@ -1236,11 +1251,13 @@ function atualizarProdutosProducao(){
 
 
 
+
     select.innerHTML="";
 
 
 
-    produtos.forEach(function(produto,index){
+    produtos.forEach(
+    function(produto,index){
 
 
 
@@ -1261,7 +1278,6 @@ function atualizarProdutosProducao(){
     });
 
 
-
 }
 
 
@@ -1275,11 +1291,11 @@ function registrarProducao(){
 
 
 
-    let produto =
+    let indice =
     document.getElementById(
         "produtoProducao"
-    ).value;
-
+    )
+    .value;
 
 
 
@@ -1287,14 +1303,15 @@ function registrarProducao(){
     Number(
         document.getElementById(
             "quantidadeProducao"
-        ).value
+        )
+        .value
     );
 
 
 
 
 
-    if(produto===""){
+    if(indice===""){
 
         return;
 
@@ -1303,48 +1320,43 @@ function registrarProducao(){
 
 
 
-    let item =
-    produtos[produto];
+
+    let produto =
+    produtos[indice];
 
 
 
 
-    item.estoque =
-    Number(item.estoque)
+    produto.estoque =
+    Number(produto.estoque || 0)
     +
     quantidade;
 
 
 
 
-    salvarBanco(
-        DB.produtos,
-        produtos
+
+    localStorage.setItem(
+        "carols_gourmet_produtos",
+        JSON.stringify(produtos)
     );
 
 
 
 
-    producao.push({
+    producoes.push({
 
 
-        produto:item.nome,
+        produto:
+        produto.nome,
 
 
         quantidade:quantidade,
 
 
-        fabricacao:
-        document.getElementById(
-            "fabricacaoProducao"
-        ).value,
-
-
-        validade:
-        document.getElementById(
-            "validadeProducao"
-        ).value
-
+        data:
+        new Date()
+        .toLocaleDateString()
 
 
     });
@@ -1352,15 +1364,11 @@ function registrarProducao(){
 
 
 
-    salvarBanco(
-        DB.producao,
-        producao
-    );
+    salvarProducoes();
 
 
 
-
-    atualizarTudo();
+    atualizarProdutos();
 
 
 
@@ -1378,24 +1386,15 @@ function registrarProducao(){
 
 
 
-
 /* =========================================================
-   COMPLEMENTO DO ATUALIZAR TUDO
+   INICIALIZAÇÃO
 ========================================================= */
 
 
-const atualizarTudoOriginal =
-atualizarTudo;
 
-
-
-atualizarTudo =
+window.addEventListener(
+"load",
 function(){
-
-
-
-    atualizarTudoOriginal();
-
 
 
     atualizarMateriaPrima();
@@ -1404,7 +1403,11 @@ function(){
     atualizarEstoque();
 
 
+    atualizarItensMovimentacao();
+
+
     atualizarProdutosProducao();
 
 
-};
+
+});
