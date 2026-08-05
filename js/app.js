@@ -1814,15 +1814,12 @@ function calcularPreco(){
 
 
 
-
 // ======================================================
-// INICIALIZAÇÃO DA PARTE 3
+// INICIALIZAÇÃO PRODUÇÃO / PRECIFICAÇÃO
 // ======================================================
 
 
-window.addEventListener(
-"load",
-function(){
+function iniciarProducao(){
 
 
     carregarProdutosProducao();
@@ -1834,5 +1831,8 @@ function(){
     carregarProdutosPreco();
 
 
+}
 
-});
+
+
+
