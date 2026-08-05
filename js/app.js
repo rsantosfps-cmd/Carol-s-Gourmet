@@ -1258,3 +1258,581 @@ function registrarMovimentacao(){
 
 
 }
+// ======================================================
+// CAROL'S GOURMET ERP 4.0
+// PARTE 3/4
+// PRODUÇÃO + PRECIFICAÇÃO
+// ======================================================
+
+
+
+// ======================================================
+// PRODUÇÃO
+// ======================================================
+
+
+
+function carregarProdutosProducao(){
+
+
+    const select =
+    document.getElementById(
+        "produtoProducao"
+    );
+
+
+    if(!select){
+
+        return;
+
+    }
+
+
+
+    select.innerHTML = `
+
+<option value="">
+Selecione o produto
+</option>
+
+`;
+
+
+
+    if(typeof produtos === "undefined"){
+
+        return;
+
+    }
+
+
+
+    produtos.forEach(function(produto){
+
+
+        let option =
+        document.createElement("option");
+
+
+        option.value =
+        produto.codigo;
+
+
+        option.textContent =
+        produto.nome;
+
+
+
+        select.appendChild(option);
+
+
+    });
+
+
+}
+
+
+
+
+
+
+
+
+function calcularValidadeProducao(){
+
+
+    const fabricacao =
+    document.getElementById(
+        "fabricacaoProducao"
+    );
+
+
+
+    const validade =
+    document.getElementById(
+        "validadeProducao"
+    );
+
+
+
+    if(!fabricacao || !validade){
+
+        return;
+
+    }
+
+
+
+    if(!fabricacao.value){
+
+        return;
+
+    }
+
+
+
+    let data =
+    new Date(
+        fabricacao.value
+    );
+
+
+
+    // validade padrão 7 dias
+
+    data.setDate(
+        data.getDate() + 7
+    );
+
+
+
+    validade.value =
+    data.toISOString()
+    .split("T")[0];
+
+
+}
+
+
+
+
+
+
+
+
+
+function registrarProducao(){
+
+
+
+    let produtoCodigo =
+    document.getElementById(
+        "produtoProducao"
+    )?.value;
+
+
+
+    let quantidade =
+    Number(
+        document.getElementById(
+            "quantidadeProducao"
+        )?.value || 0
+    );
+
+
+
+
+    if(!produtoCodigo || quantidade <=0){
+
+
+        alert(
+            "Selecione o produto e informe a quantidade"
+        );
+
+
+        return;
+
+    }
+
+
+
+
+
+
+    let produto =
+    produtos.find(
+        function(p){
+
+            return p.codigo === produtoCodigo;
+
+        }
+    );
+
+
+
+
+
+    if(!produto){
+
+
+        alert(
+            "Produto não encontrado"
+        );
+
+
+        return;
+
+    }
+
+
+
+
+
+
+    produto.estoque =
+    Number(produto.estoque || 0)
+    + quantidade;
+
+
+
+
+
+
+
+    let producao = {
+
+
+        produto:
+        produto.nome,
+
+
+        codigo:
+        produto.codigo,
+
+
+        quantidade:
+        quantidade,
+
+
+        fabricacao:
+        document.getElementById(
+            "fabricacaoProducao"
+        )?.value || "",
+
+
+        validade:
+        document.getElementById(
+            "validadeProducao"
+        )?.value || "",
+
+
+        observacao:
+        document.getElementById(
+            "observacaoProducao"
+        )?.value || ""
+
+
+    };
+
+
+
+
+
+
+    producoes.push(producao);
+
+
+
+
+
+
+    salvarBanco();
+
+
+
+    carregarListaProducao();
+
+
+
+    carregarEstoque();
+
+
+
+    atualizarDashboard();
+
+
+
+
+
+    alert(
+        "Produção registrada!"
+    );
+
+
+
+}
+
+
+
+
+
+
+
+
+function carregarListaProducao(){
+
+
+
+    const tabela =
+    document.getElementById(
+        "listaProducao"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+    tabela.innerHTML="";
+
+
+
+
+
+    if(typeof producoes === "undefined"){
+
+        return;
+
+    }
+
+
+
+
+
+    producoes.forEach(function(p){
+
+
+
+        tabela.innerHTML += `
+
+
+<tr>
+
+<td>${p.produto}</td>
+
+<td>${p.quantidade}</td>
+
+<td>${p.fabricacao}</td>
+
+<td>${p.validade}</td>
+
+
+</tr>
+
+
+`;
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+// ======================================================
+// PRECIFICAÇÃO
+// ======================================================
+
+
+
+
+
+function carregarProdutosPreco(){
+
+
+
+    const select =
+    document.getElementById(
+        "produtoPreco"
+    );
+
+
+
+    if(!select){
+
+        return;
+
+    }
+
+
+
+    select.innerHTML = `
+
+<option value="">
+Selecione o produto
+</option>
+
+`;
+
+
+
+    produtos.forEach(function(produto){
+
+
+
+        let option =
+        document.createElement("option");
+
+
+
+        option.value =
+        produto.codigo;
+
+
+
+        option.textContent =
+        produto.nome;
+
+
+
+        select.appendChild(option);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+function calcularPreco(){
+
+
+
+    let materia =
+    Number(
+        document.getElementById(
+            "custoMateria"
+        )?.value || 0
+    );
+
+
+
+    let embalagem =
+    Number(
+        document.getElementById(
+            "custoEmbalagem"
+        )?.value || 0
+    );
+
+
+
+    let outros =
+    Number(
+        document.getElementById(
+            "outrosCustos"
+        )?.value || 0
+    );
+
+
+
+    let margem =
+    Number(
+        document.getElementById(
+            "margemLucro"
+        )?.value || 0
+    );
+
+
+
+
+
+
+
+    let custoTotal =
+    materia +
+    embalagem +
+    outros;
+
+
+
+
+
+    let venda =
+    custoTotal *
+    (1 + margem / 100);
+
+
+
+
+
+
+
+    let resultadoCusto =
+    document.getElementById(
+        "resultadoCusto"
+    );
+
+
+
+    let resultadoVenda =
+    document.getElementById(
+        "resultadoVenda"
+    );
+
+
+
+
+
+    if(resultadoCusto){
+
+        resultadoCusto.innerText =
+        "R$ " +
+        custoTotal.toFixed(2);
+
+    }
+
+
+
+
+
+    if(resultadoVenda){
+
+        resultadoVenda.innerText =
+        "R$ " +
+        venda.toFixed(2);
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+// ======================================================
+// INICIALIZAÇÃO DA PARTE 3
+// ======================================================
+
+
+window.addEventListener(
+"load",
+function(){
+
+
+    carregarProdutosProducao();
+
+
+    carregarListaProducao();
+
+
+    carregarProdutosPreco();
+
+
+
+});
