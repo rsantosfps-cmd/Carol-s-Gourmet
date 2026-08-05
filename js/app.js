@@ -4415,3 +4415,28 @@ janela.document.close();
 
 
 }
+/* =========================================================
+   ATUALIZAÇÃO GERAL DO SISTEMA
+========================================================= */
+
+function atualizarTudo(){
+
+    atualizarListaProdutos();
+
+    atualizarListaMateriaPrima();
+
+    alterarTipoEstoque();
+
+    atualizarItensMovimentacao();
+
+    atualizarSelectsProdutos();
+
+    atualizarSelectsMateriaPrima();
+
+    atualizarDashboard();
+
+    atualizarHistoricoMovimentacoes();
+
+    atualizarListaProducao();
+
+}
