@@ -71,11 +71,19 @@ function salvarBanco(){
 // INICIO DO SISTEMA
 // ================================
 
-
 window.onload = function(){
 
 
     carregarProdutos();
+
+
+    carregarMaterias();
+
+
+    carregarEstoque();
+
+
+    iniciarProducao();
 
 
     atualizarDashboard();
