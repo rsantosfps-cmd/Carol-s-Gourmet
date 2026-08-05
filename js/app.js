@@ -406,7 +406,7 @@ function salvarMateriaPrima(){
 
 
 
-    salvarDados();
+    salvarBanco();
 
 
     listarMaterias();
