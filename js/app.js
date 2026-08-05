@@ -3568,11 +3568,11 @@ function importarBackup() {
 
 
 /* =========================================================
-   TARJETA - HTML
-   =========================================================
-   TAMANHO FINAL:
-   21 CM LARGURA
-   5 CM ALTURA
+   TARJETA - HTML NOVO
+   FORMATO:
+   5 CM LARGURA
+   21 CM ALTURA
+   VERTICAL
 ========================================================= */
 
 function criarTarjetaHTML(
@@ -3581,32 +3581,13 @@ function criarTarjetaHTML(
     validade
 ) {
 
-    if (!produto) {
+    if (!produto) return "";
 
-        return "";
-
-    }
-
-
-    /*
-     * O EAN pertence ao produto.
-     * Cada sabor continua com seu próprio EAN.
-     */
 
     const ean =
         produto.ean ||
         gerarEAN13();
 
-
-    /*
-     * IMPORTANTE:
-     *
-     * O logo recebe uma URL absoluta.
-     *
-     * Isso corrige o problema em que
-     * assets/logo.png aparecia quebrado
-     * na janela de impressão.
-     */
 
     const logoURL =
         new URL(
@@ -3617,106 +3598,88 @@ function criarTarjetaHTML(
 
     return `
 
-        <div
-            class="tarjeta-impressao"
-            data-produto-id="${produto.id}"
-        >
+<div class="tarjeta-impressao"
+     data-produto-id="${produto.id}">
 
-            <div class="tarjeta-lateral-esquerda">
 
-                <div class="tarjeta-xadrez">
-                </div>
+    <div class="tarjeta-conteudo">
 
-                <div class="tarjeta-onda-esquerda">
-                </div>
 
+        <div class="tarjeta-logo">
+
+            <img
+              src="${logoURL}"
+              alt="Carol's Gourmet"
+            >
+
+        </div>
+
+
+
+        <div class="tarjeta-frase">
+
+            <div class="tarjeta-linha">
+                <span></span>
+                <strong>♥</strong>
+                <span></span>
             </div>
 
 
-            <div class="tarjeta-conteudo">
-
-                <div class="tarjeta-codigo">
-
-                    <svg
-                        class="barcode-tarjeta"
-                        data-ean="${ean}"
-                    ></svg>
-
-                    <div class="tarjeta-datas">
-
-                        <span>
-                            FAB:
-                            ${formatarData(
-                                fabricacao
-                            )}
-                        </span>
-
-                        <span>
-                            VAL:
-                            ${formatarData(
-                                validade
-                            )}
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="tarjeta-logo">
-
-                    <img
-                        src="${logoURL}"
-                        alt="Carol's Gourmet"
-                    >
-
-                </div>
-
-
-                <div class="tarjeta-frase">
-
-                    <div class="tarjeta-linha">
-
-                        <span></span>
-
-                        <strong>♥</strong>
-
-                        <span></span>
-
-                    </div>
-
-                    <div class="tarjeta-frase-destaque">
-                        Feito com amor,
-                    </div>
-
-                    <div class="tarjeta-frase-normal">
-                        pra adoçar seus dias!
-                    </div>
-
-                    <div class="tarjeta-coracao">
-                        ♥
-                    </div>
-
-                </div>
-
+            <div class="tarjeta-frase-destaque">
+                Feito com amor,
             </div>
 
 
-            <div class="tarjeta-lateral-direita">
+            <div class="tarjeta-frase-normal">
+                pra adoçar seus dias!
+            </div>
 
-                <div class="tarjeta-xadrez">
-                </div>
 
-                <div class="tarjeta-onda-direita">
-                </div>
-
+            <div class="tarjeta-coracao">
+                ♥
             </div>
 
         </div>
 
-    `;
+
+
+        <div class="tarjeta-codigo">
+
+
+            <svg
+             class="barcode-tarjeta"
+             data-ean="${ean}">
+            </svg>
+
+
+            <div class="tarjeta-datas">
+
+                <span>
+                 FAB:
+                 ${formatarData(fabricacao)}
+                </span>
+
+
+                <span>
+                 VAL:
+                 ${formatarData(validade)}
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+`;
 
 }
+
 
 
 /* =========================================================
@@ -3725,29 +3688,170 @@ function criarTarjetaHTML(
 
 function gerarTarjetas() {
 
-    const produtoSelect =
-        document.getElementById(
-            "produtoTarjeta"
-        );
+
+const produtoSelect =
+document.getElementById(
+"produtoTarjeta"
+);
 
 
-    const quantidadeCampo =
-        document.getElementById(
-            "quantidadeTarjeta"
-        );
+const quantidadeCampo =
+document.getElementById(
+"quantidadeTarjeta"
+);
 
 
-    const fabricacaoCampo =
-        document.getElementById(
-            "fabricacaoTarjeta"
-        );
+const fabricacaoCampo =
+document.getElementById(
+"fabricacaoTarjeta"
+);
 
 
-    const validadeCampo =
-        document.getElementById(
-            "validadeTarjeta"
-        );
+const validadeCampo =
+document.getElementById(
+"validadeTarjeta"
+);
 
+
+const area =
+document.getElementById(
+"areaTarjetas"
+);
+
+
+
+if(!produtoSelect || !area){
+
+alert(
+"Área de tarjetas não encontrada."
+);
+
+return;
+
+}
+
+
+
+const produtoId =
+Number(produtoSelect.value);
+
+
+
+const quantidade =
+Number(
+quantidadeCampo?.value || 1
+);
+
+
+
+const fabricacao =
+fabricacaoCampo?.value ||
+obterDataHoje();
+
+
+
+let validade =
+validadeCampo?.value || "";
+
+
+
+if(!produtoId){
+
+alert(
+"Selecione um produto."
+);
+
+return;
+
+}
+
+
+
+const produto =
+produtos.find(
+p=>p.id===produtoId
+);
+
+
+
+if(!produto){
+
+alert(
+"Produto não encontrado."
+);
+
+return;
+
+}
+
+
+
+if(!produtoPodeTerTarjeta(produto)){
+
+alert(
+"Produto não permitido para tarjeta."
+);
+
+return;
+
+}
+
+
+
+if(!validade){
+
+const dias =
+obterDiasValidadeProduto(produto);
+
+
+if(dias!==null){
+
+validade =
+calcularDataValidade(
+fabricacao,
+dias
+);
+
+}
+
+}
+
+
+
+for(
+let i=0;
+i<quantidade;
+i++
+){
+
+area.insertAdjacentHTML(
+"beforeend",
+criarTarjetaHTML(
+produto,
+fabricacao,
+validade
+)
+);
+
+}
+
+
+
+gerarCodigosTarjetas();
+
+atualizarResumoTarjetas();
+
+
+}
+/* =========================================================
+   IMPRIMIR TARJETAS - NOVA
+   FORMATO:
+   5 CM LARGURA
+   21 CM ALTURA
+   VERTICAL
+========================================================= */
+
+function imprimirTarjetas(){
 
     const area =
         document.getElementById(
@@ -3755,10 +3859,10 @@ function gerarTarjetas() {
         );
 
 
-    if (!produtoSelect) {
+    if(!area){
 
         alert(
-            "Campo de produto da tarjeta não encontrado."
+            "Área de tarjetas não encontrada."
         );
 
         return;
@@ -3766,36 +3870,17 @@ function gerarTarjetas() {
     }
 
 
-    const produtoId =
-        Number(
-            produtoSelect.value
+
+    const tarjetas =
+        area.querySelectorAll(
+            ".tarjeta-impressao"
         );
 
 
-    const quantidade =
-        Number(
-            quantidadeCampo
-                ? quantidadeCampo.value
-                : 1
-        ) || 1;
-
-
-    const fabricacao =
-        fabricacaoCampo
-            ? fabricacaoCampo.value
-            : obterDataHoje();
-
-
-    let validade =
-        validadeCampo
-            ? validadeCampo.value
-            : "";
-
-
-    if (!produtoId) {
+    if(!tarjetas.length){
 
         alert(
-            "Selecione o Brownie ou a Palha Italiana."
+            "Gere pelo menos uma tarjeta."
         );
 
         return;
@@ -3803,1176 +3888,530 @@ function gerarTarjetas() {
     }
 
 
-    const produto =
-        produtos.find(
-            function (item) {
 
-                return (
-                    item.id ===
-                    produtoId
-                );
-
-            }
-        );
+    gerarCodigosTarjetas();
 
 
-    if (!produto) {
 
-        alert(
-            "Produto não encontrado."
-        );
-
-        return;
-
-    }
+    setTimeout(()=>{
 
 
-    if (
-        !produtoPodeTerTarjeta(
-            produto
-        )
-    ) {
-
-        alert(
-            "A tarjeta está disponível somente para Brownie e Palha Italiana."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        !quantidade ||
-        quantidade < 1
-    ) {
-
-        alert(
-            "Informe uma quantidade válida."
-        );
-
-        return;
-
-    }
-
-
-    if (!validade) {
-
-        const dias =
-            obterDiasValidadeProduto(
-                produto
+        const janela =
+            window.open(
+                "",
+                "_blank"
             );
 
 
-        if (dias !== null) {
+        if(!janela){
 
-            validade =
-                calcularDataValidade(
-                    fabricacao,
-                    dias
-                );
+            alert(
+                "Permita pop-ups para imprimir."
+            );
 
-        }
-
-    }
-
-
-    if (!area) {
-
-        alert(
-            "Área de tarjetas não encontrada."
-        );
-
-        return;
-
-    }
-
-
-    for (
-        let i = 0;
-        i < quantidade;
-        i++
-    ) {
-
-        area.insertAdjacentHTML(
-            "beforeend",
-            criarTarjetaHTML(
-                produto,
-                fabricacao,
-                validade
-            )
-        );
-
-    }
-
-
-    gerarCodigosTarjetas();
-
-    atualizarResumoTarjetas();
-
-}
-
-
-/* =========================================================
-   CÓDIGOS DE BARRAS
-========================================================= */
-
-function gerarCodigosTarjetas() {
-
-    if (
-        typeof JsBarcode ===
-        "undefined"
-    ) {
-
-        return;
-
-    }
-
-
-    const codigos =
-        document.querySelectorAll(
-            ".barcode-tarjeta"
-        );
-
-
-    codigos.forEach(
-        function (svg) {
-
-            const ean =
-                svg.dataset.ean;
-
-
-            if (!ean) {
-
-                return;
-
-            }
-
-
-            svg.innerHTML = "";
-
-
-            try {
-
-                JsBarcode(
-                    svg,
-                    ean,
-                    {
-
-                        format:
-                            "EAN13",
-
-                        displayValue:
-                            true,
-
-                        width:
-                            1.25,
-
-                        height:
-                            28,
-
-                        margin:
-                            1,
-
-                        fontSize:
-                            9,
-
-                        textMargin:
-                            1
-
-                    }
-                );
-
-
-            } catch (erro) {
-
-                console.error(
-                    "Erro no EAN da tarjeta:",
-                    erro
-                );
-
-            }
+            return;
 
         }
+
+
+
+        const conteudo =
+            area.innerHTML;
+
+
+
+        janela.document.write(`
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+
+<title>
+Tarjetas Carol's Gourmet
+</title>
+
+
+<style>
+
+
+@page{
+
+    size:A4 portrait;
+
+    margin:10mm;
+
+}
+
+
+
+*{
+
+    box-sizing:border-box;
+
+}
+
+
+
+body{
+
+    margin:0;
+
+    padding:0;
+
+    font-family:Arial,sans-serif;
+
+    -webkit-print-color-adjust:exact!important;
+
+    print-color-adjust:exact!important;
+
+}
+
+
+
+.folha-impressao{
+
+
+    width:190mm;
+
+
+    display:flex;
+
+
+    flex-wrap:wrap;
+
+
+    gap:5mm;
+
+
+    align-items:flex-start;
+
+
+}
+
+
+
+.tarjeta-impressao{
+
+
+    width:50mm;
+
+
+    height:210mm;
+
+
+    position:relative;
+
+
+    overflow:hidden;
+
+
+    border:1px solid #ddd;
+
+
+    background:white;
+
+
+    page-break-inside:avoid;
+
+
+}
+
+
+
+.tarjeta-conteudo{
+
+
+    height:100%;
+
+
+    width:100%;
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    align-items:center;
+
+
+    justify-content:space-around;
+
+
+    padding:5mm 3mm;
+
+
+}
+
+
+
+
+/* LOGO */
+
+
+.tarjeta-logo{
+
+
+    width:42mm;
+
+
+    height:45mm;
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    justify-content:center;
+
+
+}
+
+
+
+.tarjeta-logo img{
+
+
+    width:38mm;
+
+
+    max-height:40mm;
+
+
+    object-fit:contain;
+
+
+}
+
+
+
+
+/* FRASE */
+
+
+.tarjeta-frase{
+
+
+    text-align:center;
+
+
+}
+
+
+
+.tarjeta-linha{
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    justify-content:center;
+
+
+    gap:3mm;
+
+
+}
+
+
+
+.tarjeta-linha span{
+
+
+    width:10mm;
+
+
+    height:1px;
+
+
+    background:#b40000;
+
+
+}
+
+
+
+.tarjeta-linha strong{
+
+
+    color:#b40000;
+
+
+    font-size:18px;
+
+
+}
+
+
+
+.tarjeta-frase-destaque{
+
+
+    color:#b40000;
+
+
+    font-family:Georgia,serif;
+
+
+    font-style:italic;
+
+
+    font-weight:bold;
+
+
+    font-size:14px;
+
+
+}
+
+
+
+.tarjeta-frase-normal{
+
+
+    font-size:11px;
+
+
+}
+
+
+
+.tarjeta-coracao{
+
+
+    color:#b40000;
+
+
+    font-size:18px;
+
+
+}
+
+
+
+
+
+/* CODIGO */
+
+
+.tarjeta-codigo{
+
+
+    width:45mm;
+
+
+    text-align:center;
+
+
+}
+
+
+
+.barcode-tarjeta{
+
+
+    width:42mm;
+
+
+    height:auto;
+
+
+}
+
+
+
+.tarjeta-datas{
+
+
+    display:flex;
+
+
+    justify-content:space-between;
+
+
+    font-size:8px;
+
+
+    margin-top:2mm;
+
+
+}
+
+
+
+
+/* laterais */
+
+.tarjeta-lateral-esquerda,
+.tarjeta-lateral-direita{
+
+
+    position:absolute;
+
+
+    top:0;
+
+
+    width:5mm;
+
+
+    height:100%;
+
+
+    background:#c51414;
+
+
+    z-index:5;
+
+
+}
+
+
+
+.tarjeta-lateral-esquerda{
+
+
+    left:0;
+
+}
+
+
+
+.tarjeta-lateral-direita{
+
+
+    right:0;
+
+}
+
+
+
+
+.tarjeta-xadrez{
+
+
+    width:100%;
+
+    height:100%;
+
+
+    background-color:#c51414;
+
+
+    background-image:
+
+    linear-gradient(
+    45deg,
+    #ffc928 25%,
+    transparent 25%,
+    transparent 75%,
+    #ffc928 75%
+    ),
+
+    linear-gradient(
+    45deg,
+    #ffc928 25%,
+    transparent 25%,
+    transparent 75%,
+    #ffc928 75%
     );
 
+
+    background-size:10px 10px;
+
+
 }
 
 
-/* =========================================================
-   RESUMO
-========================================================= */
-
-function atualizarResumoTarjetas() {
-
-    const area =
-        document.getElementById(
-            "areaTarjetas"
-        );
 
 
-    const resumo =
-        document.getElementById(
-            "folhaTarjetas"
-        );
+@media print{
 
 
-    if (!area || !resumo) {
+    body{
 
-        return;
+        margin:0;
 
     }
 
 
-    const tarjetas =
-        area.querySelectorAll(
-            ".tarjeta-impressao"
-        );
-
-
-    resumo.textContent =
-        tarjetas.length +
-        (
-            tarjetas.length === 1
-                ? " tarjeta pronta"
-                : " tarjetas prontas"
-        );
-
 }
 
 
-/* =========================================================
-   LIMPAR TARJETAS
-========================================================= */
-
-function limparTarjetas() {
-
-    const area =
-        document.getElementById(
-            "areaTarjetas"
-        );
+</style>
 
 
-    if (!area) {
-
-        return;
-
-    }
+</head>
 
 
-    area.innerHTML = "";
 
-    atualizarResumoTarjetas();
+<body>
+
+
+<div class="folha-impressao">
+
+
+${conteudo}
+
+
+</div>
+
+
+
+<script>
+
+
+window.onload=function(){
+
+
+setTimeout(
+
+function(){
+
+window.print();
+
+
+},
+
+700
+
+);
+
+
+};
+
+
+<\/script>
+
+
+
+</body>
+
+
+</html>
+
+
+`);
+
+
+
+janela.document.close();
+
+
+
+},500);
+
+
 
 }
-
-
-/* =========================================================
-   IMPRIMIR TARJETAS
-   =========================================================
-   CORREÇÃO PRINCIPAL
-   ---------------------------------------------------------
-   TARJETA:
-   21 cm x 5 cm
-   HORIZONTAL
-
-   A4:
-   21 cm x 29,7 cm
-   PORTRAIT
-
-   RESULTADO:
-   ATÉ 5 TARJETAS POR FOLHA
-========================================================= */
-
-function imprimirTarjetas() {
-
-    const area =
-        document.getElementById(
-            "areaTarjetas"
-        );
-
-
-    if (!area) {
-
-        alert(
-            "Área de tarjetas não encontrada."
-        );
-
-        return;
-
-    }
-
-
-    const tarjetas =
-        area.querySelectorAll(
-            ".tarjeta-impressao"
-        );
-
-
-    if (!tarjetas.length) {
-
-        alert(
-            "Gere pelo menos uma tarjeta antes de imprimir."
-        );
-
-        return;
-
-    }
-
-
-    gerarCodigosTarjetas();
-
-
-    /*
-     * Pequeno atraso para garantir que os SVGs
-     * dos códigos de barras estejam prontos.
-     */
-
-    setTimeout(
-        function () {
-
-            const conteudo =
-                area.innerHTML;
-
-
-            const janela =
-                window.open(
-                    "",
-                    "_blank"
-                );
-
-
-            if (!janela) {
-
-                alert(
-                    "O navegador bloqueou a janela de impressão. Permita pop-ups para este sistema."
-                );
-
-                return;
-
-            }
-
-
-            janela.document.open();
-
-
-            janela.document.write(`
-
-                <!DOCTYPE html>
-
-                <html lang="pt-BR">
-
-                <head>
-
-                    <meta charset="UTF-8">
-
-                    <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1.0"
-                    >
-
-                    <title>
-                        Tarjetas - Carol's Gourmet
-                    </title>
-
-
-                    <style>
-
-                        @page {
-
-                            size:
-                                A4 portrait;
-
-                            margin:
-                                0;
-
-                        }
-
-
-                        * {
-
-                            box-sizing:
-                                border-box;
-
-                        }
-
-
-                        html,
-                        body {
-
-                            margin:
-                                0;
-
-                            padding:
-                                0;
-
-                            width:
-                                210mm;
-
-                            min-height:
-                                297mm;
-
-                            background:
-                                white;
-
-                        }
-
-
-                        body {
-
-                            font-family:
-                                Arial,
-                                sans-serif;
-
-                            -webkit-print-color-adjust:
-                                exact;
-
-                            print-color-adjust:
-                                exact;
-
-                        }
-
-
-                        .folha-impressao {
-
-                            width:
-                                210mm;
-
-                            min-height:
-                                297mm;
-
-                            display:
-                                flex;
-
-                            flex-direction:
-                                column;
-
-                            align-items:
-                                center;
-
-                            justify-content:
-                                flex-start;
-
-                            margin:
-                                0;
-
-                            padding:
-                                0;
-
-                        }
-
-
-                        .tarjeta-impressao {
-
-                            width:
-                                210mm;
-
-                            height:
-                                50mm;
-
-                            min-width:
-                                210mm;
-
-                            max-width:
-                                210mm;
-
-                            min-height:
-                                50mm;
-
-                            max-height:
-                                50mm;
-
-                            position:
-                                relative;
-
-                            overflow:
-                                hidden;
-
-                            background:
-                                #ffffff;
-
-                            page-break-inside:
-                                avoid;
-
-                            break-inside:
-                                avoid;
-
-                            flex-shrink:
-                                0;
-
-                            border:
-                                1px solid
-                                #d8d8d8;
-
-                        }
-
-
-                        /*
-                         * Cada 5 tarjetas ocupam 25 cm.
-                         * Sobra aproximadamente 4,7 cm no A4.
-                         */
-
-                        .tarjeta-conteudo {
-
-                            position:
-                                absolute;
-
-                            top:
-                                0;
-
-                            bottom:
-                                0;
-
-                            left:
-                                9mm;
-
-                            right:
-                                9mm;
-
-                            background:
-                                #ffffff;
-
-                            display:
-                                flex;
-
-                            flex-direction:
-                                row;
-
-                            align-items:
-                                center;
-
-                            justify-content:
-                                space-between;
-
-                        }
-
-
-                        /*
-                         * BORDAS QUADRICULADAS
-                         */
-
-                        .tarjeta-lateral-esquerda,
-                        .tarjeta-lateral-direita {
-
-                            position:
-                                absolute;
-
-                            top:
-                                0;
-
-                            width:
-                                9mm;
-
-                            height:
-                                100%;
-
-                            overflow:
-                                hidden;
-
-                            z-index:
-                                5;
-
-                        }
-
-
-                        .tarjeta-lateral-esquerda {
-
-                            left:
-                                0;
-
-                        }
-
-
-                        .tarjeta-lateral-direita {
-
-                            right:
-                                0;
-
-                        }
-
-
-                        .tarjeta-xadrez {
-
-                            position:
-                                absolute;
-
-                            inset:
-                                0;
-
-                            background-color:
-                                #c51414;
-
-                            background-image:
-
-                                linear-gradient(
-                                    45deg,
-                                    #ffc928 25%,
-                                    transparent 25%,
-                                    transparent 75%,
-                                    #ffc928 75%
-                                ),
-
-                                linear-gradient(
-                                    45deg,
-                                    #ffc928 25%,
-                                    transparent 25%,
-                                    transparent 75%,
-                                    #ffc928 75%
-                                );
-
-                            background-position:
-                                0 0,
-                                6px 6px;
-
-                            background-size:
-                                12px 12px;
-
-                        }
-
-
-                        /*
-                         * ONDAS BRANCAS
-                         */
-
-                        .tarjeta-onda-esquerda,
-                        .tarjeta-onda-direita {
-
-                            position:
-                                absolute;
-
-                            top:
-                                -10mm;
-
-                            width:
-                                12mm;
-
-                            height:
-                                70mm;
-
-                            background:
-                                #ffffff;
-
-                            border-radius:
-                                50%;
-
-                        }
-
-
-                        .tarjeta-onda-esquerda {
-
-                            left:
-                                5mm;
-
-                        }
-
-
-                        .tarjeta-onda-direita {
-
-                            right:
-                                5mm;
-
-                        }
-
-
-                        /*
-                         * CÓDIGO DE BARRAS
-                         */
-
-                        .tarjeta-codigo {
-
-                            width:
-                                48mm;
-
-                            text-align:
-                                center;
-
-                            display:
-                                flex;
-
-                            flex-direction:
-                                column;
-
-                            align-items:
-                                center;
-
-                            justify-content:
-                                center;
-
-                        }
-
-
-                        .barcode-tarjeta {
-
-                            width:
-                                47mm;
-
-                            max-width:
-                                47mm;
-
-                            height:
-                                auto;
-
-                            display:
-                                block;
-
-                        }
-
-
-                        .tarjeta-datas {
-
-                            display:
-                                flex;
-
-                            justify-content:
-                                space-between;
-
-                            width:
-                                46mm;
-
-                            font-size:
-                                7px;
-
-                            line-height:
-                                8px;
-
-                            color:
-                                #555555;
-
-                            margin-top:
-                                1mm;
-
-                        }
-
-
-                        /*
-                         * LOGO
-                         */
-
-                        .tarjeta-logo {
-
-                            width:
-                                80mm;
-
-                            height:
-                                42mm;
-
-                            display:
-                                flex;
-
-                            align-items:
-                                center;
-
-                            justify-content:
-                                center;
-
-                            overflow:
-                                hidden;
-
-                        }
-
-
-                        .tarjeta-logo img {
-
-                            display:
-                                block;
-
-                            width:
-                                70mm;
-
-                            max-width:
-                                70mm;
-
-                            max-height:
-                                38mm;
-
-                            height:
-                                auto;
-
-                            object-fit:
-                                contain;
-
-                        }
-
-
-                        /*
-                         * FRASE
-                         */
-
-                        .tarjeta-frase {
-
-                            width:
-                                58mm;
-
-                            text-align:
-                                center;
-
-                            display:
-                                flex;
-
-                            flex-direction:
-                                column;
-
-                            align-items:
-                                center;
-
-                            justify-content:
-                                center;
-
-                        }
-
-
-                        .tarjeta-linha {
-
-                            display:
-                                flex;
-
-                            align-items:
-                                center;
-
-                            justify-content:
-                                center;
-
-                            gap:
-                                3mm;
-
-                            margin-bottom:
-                                1mm;
-
-                        }
-
-
-                        .tarjeta-linha span {
-
-                            width:
-                                12mm;
-
-                            height:
-                                1px;
-
-                            background:
-                                #b40000;
-
-                        }
-
-
-                        .tarjeta-linha strong {
-
-                            color:
-                                #b40000;
-
-                            font-size:
-                                15px;
-
-                            line-height:
-                                15px;
-
-                        }
-
-
-                        .tarjeta-frase-destaque {
-
-                            color:
-                                #b40000;
-
-                            font-family:
-                                Georgia,
-                                serif;
-
-                            font-style:
-                                italic;
-
-                            font-weight:
-                                bold;
-
-                            font-size:
-                                12px;
-
-                            line-height:
-                                14px;
-
-                        }
-
-
-                        .tarjeta-frase-normal {
-
-                            color:
-                                #222222;
-
-                            font-size:
-                                10px;
-
-                            line-height:
-                                12px;
-
-                            margin-top:
-                                1px;
-
-                        }
-
-
-                        .tarjeta-coracao {
-
-                            color:
-                                #b40000;
-
-                            font-size:
-                                13px;
-
-                            line-height:
-                                14px;
-
-                            margin-top:
-                                2px;
-
-                        }
-
-
-                        @media print {
-
-                            html,
-                            body {
-
-                                width:
-                                    210mm;
-
-                                height:
-                                    auto;
-
-                                margin:
-                                    0;
-
-                                padding:
-                                    0;
-
-                            }
-
-
-                            .folha-impressao {
-
-                                width:
-                                    210mm;
-
-                            }
-
-
-                            .tarjeta-impressao {
-
-                                page-break-inside:
-                                    avoid;
-
-                                break-inside:
-                                    avoid;
-
-                            }
-
-                        }
-
-                    </style>
-
-                </head>
-
-
-                <body>
-
-                    <div class="folha-impressao">
-
-                        ${conteudo}
-
-                    </div>
-
-
-                    <script>
-
-                        window.onload =
-                            function () {
-
-                                setTimeout(
-                                    function () {
-
-                                        window.print();
-
-                                    },
-                                    800
-                                );
-
-                            };
-
-                    <\/script>
-
-                </body>
-
-                </html>
-
-            `);
-
-
-            janela.document.close();
-
-
-        },
-        300
-    );
-
-}
-
-
-/* =========================================================
-   ATUALIZAÇÃO GERAL
-========================================================= */
-
-function atualizarTudo() {
-
-    atualizarDashboard();
-
-    atualizarListaProdutos();
-
-    atualizarListaMateriaPrima();
-
-    atualizarSelectsProdutos();
-
-    atualizarSelectsMateriaPrima();
-
-    alterarTipoEstoque();
-
-    atualizarItensMovimentacao();
-
-    atualizarHistoricoMovimentacoes();
-
-    atualizarListaProducao();
-
-    atualizarProdutosTarjeta();
-
-}
-
-
-/* =========================================================
-   FORMATAÇÃO
-========================================================= */
-
-function formatarData(data) {
-
-    if (!data) {
-
-        return "--/--/----";
-
-    }
-
-
-    const partes =
-        String(data).split("-");
-
-
-    if (
-        partes.length === 3
-    ) {
-
-        return (
-            partes[2] +
-            "/" +
-            partes[1] +
-            "/" +
-            partes[0]
-        );
-
-    }
-
-
-    return data;
-
-}
-
-
-function formatarMoeda(valor) {
-
-    return Number(
-        valor || 0
-    ).toLocaleString(
-        "pt-BR",
-        {
-
-            style:
-                "currency",
-
-            currency:
-                "BRL"
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   COMPATIBILIDADE GLOBAL
-========================================================= */
-
-window.mostrarAba =
-    mostrarAba;
-
-window.toggleMenu =
-    toggleMenu;
-
-window.salvarProduto =
-    salvarProduto;
-
-window.novoProduto =
-    novoProduto;
-
-window.editarProduto =
-    editarProduto;
-
-window.excluirProduto =
-    excluirProduto;
-
-window.salvarMateriaPrima =
-    salvarMateriaPrima;
-
-window.novaMateriaPrima =
-    novaMateriaPrima;
-
-window.alterarTipoEstoque =
-    alterarTipoEstoque;
-
-window.atualizarItensMovimentacao =
-    atualizarItensMovimentacao;
-
-window.registrarMovimentacao =
-    registrarMovimentacao;
-
-window.registrarProducao =
-    registrarProducao;
-
-window.calcularPreco =
-    calcularPreco;
-
-window.gerarEtiqueta =
-    gerarEtiqueta;
-
-window.salvarEtiquetaPNG =
-    salvarEtiquetaPNG;
-
-window.exportarBackup =
-    exportarBackup;
-
-window.importarBackup =
-    importarBackup;
-
-
-/* =========================================================
-   TARJETAS - FUNÇÕES GLOBAIS
-========================================================= */
-
-window.gerarTarjetas =
-    gerarTarjetas;
-
-window.imprimirTarjetas =
-    imprimirTarjetas;
-
-window.limparTarjetas =
-    limparTarjetas;
-
-window.atualizarProdutosTarjeta =
-    atualizarProdutosTarjeta;
-
-window.calcularValidadeTarjeta =
-    calcularValidadeTarjeta;
