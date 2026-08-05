@@ -1,14 +1,13 @@
 // ======================================================
 // CAROL'S GOURMET ERP 4.0
-// APP.JS NOVO - PARTE 1/4
-// BASE + PRODUTOS
+// APP.JS NOVO
+// PARTE 1/4
 // ======================================================
 
 
-
-// ======================================================
+// ================================
 // BANCO DE DADOS
-// ======================================================
+// ================================
 
 
 let produtos = JSON.parse(
@@ -32,13 +31,13 @@ let producoes = JSON.parse(
 
 
 
-
-// ======================================================
-// SALVAR BANCO
-// ======================================================
+// ================================
+// SALVAR DADOS
+// ================================
 
 
 function salvarBanco(){
+
 
     localStorage.setItem(
         "carols_produtos",
@@ -63,21 +62,21 @@ function salvarBanco(){
         JSON.stringify(producoes)
     );
 
+
 }
 
 
 
-
-
-// ======================================================
-// INICIALIZAÇÃO
-// ======================================================
+// ================================
+// INICIO DO SISTEMA
+// ================================
 
 
 window.onload = function(){
 
 
     carregarProdutos();
+
 
     atualizarDashboard();
 
@@ -87,11 +86,9 @@ window.onload = function(){
 
 
 
-
-
-// ======================================================
+// ================================
 // MENU LATERAL
-// ======================================================
+// ================================
 
 
 function toggleMenu(){
@@ -115,18 +112,25 @@ function toggleMenu(){
 
 
 
+
 function mostrarAba(id, botao){
+
 
 
     let abas =
     document.querySelectorAll(".aba");
 
 
-    abas.forEach(function(aba){
 
-        aba.classList.remove("ativa");
+    abas.forEach(function(item){
+
+
+        item.classList.remove("ativa");
+
 
     });
+
+
 
 
 
@@ -143,15 +147,22 @@ function mostrarAba(id, botao){
 
 
 
+
+
     let botoes =
     document.querySelectorAll(".menu-item");
 
 
+
     botoes.forEach(function(item){
+
 
         item.classList.remove("ativo");
 
+
     });
+
+
 
 
 
@@ -162,7 +173,6 @@ function mostrarAba(id, botao){
     }
 
 
-
 }
 
 
@@ -170,13 +180,13 @@ function mostrarAba(id, botao){
 
 
 
-
-// ======================================================
+// ================================
 // DASHBOARD
-// ======================================================
+// ================================
 
 
 function atualizarDashboard(){
+
 
 
     let totalProdutos =
@@ -191,7 +201,6 @@ function atualizarDashboard(){
         produtos.length;
 
     }
-
 
 
 
@@ -210,7 +219,6 @@ function atualizarDashboard(){
 
 
 
-
     let data =
     document.getElementById(
         "ultimaAtualizacao"
@@ -225,7 +233,6 @@ function atualizarDashboard(){
     }
 
 
-
 }
 
 
@@ -234,24 +241,22 @@ function atualizarDashboard(){
 
 
 
-// ======================================================
+// ================================
 // PRODUTOS
-// ======================================================
+// ================================
 
 
 
 function gerarCodigoProduto(){
 
 
-    let numero =
-    produtos.length + 1;
-
-
     return "PROD-" +
-    String(numero).padStart(4,"0");
+    String(produtos.length + 1)
+    .padStart(4,"0");
 
 
 }
+
 
 
 
@@ -259,6 +264,7 @@ function gerarCodigoProduto(){
 
 
 function novoProduto(){
+
 
 
     let codigo =
@@ -276,20 +282,6 @@ function novoProduto(){
 
 
 
-    let ean =
-    document.getElementById(
-        "eanProduto"
-    );
-
-
-    if(ean){
-
-        ean.value = "";
-
-    }
-
-
-
     let nome =
     document.getElementById(
         "nomeProduto"
@@ -298,21 +290,21 @@ function novoProduto(){
 
     if(nome){
 
-        nome.value = "";
+        nome.value="";
 
     }
 
 
 
-    let categoria =
+    let ean =
     document.getElementById(
-        "categoriaProduto"
+        "eanProduto"
     );
 
 
-    if(categoria){
+    if(ean){
 
-        categoria.value="";
+        ean.value="";
 
     }
 
@@ -327,6 +319,7 @@ function novoProduto(){
 
 
 function salvarProduto(){
+
 
 
     let nome =
@@ -352,13 +345,17 @@ function salvarProduto(){
 
 
 
+
     let produto = {
+
 
 
         codigo:
         document.getElementById(
             "codigoProduto"
-        ).value || gerarCodigoProduto(),
+        ).value
+        ||
+        gerarCodigoProduto(),
 
 
 
@@ -398,7 +395,9 @@ function salvarProduto(){
         estoque:0,
 
 
+
         custo:0,
+
 
 
         data:
@@ -428,17 +427,12 @@ function salvarProduto(){
 
 
     alert(
-        "Produto salvo com sucesso!"
+        "Produto salvo!"
     );
 
 
 
-    novoProduto();
-
-
-
 }
-
 
 
 
@@ -466,7 +460,9 @@ function carregarProdutos(){
 
 
 
+
     tabela.innerHTML="";
+
 
 
 
@@ -483,24 +479,19 @@ function carregarProdutos(){
         linha.innerHTML = `
 
 
-<td>${produto.codigo || ""}</td>
+<td>${produto.codigo}</td>
 
-<td>${produto.nome || ""}</td>
+<td>${produto.nome}</td>
 
-<td>${produto.categoria || ""}</td>
+<td>${produto.categoria}</td>
 
-<td>${produto.unidade || ""}</td>
+<td>${produto.unidade}</td>
 
-<td>${produto.estoque || 0}</td>
+<td>${produto.estoque}</td>
 
-<td>
-R$ ${Number(produto.custo || 0).toFixed(2)}
-</td>
+<td>R$ ${produto.custo.toFixed(2)}</td>
 
-<td>
-R$ ${(produto.estoque * produto.custo).toFixed(2)}
-</td>
-
+<td>R$ ${(produto.estoque * produto.custo).toFixed(2)}</td>
 
 <td>
 
@@ -530,8 +521,6 @@ R$ ${(produto.estoque * produto.custo).toFixed(2)}
 
 
 
-
-
 function excluirProduto(index){
 
 
@@ -542,635 +531,16 @@ function excluirProduto(index){
         produtos.splice(index,1);
 
 
-
         salvarBanco();
-
 
 
         carregarProdutos();
 
 
-
         atualizarDashboard();
 
 
-
     }
-
-
-
-}
-// ======================================================
-// MATÉRIA-PRIMA
-// ======================================================
-
-
-function gerarCodigoMP(){
-
-
-    let numero = materias.length + 1;
-
-
-    return "MP-" + String(numero).padStart(4,"0");
-
-
-}
-
-
-
-
-
-function novaMateriaPrima(){
-
-
-    let codigo =
-    document.getElementById("codigoMP");
-
-
-    if(codigo){
-
-        codigo.value = gerarCodigoMP();
-
-    }
-
-
-
-    let nome =
-    document.getElementById("nomeMP");
-
-
-    if(nome){
-
-        nome.value = "";
-
-    }
-
-
-
-    let estoque =
-    document.getElementById("estoqueMP");
-
-
-    if(estoque){
-
-        estoque.value = 0;
-
-    }
-
-
-
-    let custo =
-    document.getElementById("custoMP");
-
-
-    if(custo){
-
-        custo.value = "";
-
-    }
-
-
-}
-
-
-
-
-
-
-
-function salvarMateriaPrima(){
-
-
-
-    let nome =
-    document.getElementById("nomeMP");
-
-
-
-    if(!nome || nome.value.trim()===""){
-
-
-        alert("Digite o nome da matéria-prima");
-
-
-        return;
-
-    }
-
-
-
-
-    let materia = {
-
-
-        codigo:
-        document.getElementById("codigoMP").value
-        || gerarCodigoMP(),
-
-
-
-        nome:
-        nome.value.trim(),
-
-
-
-        categoria:
-        document.getElementById("categoriaMP").value,
-
-
-
-        unidade:
-        document.getElementById("unidadeMP").value,
-
-
-
-        estoque:
-        Number(
-            document.getElementById("estoqueMP").value
-        ) || 0,
-
-
-
-        custo:
-        Number(
-            document.getElementById("custoMP").value
-        ) || 0,
-
-
-
-        data:
-        new Date().toLocaleString()
-
-
-    };
-
-
-
-
-
-    materias.push(materia);
-
-
-
-    salvarBanco();
-
-
-
-    carregarMaterias();
-
-
-
-    carregarEstoque();
-
-
-
-    atualizarDashboard();
-
-
-
-    novaMateriaPrima();
-
-
-
-    alert(
-        "Matéria-prima salva com sucesso!"
-    );
-
-
-
-}
-
-
-
-
-
-
-
-
-function carregarMaterias(){
-
-
-
-    let tabela =
-    document.getElementById(
-        "listaMateriaPrima"
-    );
-
-
-
-    if(!tabela){
-
-        return;
-
-    }
-
-
-
-
-    tabela.innerHTML = "";
-
-
-
-
-    materias.forEach(function(mp){
-
-
-
-        let linha =
-        document.createElement("tr");
-
-
-
-        linha.innerHTML = `
-
-
-<td>${mp.codigo}</td>
-
-<td>${mp.nome}</td>
-
-<td>${mp.categoria}</td>
-
-<td>${mp.unidade}</td>
-
-<td>${mp.estoque}</td>
-
-<td>
-R$ ${Number(mp.custo).toFixed(2)}
-</td>
-
-<td>
-R$ ${(mp.estoque * mp.custo).toFixed(2)}
-</td>
-
-
-`;
-
-
-
-        tabela.appendChild(linha);
-
-
-
-    });
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// ======================================================
-// ESTOQUE
-// ======================================================
-
-
-
-function alterarTipoEstoque(){
-
-
-    carregarEstoque();
-
-
-}
-
-
-
-
-
-
-function carregarEstoque(){
-
-
-
-    let tabela =
-    document.getElementById(
-        "listaEstoque"
-    );
-
-
-
-    let cabecalho =
-    document.getElementById(
-        "cabecalhoEstoque"
-    );
-
-
-
-    if(!tabela){
-
-        return;
-
-    }
-
-
-
-
-
-    tabela.innerHTML="";
-
-
-
-
-
-    if(cabecalho){
-
-
-        cabecalho.innerHTML = `
-
-<tr>
-
-<th>Código</th>
-
-<th>Nome</th>
-
-<th>Unidade</th>
-
-<th>Quantidade</th>
-
-</tr>
-
-`;
-
-
-    }
-
-
-
-
-
-
-    materias.forEach(function(mp){
-
-
-
-        let linha =
-        document.createElement("tr");
-
-
-
-        linha.innerHTML = `
-
-
-<td>${mp.codigo}</td>
-
-<td>${mp.nome}</td>
-
-<td>${mp.unidade}</td>
-
-<td>${mp.estoque}</td>
-
-
-`;
-
-
-
-        tabela.appendChild(linha);
-
-
-
-    });
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// ======================================================
-// MOVIMENTAÇÃO DE ESTOQUE
-// ======================================================
-
-
-
-function atualizarItensMovimentacao(){
-
-
-
-    let select =
-    document.getElementById(
-        "itemMovimentacao"
-    );
-
-
-
-    if(!select){
-
-        return;
-
-    }
-
-
-
-    select.innerHTML = `
-
-<option value="">
-Selecione um item
-</option>
-
-`;
-
-
-
-
-
-    materias.forEach(function(mp){
-
-
-
-        let option =
-        document.createElement("option");
-
-
-
-        option.value =
-        mp.codigo;
-
-
-
-        option.textContent =
-        mp.nome;
-
-
-
-        select.appendChild(option);
-
-
-
-    });
-
-
-
-}
-
-
-
-
-
-
-
-
-function registrarMovimentacao(){
-
-
-
-    let codigo =
-    document.getElementById(
-        "itemMovimentacao"
-    ).value;
-
-
-
-
-    let quantidade =
-    Number(
-        document.getElementById(
-            "quantidadeMovimentacao"
-        ).value
-    );
-
-
-
-    let operacao =
-    document.getElementById(
-        "tipoMovimentacao"
-    ).value;
-
-
-
-
-
-
-    if(!codigo || !quantidade){
-
-
-        alert(
-            "Preencha os dados da movimentação"
-        );
-
-
-        return;
-
-    }
-
-
-
-
-
-    let materia =
-    materias.find(function(mp){
-
-
-        return mp.codigo === codigo;
-
-
-    });
-
-
-
-
-
-    if(!materia){
-
-        alert(
-            "Matéria-prima não encontrada"
-        );
-
-
-        return;
-
-    }
-
-
-
-
-
-    if(operacao === "entrada"){
-
-
-        materia.estoque += quantidade;
-
-
-    }else{
-
-
-        materia.estoque -= quantidade;
-
-
-    }
-
-
-
-
-
-
-
-    movimentacoes.push({
-
-
-
-        data:
-        document.getElementById(
-            "dataMovimentacao"
-        ).value,
-
-
-
-        item:
-        materia.nome,
-
-
-
-        quantidade: quantidade,
-
-
-
-        operacao: operacao,
-
-
-
-        observacao:
-        document.getElementById(
-            "observacaoMovimentacao"
-        ).value
-
-
-
-    });
-
-
-
-
-
-
-
-    salvarBanco();
-
-
-
-    carregarMaterias();
-
-
-
-    carregarEstoque();
-
-
-
-    alert(
-        "Movimentação registrada!"
-    );
-
 
 
 }
