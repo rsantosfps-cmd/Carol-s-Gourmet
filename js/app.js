@@ -1,115 +1,125 @@
 /* =========================================================
    CAROL'S GOURMET ERP 4.0
-   APP.JS NOVO - PARTE 1
-   MOTOR DO SISTEMA
+   APP.JS - PARTE 1
 ========================================================= */
-
-
-
-console.log(
-    "Carol's Gourmet iniciado"
-);
-
-
 
 
 /* =========================================================
    BANCO LOCAL
 ========================================================= */
 
+const DB = {
 
-const CHAVES = {
-
-
-    produtos:
-    "carols_gourmet_produtos",
-
-
-    materias:
-    "carols_gourmet_materias",
-
-
-    estoque:
-    "carols_gourmet_estoque",
-
-
-    producao:
-    "carols_gourmet_producao",
-
-
-    etiquetas:
-    "carols_gourmet_etiquetas"
-
+    produtos: "carols_gourmet_produtos",
+    materias: "carols_gourmet_materias",
+    estoque: "carols_gourmet_estoque",
+    producao: "carols_gourmet_producao",
+    etiquetas: "carols_gourmet_etiquetas"
 
 };
 
 
 
+function carregarBanco(chave) {
+
+    return JSON.parse(
+        localStorage.getItem(chave)
+    ) || [];
+
+}
 
 
 
-
-let produtos =
-JSON.parse(
-    localStorage.getItem(
-        CHAVES.produtos
-    )
-)
-||
-[];
-
-
-
-
-let materias =
-JSON.parse(
-    localStorage.getItem(
-        CHAVES.materias
-    )
-)
-||
-[];
-
-
-
-
-let producoes =
-JSON.parse(
-    localStorage.getItem(
-        CHAVES.producao
-    )
-)
-||
-[];
-
-
-
-
-
-
-
-function salvarDados(){
-
-
+function salvarBanco(chave, dados) {
 
     localStorage.setItem(
-        CHAVES.produtos,
-        JSON.stringify(produtos)
+        chave,
+        JSON.stringify(dados)
     );
 
-
-
-    localStorage.setItem(
-        CHAVES.materias,
-        JSON.stringify(materias)
-    );
+}
 
 
 
-    localStorage.setItem(
-        CHAVES.producao,
-        JSON.stringify(producoes)
-    );
+/* =========================================================
+   VARIÁVEIS GLOBAIS
+========================================================= */
+
+
+let produtos = carregarBanco(DB.produtos);
+
+let materias = carregarBanco(DB.materias);
+
+let estoque = carregarBanco(DB.estoque);
+
+let producao = carregarBanco(DB.producao);
+
+let etiquetas = carregarBanco(DB.etiquetas);
+
+
+
+/* =========================================================
+   MENU / NAVEGAÇÃO
+========================================================= */
+
+
+function toggleMenu(){
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+
+    sidebar.classList.toggle("aberto");
+
+}
+
+
+
+function mostrarAba(id, botao){
+
+
+    document
+    .querySelectorAll(".aba")
+    .forEach(function(aba){
+
+        aba.classList.remove("ativa");
+
+    });
+
+
+
+    const aba =
+    document.getElementById(id);
+
+
+
+    if(aba){
+
+        aba.classList.add("ativa");
+
+    }
+
+
+
+    document
+    .querySelectorAll(".menu-item")
+    .forEach(function(item){
+
+        item.classList.remove("ativo");
+
+    });
+
+
+
+    if(botao){
+
+        botao.classList.add("ativo");
+
+    }
+
+
+
+    atualizarTudo();
 
 
 }
@@ -117,27 +127,67 @@ function salvarDados(){
 
 
 
-
-
-
 /* =========================================================
-   MENU LATERAL
+   PRODUTOS
 ========================================================= */
 
 
 
-function toggleMenu(){
+function gerarCodigoProduto(){
+
+
+    let numero =
+    produtos.length + 1;
+
+
+    return "PROD-" +
+    String(numero).padStart(4,"0");
+
+
+}
 
 
 
-    const menu =
+function gerarEAN(){
+
+
+    let numero = "";
+
+
+    for(let i = 0; i < 12; i++){
+
+        numero +=
+        Math.floor(
+            Math.random()*10
+        );
+
+    }
+
+
+    return numero;
+
+
+}
+
+
+
+
+function salvarProduto(){
+
+
+
+    const nome =
     document.getElementById(
-        "sidebar"
-    );
+        "nomeProduto"
+    ).value.trim();
 
 
 
-    if(!menu){
+    if(!nome){
+
+        alert(
+            "Digite o nome do produto"
+        );
 
         return;
 
@@ -145,9 +195,265 @@ function toggleMenu(){
 
 
 
-    menu.classList.toggle(
-        "aberto"
+
+    let produto = {
+
+
+        codigo:
+        document.getElementById(
+            "codigoProduto"
+        ).value
+        ||
+        gerarCodigoProduto(),
+
+
+
+        ean:
+        document.getElementById(
+            "eanProduto"
+        ).value
+        ||
+        gerarEAN(),
+
+
+
+        nome:nome,
+
+
+
+        categoria:
+        document.getElementById(
+            "categoriaProduto"
+        ).value,
+
+
+
+        unidade:
+        document.getElementById(
+            "unidadeProduto"
+        ).value,
+
+
+
+        status:
+        document.getElementById(
+            "statusProduto"
+        ).value,
+
+
+
+        estoque:0,
+
+
+        custo:0,
+
+
+        valor:0
+
+    };
+
+
+
+
+    produtos.push(produto);
+
+
+
+    salvarBanco(
+        DB.produtos,
+        produtos
     );
+
+
+
+    alert(
+        "Produto cadastrado!"
+    );
+
+
+
+    novoProduto();
+
+
+    atualizarTudo();
+
+
+
+}
+
+
+
+
+
+function novoProduto(){
+
+
+    const codigo =
+    document.getElementById(
+        "codigoProduto"
+    );
+
+
+    const ean =
+    document.getElementById(
+        "eanProduto"
+    );
+
+
+
+    if(codigo){
+
+        codigo.value =
+        gerarCodigoProduto();
+
+    }
+
+
+
+    if(ean){
+
+        ean.value =
+        gerarEAN();
+
+    }
+
+
+
+
+    document.getElementById(
+        "nomeProduto"
+    ).value="";
+
+
+
+    document.getElementById(
+        "categoriaProduto"
+    ).value="";
+
+
+
+}
+
+
+
+
+
+
+function atualizarProdutos(){
+
+
+    const tabela =
+    document.getElementById(
+        "listaProdutos"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+    tabela.innerHTML="";
+
+
+
+
+    produtos.forEach(function(produto,index){
+
+
+
+        tabela.innerHTML += `
+
+
+        <tr>
+
+
+        <td>${produto.codigo}</td>
+
+
+        <td>${produto.nome}</td>
+
+
+        <td>${produto.categoria}</td>
+
+
+        <td>${produto.unidade}</td>
+
+
+        <td>${produto.estoque || 0}</td>
+
+
+        <td>
+        R$ ${(produto.custo || 0)
+        .toFixed(2)}
+        </td>
+
+
+        <td>
+        R$ ${(produto.valor || 0)
+        .toFixed(2)}
+        </td>
+
+
+
+        <td>
+
+        <button
+        onclick="excluirProduto(${index})">
+        🗑️
+        </button>
+
+
+        </td>
+
+
+
+        </tr>
+
+
+        `;
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+function excluirProduto(index){
+
+
+    if(confirm(
+        "Excluir produto?"
+    )){
+
+
+        produtos.splice(
+            index,
+            1
+        );
+
+
+        salvarBanco(
+            DB.produtos,
+            produtos
+        );
+
+
+        atualizarTudo();
+
+
+    }
+
 
 
 }
@@ -159,56 +465,25 @@ function toggleMenu(){
 
 
 /* =========================================================
-   TROCA DE ABAS
+   DASHBOARD
 ========================================================= */
 
 
-function mostrarAba(
-    idAba,
-    botao
-){
+function atualizarDashboard(){
 
 
 
-    const abas =
-    document.querySelectorAll(
-        ".aba"
-    );
-
-
-
-
-    abas.forEach(
-    function(aba){
-
-
-        aba.classList.remove(
-            "ativa"
-        );
-
-
-    });
-
-
-
-
-
-
-    const abaSelecionada =
+    const totalProdutos =
     document.getElementById(
-        idAba
+        "totalProdutos"
     );
 
 
 
+    if(totalProdutos){
 
-    if(abaSelecionada){
-
-
-        abaSelecionada.classList.add(
-            "ativa"
-        );
-
+        totalProdutos.innerText =
+        produtos.length;
 
     }
 
@@ -216,69 +491,91 @@ function mostrarAba(
 
 
 
-
-    const botoes =
-    document.querySelectorAll(
-        ".menu-item"
-    );
-
-
-
-
-    botoes.forEach(
-    function(btn){
-
-
-        btn.classList.remove(
-            "ativo"
-        );
-
-
-    });
-
-
-
-
-
-    if(botao){
-
-
-        botao.classList.add(
-            "ativo"
-        );
-
-
-    }
-
-
-
-
-
-    // fecha menu no celular
-
-    const menu =
+    const totalMateria =
     document.getElementById(
-        "sidebar"
+        "totalMateriaPrima"
     );
 
 
 
-    if(menu){
+    if(totalMateria){
 
-
-        menu.classList.remove(
-            "aberto"
-        );
-
+        totalMateria.innerText =
+        materias.length;
 
     }
 
+
+
+
+    const data =
+    document.getElementById(
+        "ultimaAtualizacao"
+    );
+
+
+
+    if(data){
+
+        data.innerText =
+        new Date()
+        .toLocaleDateString(
+            "pt-BR"
+        );
+
+    }
 
 
 
 }
 
 
+
+
+
+
+
+/* =========================================================
+   ATUALIZAÇÃO GERAL
+========================================================= */
+
+
+function atualizarTudo(){
+
+
+    produtos =
+    carregarBanco(DB.produtos);
+
+
+
+    materias =
+    carregarBanco(DB.materias);
+
+
+
+    estoque =
+    carregarBanco(DB.estoque);
+
+
+
+    producao =
+    carregarBanco(DB.producao);
+
+
+
+    etiquetas =
+    carregarBanco(DB.etiquetas);
+
+
+
+    atualizarProdutos();
+
+
+    atualizarDashboard();
+
+
+
+}
 
 
 
@@ -289,35 +586,15 @@ function mostrarAba(
 ========================================================= */
 
 
-window.addEventListener(
+document.addEventListener(
 "DOMContentLoaded",
 function(){
 
 
-
-    console.log(
-        "Sistema carregado"
-    );
+    atualizarTudo();
 
 
-
-    const primeiraAba =
-    document.getElementById(
-        "dashboard"
-    );
-
-
-
-    if(primeiraAba){
-
-
-        primeiraAba.classList.add(
-            "ativa"
-        );
-
-
-    }
-
+    novoProduto();
 
 
 });
