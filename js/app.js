@@ -560,3 +560,617 @@ function excluirProduto(index){
 
 
 }
+// ======================================================
+// MATÉRIA-PRIMA
+// ======================================================
+
+
+function gerarCodigoMP(){
+
+
+    let numero = materias.length + 1;
+
+
+    return "MP-" + String(numero).padStart(4,"0");
+
+
+}
+
+
+
+
+
+function novaMateriaPrima(){
+
+
+    let codigo =
+    document.getElementById("codigoMP");
+
+
+    if(codigo){
+
+        codigo.value = gerarCodigoMP();
+
+    }
+
+
+
+    let nome =
+    document.getElementById("nomeMP");
+
+
+    if(nome){
+
+        nome.value = "";
+
+    }
+
+
+
+    let estoque =
+    document.getElementById("estoqueMP");
+
+
+    if(estoque){
+
+        estoque.value = 0;
+
+    }
+
+
+
+    let custo =
+    document.getElementById("custoMP");
+
+
+    if(custo){
+
+        custo.value = "";
+
+    }
+
+
+}
+
+
+
+
+
+
+
+function salvarMateriaPrima(){
+
+
+
+    let nome =
+    document.getElementById("nomeMP");
+
+
+
+    if(!nome || nome.value.trim()===""){
+
+
+        alert("Digite o nome da matéria-prima");
+
+
+        return;
+
+    }
+
+
+
+
+    let materia = {
+
+
+        codigo:
+        document.getElementById("codigoMP").value
+        || gerarCodigoMP(),
+
+
+
+        nome:
+        nome.value.trim(),
+
+
+
+        categoria:
+        document.getElementById("categoriaMP").value,
+
+
+
+        unidade:
+        document.getElementById("unidadeMP").value,
+
+
+
+        estoque:
+        Number(
+            document.getElementById("estoqueMP").value
+        ) || 0,
+
+
+
+        custo:
+        Number(
+            document.getElementById("custoMP").value
+        ) || 0,
+
+
+
+        data:
+        new Date().toLocaleString()
+
+
+    };
+
+
+
+
+
+    materias.push(materia);
+
+
+
+    salvarBanco();
+
+
+
+    carregarMaterias();
+
+
+
+    carregarEstoque();
+
+
+
+    atualizarDashboard();
+
+
+
+    novaMateriaPrima();
+
+
+
+    alert(
+        "Matéria-prima salva com sucesso!"
+    );
+
+
+
+}
+
+
+
+
+
+
+
+
+function carregarMaterias(){
+
+
+
+    let tabela =
+    document.getElementById(
+        "listaMateriaPrima"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+
+    tabela.innerHTML = "";
+
+
+
+
+    materias.forEach(function(mp){
+
+
+
+        let linha =
+        document.createElement("tr");
+
+
+
+        linha.innerHTML = `
+
+
+<td>${mp.codigo}</td>
+
+<td>${mp.nome}</td>
+
+<td>${mp.categoria}</td>
+
+<td>${mp.unidade}</td>
+
+<td>${mp.estoque}</td>
+
+<td>
+R$ ${Number(mp.custo).toFixed(2)}
+</td>
+
+<td>
+R$ ${(mp.estoque * mp.custo).toFixed(2)}
+</td>
+
+
+`;
+
+
+
+        tabela.appendChild(linha);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ======================================================
+// ESTOQUE
+// ======================================================
+
+
+
+function alterarTipoEstoque(){
+
+
+    carregarEstoque();
+
+
+}
+
+
+
+
+
+
+function carregarEstoque(){
+
+
+
+    let tabela =
+    document.getElementById(
+        "listaEstoque"
+    );
+
+
+
+    let cabecalho =
+    document.getElementById(
+        "cabecalhoEstoque"
+    );
+
+
+
+    if(!tabela){
+
+        return;
+
+    }
+
+
+
+
+
+    tabela.innerHTML="";
+
+
+
+
+
+    if(cabecalho){
+
+
+        cabecalho.innerHTML = `
+
+<tr>
+
+<th>Código</th>
+
+<th>Nome</th>
+
+<th>Unidade</th>
+
+<th>Quantidade</th>
+
+</tr>
+
+`;
+
+
+    }
+
+
+
+
+
+
+    materias.forEach(function(mp){
+
+
+
+        let linha =
+        document.createElement("tr");
+
+
+
+        linha.innerHTML = `
+
+
+<td>${mp.codigo}</td>
+
+<td>${mp.nome}</td>
+
+<td>${mp.unidade}</td>
+
+<td>${mp.estoque}</td>
+
+
+`;
+
+
+
+        tabela.appendChild(linha);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ======================================================
+// MOVIMENTAÇÃO DE ESTOQUE
+// ======================================================
+
+
+
+function atualizarItensMovimentacao(){
+
+
+
+    let select =
+    document.getElementById(
+        "itemMovimentacao"
+    );
+
+
+
+    if(!select){
+
+        return;
+
+    }
+
+
+
+    select.innerHTML = `
+
+<option value="">
+Selecione um item
+</option>
+
+`;
+
+
+
+
+
+    materias.forEach(function(mp){
+
+
+
+        let option =
+        document.createElement("option");
+
+
+
+        option.value =
+        mp.codigo;
+
+
+
+        option.textContent =
+        mp.nome;
+
+
+
+        select.appendChild(option);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+
+function registrarMovimentacao(){
+
+
+
+    let codigo =
+    document.getElementById(
+        "itemMovimentacao"
+    ).value;
+
+
+
+
+    let quantidade =
+    Number(
+        document.getElementById(
+            "quantidadeMovimentacao"
+        ).value
+    );
+
+
+
+    let operacao =
+    document.getElementById(
+        "tipoMovimentacao"
+    ).value;
+
+
+
+
+
+
+    if(!codigo || !quantidade){
+
+
+        alert(
+            "Preencha os dados da movimentação"
+        );
+
+
+        return;
+
+    }
+
+
+
+
+
+    let materia =
+    materias.find(function(mp){
+
+
+        return mp.codigo === codigo;
+
+
+    });
+
+
+
+
+
+    if(!materia){
+
+        alert(
+            "Matéria-prima não encontrada"
+        );
+
+
+        return;
+
+    }
+
+
+
+
+
+    if(operacao === "entrada"){
+
+
+        materia.estoque += quantidade;
+
+
+    }else{
+
+
+        materia.estoque -= quantidade;
+
+
+    }
+
+
+
+
+
+
+
+    movimentacoes.push({
+
+
+
+        data:
+        document.getElementById(
+            "dataMovimentacao"
+        ).value,
+
+
+
+        item:
+        materia.nome,
+
+
+
+        quantidade: quantidade,
+
+
+
+        operacao: operacao,
+
+
+
+        observacao:
+        document.getElementById(
+            "observacaoMovimentacao"
+        ).value
+
+
+
+    });
+
+
+
+
+
+
+
+    salvarBanco();
+
+
+
+    carregarMaterias();
+
+
+
+    carregarEstoque();
+
+
+
+    alert(
+        "Movimentação registrada!"
+    );
+
+
+
+}
