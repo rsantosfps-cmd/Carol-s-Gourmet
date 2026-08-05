@@ -1841,68 +1841,47 @@ function iniciarProducao(){
 
 }
 // ======================================================
-// CAROL'S GOURMET ERP 4.0
-// PARTE 4/4
-// ETIQUETAS
+// PARTE 4A
+// TARJETAS 21x5
 // ======================================================
 
 
-// ==========================================
-// INICIALIZAR ETIQUETAS
-// ==========================================
+// =========================================
+// PRODUTOS DA TARJETA
+// =========================================
 
-function carregarProdutosEtiqueta(){
+function carregarProdutosTarjeta(){
 
     const select =
-    document.getElementById("produtoEtiqueta");
+    document.getElementById("produtoTarjeta");
 
     if(!select) return;
 
-    select.innerHTML="";
+    select.innerHTML =
+    '<option value="">Selecione...</option>';
 
     produtos.forEach(function(produto){
 
-        let option=document.createElement("option");
+        const categoria =
+        (produto.categoria || "").toLowerCase();
 
-        option.value=produto.codigo;
+        if(
+            categoria.includes("brownie") ||
+            categoria.includes("palha")
+        ){
 
-        option.textContent=
-        produto.nome;
+            let option =
+            document.createElement("option");
 
-        select.appendChild(option);
+            option.value =
+            produto.codigo;
 
-    });
+            option.textContent =
+            produto.nome;
 
-}
+            select.appendChild(option);
 
-
-
-// ==========================================
-// VALIDADE AUTOMÁTICA
-// ==========================================
-
-const campoFab =
-document.getElementById("fabricacaoEtiqueta");
-
-if(campoFab){
-
-    campoFab.addEventListener("change",function(){
-
-        let validade=
-        document.getElementById("validadeEtiqueta");
-
-        if(!validade) return;
-
-        let data=
-        new Date(this.value);
-
-        data.setDate(
-            data.getDate()+30
-        );
-
-        validade.value=
-        data.toISOString()
-        .split("T")[0];
+        }
 
     });
 
@@ -1910,118 +1889,469 @@ if(campoFab){
 
 
 
+// =========================================
+// VALIDADE TARJETA
+// =========================================
 
-// ==========================================
-// GERAR ETIQUETA
-// ==========================================
+const campoFabTarjeta =
+document.getElementById(
+    "fabricacaoTarjeta"
+);
 
-function gerarEtiqueta(){
+if(campoFabTarjeta){
 
-    const codigo=
-    document.getElementById("produtoEtiqueta").value;
+    campoFabTarjeta.addEventListener(
+        "change",
+        function(){
 
-    const produto=
+            let validade =
+            document.getElementById(
+                "validadeTarjeta"
+            );
+
+            if(!validade) return;
+
+            let data =
+            new Date(this.value);
+
+            data.setDate(
+                data.getDate()+30
+            );
+
+            validade.value =
+            data.toISOString()
+            .split("T")[0];
+
+        }
+    );
+
+}
+
+
+
+// =========================================
+// GERAR TARJETAS
+// =========================================
+
+function gerarTarjetas(){
+
+    const area =
+    document.getElementById(
+        "areaTarjetas"
+    );
+
+    if(!area) return;
+
+    area.innerHTML="";
+
+
+
+    const codigo =
+    document.getElementById(
+        "produtoTarjeta"
+    ).value;
+
+
+
+    const quantidade =
+    Number(
+        document.getElementById(
+            "quantidadeTarjeta"
+        ).value
+    ) || 1;
+
+
+
+    const produto =
     produtos.find(function(p){
 
         return p.codigo===codigo;
 
     });
 
+
+
     if(!produto){
 
-        alert("Selecione um produto.");
+        alert(
+            "Selecione um produto."
+        );
 
         return;
 
     }
 
-    document.getElementById(
-        "mostrarProduto"
-    ).innerText=
-    produto.nome;
 
-    document.getElementById(
-        "mostrarFabricacao"
-    ).innerText=
-    document.getElementById(
-        "fabricacaoEtiqueta"
-    ).value;
 
-    document.getElementById(
-        "mostrarValidade"
-    ).innerText=
-    document.getElementById(
-        "validadeEtiqueta"
-    ).value;
-
-    let codigoBarra=
+    let ean =
     produto.ean;
 
-    if(
-        !codigoBarra ||
-        codigoBarra==""
-    ){
+    if(!ean || ean===""){
 
-        codigoBarra=
-        "7891234567895";
+        ean="7891234567895";
 
     }
 
-    document.getElementById(
-        "codigoBarrasEtiqueta"
-    ).innerHTML=
-    '<svg id="barcodeSVG"></svg>';
 
-    JsBarcode(
-        "#barcodeSVG",
-        codigoBarra,
-        {
 
-            format:"EAN13",
+    for(let i=0;i<quantidade;i++){
 
-            displayValue:true,
+        let tarjeta =
+        document.createElement("div");
 
-            width:2,
+        tarjeta.className =
+        "tarjeta";
 
-            height:60,
 
-            margin:0
 
-        }
+        tarjeta.innerHTML = `
 
-    );
+        <div class="tarjeta-topo">
+
+            <div class="tarjeta-logo">
+
+                Carol's Gourmet
+
+            </div>
+
+        </div>
+
+
+        <div class="tarjeta-produto">
+
+            ${produto.nome}
+
+        </div>
+
+
+        <svg id="barcode_${i}"></svg>
+
+
+        <div class="tarjeta-datas">
+
+            <span>
+
+                Fab:
+                ${document.getElementById("fabricacaoTarjeta").value}
+
+            </span>
+
+            <span>
+
+                Val:
+                ${document.getElementById("validadeTarjeta").value}
+
+            </span>
+
+        </div>
+
+        `;
+
+
+
+        area.appendChild(tarjeta);
+
+
+
+        JsBarcode(
+
+            "#barcode_"+i,
+
+            ean,
+
+            {
+
+                format:"EAN13",
+
+                width:2,
+
+                height:55,
+
+                displayValue:true,
+
+                margin:0
+
+            }
+
+        );
+
+    }
 
 }
 
 
 
-// ==========================================
-// SALVAR PNG
-// ==========================================
+// =========================================
+// INICIAR TARJETAS
+// =========================================
 
-function salvarEtiquetaPNG(){
+window.addEventListener("load",function(){
 
-    const etiqueta=
-    document.getElementById(
-        "etiquetaGerada"
-    );
+    carregarProdutosTarjeta();
 
-    if(!etiqueta){
+});
+// =====================================
+// TARJETAS VERTICAIS
+// =====================================
 
+function gerarTarjetas(){
+
+    const produto =
+    document.getElementById("produtoTarjeta");
+
+    if(!produto || produto.selectedIndex < 1){
+        alert("Selecione um produto.");
         return;
+    }
+
+    const nome =
+    produto.options[produto.selectedIndex].text;
+
+    const codigo =
+    produto.value;
+
+    const quantidade =
+    Number(
+        document.getElementById("quantidadeTarjeta").value
+    ) || 1;
+
+    const fabricacao =
+    document.getElementById("fabricacaoTarjeta").value;
+
+    const validade =
+    document.getElementById("validadeTarjeta").value;
+
+    const area =
+    document.getElementById("areaTarjetas");
+
+    area.innerHTML="";
+
+    for(let i=0;i<quantidade;i++){
+
+        const div =
+        document.createElement("div");
+
+        div.className="tarjeta";
+
+        div.innerHTML=`
+
+        <div class="tarjeta-logo">
+            Carol's Gourmet
+        </div>
+
+        <div class="tarjeta-produto">
+            ${nome}
+        </div>
+
+        <svg id="bc${i}"></svg>
+
+        <div class="tarjeta-datas">
+
+            <strong>Fab:</strong>
+            ${fabricacao}
+
+            <br>
+
+            <strong>Val:</strong>
+            ${validade}
+
+        </div>
+
+        `;
+
+        area.appendChild(div);
+
+        JsBarcode(`#bc${i}`,codigo,{
+            format:"EAN13",
+            width:2,
+            height:55,
+            displayValue:true
+        });
 
     }
 
-    html2canvas(etiqueta).then(function(canvas){
+}
+function imprimirTarjetas(){
 
-        const link=
+    const conteudo =
+    document.getElementById("areaTarjetas").innerHTML;
+
+    const janela =
+    window.open("","","width=900,height=900");
+
+    janela.document.write(`
+
+<html>
+
+<head>
+
+<title>Tarjetas</title>
+
+<style>
+
+body{
+
+margin:0;
+padding:15mm;
+font-family:Arial;
+
+}
+
+.folha{
+
+display:grid;
+
+grid-template-columns:repeat(3,7cm);
+
+gap:6mm;
+
+}
+
+.tarjeta{
+
+width:7cm;
+
+height:21cm;
+
+border:1px solid #000;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:8mm;
+
+box-sizing:border-box;
+
+}
+
+.tarjeta-logo{
+
+font-size:20px;
+
+font-weight:bold;
+
+text-align:center;
+
+}
+
+.tarjeta-produto{
+
+font-size:18px;
+
+font-weight:bold;
+
+text-align:center;
+
+}
+
+.tarjeta-datas{
+
+font-size:13px;
+
+text-align:center;
+
+}
+
+svg{
+
+width:100%;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="folha">
+
+${conteudo}
+
+</div>
+
+<script>
+window.onload=function(){
+window.print();
+window.close();
+}
+</script>
+
+</body>
+
+</html>
+
+`);
+
+    janela.document.close();
+
+}
+// =====================================================
+// PARTE 4C
+// ACABAMENTO DAS TARJETAS
+// =====================================================
+
+
+// ========================================
+// ORGANIZAR FOLHA A4
+// ========================================
+
+function organizarFolhaTarjetas(){
+
+    const origem =
+    document.getElementById("areaTarjetas");
+
+    const folha =
+    document.getElementById("folhaTarjetas");
+
+    if(!origem || !folha) return;
+
+    folha.innerHTML="";
+
+    origem.querySelectorAll(".tarjeta")
+    .forEach(function(item){
+
+        folha.appendChild(
+            item.cloneNode(true)
+        );
+
+    });
+
+}
+
+
+
+// ========================================
+// EXPORTAR TARJETAS PNG
+// ========================================
+
+function salvarTarjetasPNG(){
+
+    organizarFolhaTarjetas();
+
+    const folha =
+    document.getElementById(
+        "folhaTarjetas"
+    );
+
+    html2canvas(folha,{
+        scale:3,
+        backgroundColor:"#ffffff"
+    }).then(function(canvas){
+
+        let link =
         document.createElement("a");
 
         link.download=
-        "etiqueta.png";
+        "tarjetas-carols-gourmet.png";
 
         link.href=
-        canvas.toDataURL();
+        canvas.toDataURL("image/png");
 
         link.click();
 
@@ -2031,130 +2361,160 @@ function salvarEtiquetaPNG(){
 
 
 
-
-// ==========================================
-// IMPRIMIR
-// ==========================================
-
-function imprimirEtiqueta(){
-
-    window.print();
-
-}
-
-
-
-
-// ==========================================
-// TARJETAS
-// ==========================================
-
-function atualizarTarjetaProduto(){
-
-    let select=
-    document.getElementById(
-        "produtoTarjeta"
-    );
-
-    if(!select) return;
-
-}
-
-
-
-function gerarTarjetas(){
-
-    const area=
-    document.getElementById(
-        "areaTarjetas"
-    );
-
-    if(!area) return;
-
-    area.innerHTML="";
-
-    const quantidade=
-    Number(
-        document.getElementById(
-            "quantidadeTarjeta"
-        ).value
-    );
-
-    const codigo=
-    document.getElementById(
-        "produtoTarjeta"
-    ).value;
-
-    const produto=
-    produtos.find(function(p){
-
-        return p.codigo===codigo;
-
-    });
-
-    if(!produto){
-
-        alert("Selecione um produto.");
-
-        return;
-
-    }
-
-    for(let i=0;i<quantidade;i++){
-
-        let div=
-        document.createElement("div");
-
-        div.className=
-        "tarjeta";
-
-        div.innerHTML=`
-
-            <div class="tarjeta-logo">
-                Carol's Gourmet
-            </div>
-
-            <div class="tarjeta-nome">
-                ${produto.nome}
-            </div>
-
-            <div>
-                Fab:
-                ${document.getElementById("fabricacaoTarjeta").value}
-            </div>
-
-            <div>
-                Val:
-                ${document.getElementById("validadeTarjeta").value}
-            </div>
-
-        `;
-
-        area.appendChild(div);
-
-    }
-
-}
-
-
+// ========================================
+// IMPRESSÃO MELHORADA
+// ========================================
 
 function imprimirTarjetas(){
 
-    window.print();
+    organizarFolhaTarjetas();
+
+    let conteudo =
+    document.getElementById(
+        "folhaTarjetas"
+    ).innerHTML;
+
+    let janela =
+    window.open(
+        "",
+        "",
+        "width=900,height=900"
+    );
+
+    janela.document.write(`
+
+<html>
+
+<head>
+
+<title>Tarjetas</title>
+
+<style>
+
+@page{
+
+size:A4 portrait;
+
+margin:8mm;
 
 }
 
+body{
 
+margin:0;
 
-// ==========================================
-// INICIALIZAÇÃO
-// ==========================================
+padding:0;
 
-window.addEventListener("load",function(){
+font-family:Arial,sans-serif;
 
-    carregarProdutosEtiqueta();
+}
 
-});
+.folha{
 
+display:grid;
 
+grid-template-columns:repeat(3,5cm);
 
+gap:6mm;
+
+justify-content:center;
+
+}
+
+.tarjeta{
+
+width:5cm;
+
+height:21cm;
+
+border:1px solid #000;
+
+border-radius:8px;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:8px;
+
+box-sizing:border-box;
+
+background:#fff;
+
+}
+
+.tarjeta-logo{
+
+font-size:18px;
+
+font-weight:bold;
+
+text-align:center;
+
+}
+
+.tarjeta-produto{
+
+font-size:16px;
+
+font-weight:bold;
+
+text-align:center;
+
+}
+
+.tarjeta-datas{
+
+font-size:11px;
+
+text-align:center;
+
+line-height:18px;
+
+}
+
+svg{
+
+width:100%;
+
+height:auto;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="folha">
+
+${conteudo}
+
+</div>
+
+<script>
+
+window.onload=function(){
+
+window.print();
+
+window.close();
+
+}
+
+</script>
+
+</body>
+
+</html>
+
+`);
+
+    janela.document.close();
+
+}
