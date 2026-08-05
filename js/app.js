@@ -1843,7 +1843,7 @@ function iniciarProducao(){
 // ======================================================
 // CAROL'S GOURMET ERP 4.0
 // PARTE 4A
-// TARJETAS 21cm x 5cm
+// ETIQUETAS + TARJETAS
 // ======================================================
 
 
@@ -1885,8 +1885,9 @@ Selecione um Brownie ou Palha Italiana
 
 
         let categoria =
-        (produto.categoria || "")
+        String(produto.categoria || "")
         .toLowerCase();
+
 
 
 
@@ -1929,8 +1930,51 @@ Selecione um Brownie ou Palha Italiana
 
 
 
+
 // ======================================================
-// CALCULAR VALIDADE TARJETA
+// ATUALIZAR TARJETA PRODUTO
+// ======================================================
+
+
+function atualizarTarjetaProduto(){
+
+
+    let codigo =
+    document.getElementById(
+        "produtoTarjeta"
+    )?.value;
+
+
+
+    let produto =
+    produtos.find(function(p){
+
+
+        return p.codigo === codigo;
+
+
+    });
+
+
+
+    if(!produto){
+
+        return;
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+// ======================================================
+// VALIDADE TARJETA AUTOMÁTICA
 // ======================================================
 
 
@@ -1964,7 +2008,6 @@ function calcularValidadeTarjeta(){
 
 
 
-
     let data =
     new Date(
         fabricacao.value
@@ -1985,7 +2028,6 @@ function calcularValidadeTarjeta(){
     .split("T")[0];
 
 
-
 }
 
 
@@ -1993,41 +2035,9 @@ function calcularValidadeTarjeta(){
 
 
 
-// ======================================================
-// ATUALIZAR QUANDO ALTERAR DATA
-// ======================================================
-
-
-document.addEventListener(
-    "change",
-    function(e){
-
-
-
-        if(
-            e.target.id ===
-            "fabricacaoTarjeta"
-        ){
-
-
-            calcularValidadeTarjeta();
-
-
-        }
-
-
-
-    }
-);
-
-
-
-
-
-
 
 // ======================================================
-// GERAR TARJETAS
+// GERAR TARJETAS 21cm x 5cm
 // ======================================================
 
 
@@ -2049,13 +2059,14 @@ function gerarTarjetas(){
 
 
         alert(
-            "Selecione um produto."
+            "Selecione um produto"
         );
 
 
         return;
 
     }
+
 
 
 
@@ -2078,7 +2089,7 @@ function gerarTarjetas(){
 
 
         alert(
-            "Produto não encontrado."
+            "Produto não encontrado"
         );
 
 
@@ -2091,13 +2102,12 @@ function gerarTarjetas(){
 
 
 
-
     let quantidade =
     Number(
         document.getElementById(
             "quantidadeTarjeta"
-        ).value
-    ) || 1;
+        )?.value || 1
+    );
 
 
 
@@ -2107,8 +2117,7 @@ function gerarTarjetas(){
     let fabricacao =
     document.getElementById(
         "fabricacaoTarjeta"
-    ).value;
-
+    )?.value || "";
 
 
 
@@ -2116,8 +2125,7 @@ function gerarTarjetas(){
     let validade =
     document.getElementById(
         "validadeTarjeta"
-    ).value;
-
+    )?.value || "";
 
 
 
@@ -2146,55 +2154,30 @@ function gerarTarjetas(){
 
 
 
-    // usa o EAN cadastrado
-
-    let ean =
-    produto.ean;
-
-
-
-    if(
-        !ean ||
-        ean.length < 12
-    ){
-
-
-        ean =
-        "7891234567895";
-
-
-    }
-
-
-
-
-
-
-
 
     for(
-        let i = 0;
-        i < quantidade;
+        let i=0;
+        i<quantidade;
         i++
     ){
 
 
 
-        let tarjeta =
+        let div =
         document.createElement(
             "div"
         );
 
 
 
-        tarjeta.className =
+        div.className =
         "tarjeta";
 
 
 
 
 
-        tarjeta.innerHTML = `
+        div.innerHTML = `
 
 
 <div class="tarjeta-logo">
@@ -2221,14 +2204,14 @@ ${produto.nome}
 
 
 Fab:
-${fabricacao.split("-").reverse().join("/")}
+${fabricacao}
 
 
 <br>
 
 
 Val:
-${validade.split("-").reverse().join("/")}
+${validade}
 
 
 </div>
@@ -2239,11 +2222,27 @@ ${validade.split("-").reverse().join("/")}
 
 
 
+        area.appendChild(div);
 
-        area.appendChild(
-            tarjeta
-        );
 
+
+
+
+
+        let codigoBarras =
+        produto.ean;
+
+
+
+        if(
+            !codigoBarras ||
+            codigoBarras.length !== 13
+        ){
+
+            codigoBarras =
+            "7891234567895";
+
+        }
 
 
 
@@ -2251,26 +2250,23 @@ ${validade.split("-").reverse().join("/")}
 
 
         JsBarcode(
-
             "#barcodeTarjeta"+i,
-
-            ean,
-
+            codigoBarras,
             {
 
                 format:"EAN13",
 
                 width:2,
 
-                height:45,
+                height:50,
 
                 displayValue:true,
 
                 margin:0
 
             }
-
         );
+
 
 
 
@@ -2279,6 +2275,48 @@ ${validade.split("-").reverse().join("/")}
 
 
 }
+
+
+
+
+
+
+
+// ======================================================
+// INICIALIZAÇÃO DA PARTE 4
+// ======================================================
+
+
+window.addEventListener(
+"load",
+function(){
+
+
+    carregarProdutosTarjeta();
+
+
+
+    let campoData =
+    document.getElementById(
+        "fabricacaoTarjeta"
+    );
+
+
+
+    if(campoData){
+
+
+        campoData.addEventListener(
+            "change",
+            calcularValidadeTarjeta
+        );
+
+
+    }
+
+
+
+});
 // ======================================================
 // CAROL'S GOURMET ERP 4.0
 // PARTE 4B
