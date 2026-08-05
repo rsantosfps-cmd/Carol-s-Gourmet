@@ -776,7 +776,7 @@ function registrarMovimentacao(){
 
 
 
-    salvarDados();
+    salvarBanco();
 
 
     listarMaterias();
