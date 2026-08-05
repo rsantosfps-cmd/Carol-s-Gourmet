@@ -1840,7 +1840,321 @@ function iniciarProducao(){
 
 
 }
+// ======================================================
+// CAROL'S GOURMET ERP 4.0
+// PARTE 4/4
+// ETIQUETAS
+// ======================================================
 
+
+// ==========================================
+// INICIALIZAR ETIQUETAS
+// ==========================================
+
+function carregarProdutosEtiqueta(){
+
+    const select =
+    document.getElementById("produtoEtiqueta");
+
+    if(!select) return;
+
+    select.innerHTML="";
+
+    produtos.forEach(function(produto){
+
+        let option=document.createElement("option");
+
+        option.value=produto.codigo;
+
+        option.textContent=
+        produto.nome;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+
+
+// ==========================================
+// VALIDADE AUTOMÁTICA
+// ==========================================
+
+const campoFab =
+document.getElementById("fabricacaoEtiqueta");
+
+if(campoFab){
+
+    campoFab.addEventListener("change",function(){
+
+        let validade=
+        document.getElementById("validadeEtiqueta");
+
+        if(!validade) return;
+
+        let data=
+        new Date(this.value);
+
+        data.setDate(
+            data.getDate()+30
+        );
+
+        validade.value=
+        data.toISOString()
+        .split("T")[0];
+
+    });
+
+}
+
+
+
+
+// ==========================================
+// GERAR ETIQUETA
+// ==========================================
+
+function gerarEtiqueta(){
+
+    const codigo=
+    document.getElementById("produtoEtiqueta").value;
+
+    const produto=
+    produtos.find(function(p){
+
+        return p.codigo===codigo;
+
+    });
+
+    if(!produto){
+
+        alert("Selecione um produto.");
+
+        return;
+
+    }
+
+    document.getElementById(
+        "mostrarProduto"
+    ).innerText=
+    produto.nome;
+
+    document.getElementById(
+        "mostrarFabricacao"
+    ).innerText=
+    document.getElementById(
+        "fabricacaoEtiqueta"
+    ).value;
+
+    document.getElementById(
+        "mostrarValidade"
+    ).innerText=
+    document.getElementById(
+        "validadeEtiqueta"
+    ).value;
+
+    let codigoBarra=
+    produto.ean;
+
+    if(
+        !codigoBarra ||
+        codigoBarra==""
+    ){
+
+        codigoBarra=
+        "7891234567895";
+
+    }
+
+    document.getElementById(
+        "codigoBarrasEtiqueta"
+    ).innerHTML=
+    '<svg id="barcodeSVG"></svg>';
+
+    JsBarcode(
+        "#barcodeSVG",
+        codigoBarra,
+        {
+
+            format:"EAN13",
+
+            displayValue:true,
+
+            width:2,
+
+            height:60,
+
+            margin:0
+
+        }
+
+    );
+
+}
+
+
+
+// ==========================================
+// SALVAR PNG
+// ==========================================
+
+function salvarEtiquetaPNG(){
+
+    const etiqueta=
+    document.getElementById(
+        "etiquetaGerada"
+    );
+
+    if(!etiqueta){
+
+        return;
+
+    }
+
+    html2canvas(etiqueta).then(function(canvas){
+
+        const link=
+        document.createElement("a");
+
+        link.download=
+        "etiqueta.png";
+
+        link.href=
+        canvas.toDataURL();
+
+        link.click();
+
+    });
+
+}
+
+
+
+
+// ==========================================
+// IMPRIMIR
+// ==========================================
+
+function imprimirEtiqueta(){
+
+    window.print();
+
+}
+
+
+
+
+// ==========================================
+// TARJETAS
+// ==========================================
+
+function atualizarTarjetaProduto(){
+
+    let select=
+    document.getElementById(
+        "produtoTarjeta"
+    );
+
+    if(!select) return;
+
+}
+
+
+
+function gerarTarjetas(){
+
+    const area=
+    document.getElementById(
+        "areaTarjetas"
+    );
+
+    if(!area) return;
+
+    area.innerHTML="";
+
+    const quantidade=
+    Number(
+        document.getElementById(
+            "quantidadeTarjeta"
+        ).value
+    );
+
+    const codigo=
+    document.getElementById(
+        "produtoTarjeta"
+    ).value;
+
+    const produto=
+    produtos.find(function(p){
+
+        return p.codigo===codigo;
+
+    });
+
+    if(!produto){
+
+        alert("Selecione um produto.");
+
+        return;
+
+    }
+
+    for(let i=0;i<quantidade;i++){
+
+        let div=
+        document.createElement("div");
+
+        div.className=
+        "tarjeta";
+
+        div.innerHTML=`
+
+            <div class="tarjeta-logo">
+                Carol's Gourmet
+            </div>
+
+            <div class="tarjeta-nome">
+                ${produto.nome}
+            </div>
+
+            <div>
+                Fab:
+                ${document.getElementById("fabricacaoTarjeta").value}
+            </div>
+
+            <div>
+                Val:
+                ${document.getElementById("validadeTarjeta").value}
+            </div>
+
+        `;
+
+        area.appendChild(div);
+
+    }
+
+}
+
+
+
+function imprimirTarjetas(){
+
+    window.print();
+
+}
+
+
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+
+window.addEventListener("load",function(){
+
+    carregarProdutosEtiqueta();
+
+});
 
 
 
