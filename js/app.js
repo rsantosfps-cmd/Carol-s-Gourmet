@@ -9,29 +9,29 @@
 // ======================================================
 
 let produtos =
-    JSON.parse(
-        localStorage.getItem("carols_produtos")
-    ) || [];
+JSON.parse(
+    localStorage.getItem("carols_produtos")
+) || [];
 
 let materias =
-    JSON.parse(
-        localStorage.getItem("carols_materias")
-    ) || [];
+JSON.parse(
+    localStorage.getItem("carols_materias")
+) || [];
 
 let movimentacoes =
-    JSON.parse(
-        localStorage.getItem("carols_movimentacoes")
-    ) || [];
+JSON.parse(
+    localStorage.getItem("carols_movimentacoes")
+) || [];
 
 let producoes =
-    JSON.parse(
-        localStorage.getItem("carols_producoes")
-    ) || [];
+JSON.parse(
+    localStorage.getItem("carols_producoes")
+) || [];
 
 let receitas =
-    JSON.parse(
-        localStorage.getItem("carols_receitas")
-    ) || [];
+JSON.parse(
+    localStorage.getItem("carols_receitas")
+) || [];
 
 
 // Garantir arrays válidos
