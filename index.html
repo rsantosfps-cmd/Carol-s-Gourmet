@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -16,12 +15,9 @@
         rel="stylesheet"
         href="css/style.css"
     >
-
 </head>
 
-
 <body>
-
 
 <!-- =========================================================
      CABEÇALHO
@@ -44,7 +40,6 @@
 
     </div>
 
-
     <button
         class="menu-toggle"
         onclick="toggleMenu()"
@@ -54,7 +49,6 @@
     </button>
 
 </header>
-
 
 
 <!-- =========================================================
@@ -74,7 +68,6 @@
         🏠 Dashboard
     </button>
 
-
     <button
         class="menu-item"
         onclick="mostrarAba('produtos', this)"
@@ -82,7 +75,6 @@
     >
         📦 Produtos
     </button>
-
 
     <button
         class="menu-item"
@@ -92,7 +84,6 @@
         🥫 Matéria-Prima
     </button>
 
-
     <button
         class="menu-item"
         onclick="mostrarAba('estoque', this)"
@@ -100,7 +91,6 @@
     >
         📋 Estoque
     </button>
-
 
     <button
         class="menu-item"
@@ -110,7 +100,6 @@
         🏭 Produção
     </button>
 
-
     <button
         class="menu-item"
         onclick="mostrarAba('receitas', this)"
@@ -119,7 +108,6 @@
         📖 Receitas
     </button>
 
-
     <button
         class="menu-item"
         onclick="mostrarAba('etiquetas', this)"
@@ -127,7 +115,6 @@
     >
         🏷️ Etiquetas
     </button>
-
 
     <button
         class="menu-item"
@@ -140,7 +127,6 @@
 </nav>
 
 
-
 <!-- =========================================================
      CONTEÚDO PRINCIPAL
 ========================================================= -->
@@ -148,7 +134,6 @@
 <div class="conteudo-principal">
 
 <main class="container">
-
 
 
 <!-- =========================================================
@@ -166,15 +151,12 @@
             🍰 Bem-vindo à Carol's Gourmet
         </h2>
 
-
         <p class="page-subtitle">
             Controle de produtos, matérias-primas,
             receitas, produção e etiquetas.
         </p>
 
-
         <div class="cards">
-
 
             <div class="card gold">
 
@@ -235,13 +217,11 @@
 
             </div>
 
-
         </div>
 
     </div>
 
 </section>
-
 
 
 <!-- =========================================================
@@ -259,11 +239,9 @@
             📦 Cadastro de Produtos
         </h2>
 
-
         <div class="form-box">
 
             <div class="form-grid">
-
 
                 <div class="form-group">
 
@@ -396,7 +374,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -409,7 +386,6 @@
                 >
                     💾 Salvar Produto
                 </button>
-
 
                 <button
                     type="button"
@@ -426,13 +402,11 @@
     </div>
 
 
-
     <div class="section">
 
         <h2 class="section-title">
             📋 Produtos Cadastrados
         </h2>
-
 
         <div class="table-container">
 
@@ -443,25 +417,17 @@
                     <tr>
 
                         <th>Código</th>
-
                         <th>Nome</th>
-
                         <th>Categoria</th>
-
                         <th>Unidade</th>
-
                         <th>Estoque</th>
-
                         <th>Custo Unitário</th>
-
                         <th>Valor Total</th>
-
                         <th>Ações</th>
 
                     </tr>
 
                 </thead>
-
 
                 <tbody id="listaProdutos">
                 </tbody>
@@ -473,7 +439,6 @@
     </div>
 
 </section>
-
 
 
 <!-- =========================================================
@@ -491,11 +456,11 @@
             🥫 Cadastro de Matéria-Prima
         </h2>
 
-
         <div class="form-box">
 
             <div class="form-grid">
 
+                <!-- CÓDIGO -->
 
                 <div class="form-group">
 
@@ -511,6 +476,8 @@
                 </div>
 
 
+                <!-- NOME -->
+
                 <div class="form-group full">
 
                     <label for="nomeMP">
@@ -524,6 +491,8 @@
 
                 </div>
 
+
+                <!-- CATEGORIA -->
 
                 <div class="form-group">
 
@@ -554,10 +523,12 @@
                 </div>
 
 
+                <!-- UNIDADE DE MEDIDA -->
+
                 <div class="form-group">
 
                     <label for="unidadeMP">
-                        Unidade
+                        Unidade de Medida
                     </label>
 
                     <select id="unidadeMP">
@@ -587,10 +558,12 @@
                 </div>
 
 
+                <!-- QUANTIDADE DE UNIDADES -->
+
                 <div class="form-group">
 
                     <label for="estoqueMP">
-                        Quantidade Inicial
+                        Quantidade de Unidades
                     </label>
 
                     <input
@@ -598,11 +571,34 @@
                         id="estoqueMP"
                         value="0"
                         min="0"
-                        step="0.01"
+                        step="1"
+                        placeholder="Ex: 12"
                     >
 
                 </div>
 
+
+                <!-- PESO POR UNIDADE -->
+
+                <div class="form-group">
+
+                    <label for="pesoUnidadeMP">
+                        Peso por Unidade
+                    </label>
+
+                    <input
+                        type="number"
+                        id="pesoUnidadeMP"
+                        value="0"
+                        min="0"
+                        step="0.01"
+                        placeholder="Ex: 250"
+                    >
+
+                </div>
+
+
+                <!-- CUSTO DE COMPRA -->
 
                 <div class="form-group">
 
@@ -615,10 +611,10 @@
                         id="custoMP"
                         step="0.01"
                         min="0"
+                        placeholder="Ex: 6,50"
                     >
 
                 </div>
-
 
             </div>
 
@@ -632,7 +628,6 @@
                 >
                     💾 Salvar Matéria-Prima
                 </button>
-
 
                 <button
                     type="button"
@@ -649,13 +644,15 @@
     </div>
 
 
+    <!-- =====================================================
+         MATÉRIAS-PRIMAS CADASTRADAS
+    ====================================================== -->
 
     <div class="section">
 
         <h2 class="section-title">
             📋 Matérias-Primas Cadastradas
         </h2>
-
 
         <div class="table-container">
 
@@ -665,24 +662,17 @@
 
                     <tr>
 
-                        <th>Código</th>
-
-                        <th>Nome</th>
-
-                        <th>Categoria</th>
-
-                        <th>Unidade</th>
-
-                        <th>Estoque</th>
-
+                        <th>Matéria-prima</th>
+                        <th>Unidades</th>
+                        <th>Peso/unidade</th>
+                        <th>Peso total</th>
                         <th>Custo</th>
-
-                        <th>Custo Total</th>
+                        <th>Custo total</th>
+                        <th>Ações</th>
 
                     </tr>
 
                 </thead>
-
 
                 <tbody id="listaMateriaPrima">
                 </tbody>
@@ -694,7 +684,6 @@
     </div>
 
 </section>
-
 
 
 <!-- =========================================================
@@ -711,7 +700,6 @@
         <h2 class="section-title">
             📋 Estoque
         </h2>
-
 
         <div class="form-grid">
 
@@ -743,7 +731,6 @@
     </div>
 
 
-
     <div class="section">
 
         <div class="table-container">
@@ -763,16 +750,13 @@
     </div>
 
 
-
     <div class="section">
 
         <h2 class="section-title">
             🔄 Movimentar Estoque
         </h2>
 
-
         <div class="form-grid">
-
 
             <div class="form-group">
 
@@ -879,7 +863,6 @@
 
             </div>
 
-
         </div>
 
 
@@ -898,13 +881,11 @@
     </div>
 
 
-
     <div class="section">
 
         <h2 class="section-title">
             📋 Histórico de Movimentações
         </h2>
-
 
         <div class="table-container">
 
@@ -915,21 +896,15 @@
                     <tr>
 
                         <th>Data</th>
-
                         <th>Tipo</th>
-
                         <th>Item</th>
-
                         <th>Quantidade</th>
-
                         <th>Operação</th>
-
                         <th>Observação</th>
 
                     </tr>
 
                 </thead>
-
 
                 <tbody id="historicoMovimentacoes">
                 </tbody>
@@ -941,7 +916,6 @@
     </div>
 
 </section>
-
 
 
 <!-- =========================================================
@@ -959,11 +933,9 @@
             🏭 Produção
         </h2>
 
-
         <div class="form-box">
 
             <div class="form-grid">
-
 
                 <div class="form-group full">
 
@@ -1039,7 +1011,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -1060,13 +1031,11 @@
     </div>
 
 
-
     <div class="section">
 
         <h2 class="section-title">
             📋 Produções Registradas
         </h2>
-
 
         <div class="table-container">
 
@@ -1077,17 +1046,13 @@
                     <tr>
 
                         <th>Produto</th>
-
                         <th>Quantidade</th>
-
                         <th>Fabricação</th>
-
                         <th>Validade</th>
 
                     </tr>
 
                 </thead>
-
 
                 <tbody id="listaProducao">
                 </tbody>
@@ -1101,7 +1066,6 @@
 </section>
 
 
-
 <!-- =========================================================
      RECEITAS
 ========================================================= -->
@@ -1111,13 +1075,11 @@
     class="aba"
 >
 
-
     <div class="section">
 
         <h2 class="section-title">
             📖 Receita do Produto
         </h2>
-
 
         <p class="page-subtitle">
             Cadastre os ingredientes utilizados no produto
@@ -1125,14 +1087,9 @@
             e o valor de venda.
         </p>
 
-
         <div class="form-box">
 
-
             <div class="form-grid">
-
-
-                <!-- PRODUTO -->
 
                 <div class="form-group full">
 
@@ -1140,9 +1097,7 @@
                         Produto
                     </label>
 
-                    <select
-                        id="produtoReceita"
-                    >
+                    <select id="produtoReceita">
 
                         <option value="">
                             Selecione o produto
@@ -1153,17 +1108,13 @@
                 </div>
 
 
-                <!-- MATÉRIA-PRIMA -->
-
                 <div class="form-group">
 
                     <label for="materiaReceita">
                         Matéria-Prima
                     </label>
 
-                    <select
-                        id="materiaReceita"
-                    >
+                    <select id="materiaReceita">
 
                         <option value="">
                             Selecione a matéria-prima
@@ -1173,8 +1124,6 @@
 
                 </div>
 
-
-                <!-- QUANTIDADE -->
 
                 <div class="form-group">
 
@@ -1192,7 +1141,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -1208,23 +1156,16 @@
 
             </div>
 
-
         </div>
 
     </div>
 
-
-
-    <!-- =====================================================
-         INGREDIENTES
-    ====================================================== -->
 
     <div class="section">
 
         <h2 class="section-title">
             🥣 Ingredientes da Receita
         </h2>
-
 
         <div class="table-container">
 
@@ -1235,25 +1176,17 @@
                     <tr>
 
                         <th>Ingrediente</th>
-
                         <th>Quantidade</th>
-
                         <th>Unidade</th>
-
                         <th>Custo Unitário</th>
-
                         <th>Custo</th>
-
                         <th>Ação</th>
 
                     </tr>
 
                 </thead>
 
-
-                <tbody
-                    id="listaIngredientesReceita"
-                >
+                <tbody id="listaIngredientesReceita">
                 </tbody>
 
             </table>
@@ -1263,25 +1196,15 @@
     </div>
 
 
-
-    <!-- =====================================================
-         CÁLCULO DA RECEITA
-    ====================================================== -->
-
     <div class="section">
 
         <h2 class="section-title">
             💰 Custo e Valor de Venda
         </h2>
 
-
         <div class="form-box">
 
-
             <div class="form-grid">
-
-
-                <!-- RENDIMENTO -->
 
                 <div class="form-group">
 
@@ -1300,8 +1223,6 @@
                 </div>
 
 
-                <!-- EMBALAGEM -->
-
                 <div class="form-group">
 
                     <label for="custoEmbalagem">
@@ -1318,8 +1239,6 @@
 
                 </div>
 
-
-                <!-- OUTROS -->
 
                 <div class="form-group">
 
@@ -1338,8 +1257,6 @@
                 </div>
 
 
-                <!-- MARGEM -->
-
                 <div class="form-group">
 
                     <label for="margemLucro">
@@ -1356,7 +1273,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -1370,7 +1286,6 @@
                     🧮 Calcular
                 </button>
 
-
                 <button
                     type="button"
                     class="btn btn-primary"
@@ -1378,7 +1293,6 @@
                 >
                     💾 Salvar Receita
                 </button>
-
 
                 <button
                     type="button"
@@ -1395,20 +1309,13 @@
     </div>
 
 
-
-    <!-- =====================================================
-         RESULTADOS
-    ====================================================== -->
-
     <div class="section">
 
         <h2 class="section-title">
             📊 Resultado
         </h2>
 
-
         <div class="cards">
-
 
             <div class="card">
 
@@ -1477,23 +1384,16 @@
 
             </div>
 
-
         </div>
 
     </div>
 
-
-
-    <!-- =====================================================
-         RECEITAS SALVAS
-    ====================================================== -->
 
     <div class="section">
 
         <h2 class="section-title">
             📋 Receitas Cadastradas
         </h2>
-
 
         <div class="table-container">
 
@@ -1504,25 +1404,17 @@
                     <tr>
 
                         <th>Produto</th>
-
                         <th>Rendimento</th>
-
                         <th>Custo Unitário</th>
-
                         <th>Margem</th>
-
                         <th>Valor de Venda</th>
-
                         <th>Ações</th>
 
                     </tr>
 
                 </thead>
 
-
-                <tbody
-                    id="listaReceitas"
-                >
+                <tbody id="listaReceitas">
                 </tbody>
 
             </table>
@@ -1531,9 +1423,7 @@
 
     </div>
 
-
 </section>
-
 
 
 <!-- =========================================================
@@ -1545,21 +1435,15 @@
     class="aba"
 >
 
-
-    <!-- EAN-13 -->
-
     <div class="section">
 
         <h2 class="section-title">
             🏷️ Gerar Etiqueta EAN-13
         </h2>
 
-
         <div class="form-box">
 
-
             <div class="form-grid">
-
 
                 <div class="form-group full">
 
@@ -1606,7 +1490,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -1619,7 +1502,6 @@
                 >
                     👁️ Gerar Visualização
                 </button>
-
 
                 <button
                     type="button"
@@ -1636,29 +1518,22 @@
     </div>
 
 
-
-    <!-- PRÉ-VISUALIZAÇÃO EAN-13 -->
-
     <div class="section">
 
         <h2 class="section-title">
             Pré-visualização da Etiqueta
         </h2>
 
-
         <div class="print-area">
-
 
             <div
                 id="etiquetaGerada"
                 class="etiqueta"
             >
 
-
                 <div class="etiqueta-logo">
                     Carol's Gourmet
                 </div>
-
 
                 <div
                     id="codigoBarrasEtiqueta"
@@ -1666,9 +1541,7 @@
                 >
                 </div>
 
-
                 <div class="etiqueta-info">
-
 
                     <span>
 
@@ -1691,7 +1564,6 @@
 
                     </span>
 
-
                 </div>
 
 
@@ -1702,7 +1574,6 @@
                     Produto
                 </div>
 
-
             </div>
 
         </div>
@@ -1710,31 +1581,20 @@
     </div>
 
 
-
-    <!-- =====================================================
-         TARJETAS
-    ====================================================== -->
-
     <div class="section">
 
         <h2 class="section-title">
             🎀 Tarjetas para Brownie / Palha Italiana
         </h2>
 
-
         <p class="page-subtitle">
-
             Tarjeta de embalagem
             <strong>21 cm × 5 cm</strong>.
-
         </p>
-
 
         <div class="form-box">
 
-
             <div class="form-grid">
-
 
                 <div class="form-group full">
 
@@ -1801,7 +1661,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -1814,7 +1673,6 @@
                 >
                     🎀 Gerar Tarjetas
                 </button>
-
 
                 <button
                     type="button"
@@ -1831,15 +1689,11 @@
     </div>
 
 
-
-    <!-- PRÉ-VISUALIZAÇÃO TARJETAS -->
-
     <div class="section">
 
         <h2 class="section-title">
             Pré-visualização das Tarjetas
         </h2>
-
 
         <div
             id="areaTarjetas"
@@ -1850,18 +1704,13 @@
     </div>
 
 
-
-    <!-- FOLHA A4 -->
-
     <div
         id="folhaTarjetas"
         class="folha-tarjetas"
     >
     </div>
 
-
 </section>
-
 
 
 <!-- =========================================================
@@ -1873,16 +1722,13 @@
     class="aba"
 >
 
-
     <div class="section">
 
         <h2 class="section-title">
             ⚙️ Configurações
         </h2>
 
-
         <div class="cards">
-
 
             <div class="card">
 
@@ -1933,7 +1779,6 @@
 
             </div>
 
-
         </div>
 
     </div>
@@ -1941,11 +1786,9 @@
 </section>
 
 
-
 </main>
 
 </div>
-
 
 
 <!-- =========================================================
@@ -1961,7 +1804,6 @@
 </footer>
 
 
-
 <!-- =========================================================
      BIBLIOTECAS
 ========================================================= -->
@@ -1970,11 +1812,9 @@
     src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
 ></script>
 
-
 <script
     src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"
 ></script>
-
 
 
 <!-- =========================================================
@@ -1983,7 +1823,5 @@
 
 <script src="js/app.js"></script>
 
-
 </body>
-
 </html>
