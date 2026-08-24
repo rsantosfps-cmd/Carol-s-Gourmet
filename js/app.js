@@ -1,6 +1,6 @@
 // ======================================================
 // CAROL'S GOURMET ERP 4.0
-// APP.JS - VERSÃO CORRIGIDA
+// APP.JS - VERSÃO CONSOLIDADA + PESO DE MATÉRIA-PRIMA
 // ======================================================
 
 
@@ -34,13 +34,30 @@ let receitas =
     ) || [];
 
 
-// Garantir arrays válidos
+// ======================================================
+// GARANTIR ARRAYS VÁLIDOS
+// ======================================================
 
-if (!Array.isArray(produtos)) produtos = [];
-if (!Array.isArray(materias)) materias = [];
-if (!Array.isArray(movimentacoes)) movimentacoes = [];
-if (!Array.isArray(producoes)) producoes = [];
-if (!Array.isArray(receitas)) receitas = [];
+if (!Array.isArray(produtos)) {
+    produtos = [];
+}
+
+if (!Array.isArray(materias)) {
+    materias = [];
+}
+
+if (!Array.isArray(movimentacoes)) {
+    movimentacoes = [];
+}
+
+if (!Array.isArray(producoes)) {
+    producoes = [];
+}
+
+if (!Array.isArray(receitas)) {
+    receitas = [];
+
+}
 
 
 // ======================================================
@@ -51,199 +68,36 @@ let ingredientesReceita = [];
 
 
 // ======================================================
-// FUNÇÕES AUXILIARES
+// NORMALIZAR MATÉRIAS-PRIMAS
+// NÃO APAGA DADOS EXISTENTES
 // ======================================================
 
-function obterElemento(...ids) {
-
-    for (const id of ids) {
-
-        const elemento =
-            document.getElementById(id);
-
-        if (elemento) {
-            return elemento;
-        }
-
-    }
-
-    return null;
-}
-
-
-// ------------------------------------------------------
-// NÚMERO
-// ------------------------------------------------------
-
-function numero(valor, padrao = 0) {
+materias.forEach(function (materia) {
 
     if (
-        valor === null ||
-        valor === undefined ||
-        valor === ""
+        materia.pesoUnidade === undefined ||
+        materia.pesoUnidade === null
     ) {
-        return padrao;
+
+        materia.pesoUnidade =
+            materia.peso ||
+            materia.pesoPorUnidade ||
+            0;
+
     }
 
-    if (typeof valor === "number") {
-        return isNaN(valor) ? padrao : valor;
-    }
-
-    let texto =
-        String(valor)
-            .trim()
-            .replace(/\s/g, "");
-
-    // Trata valores como:
-    // 250
-    // 250,5
-    // 250.5
-    // 1.250,50
 
     if (
-        texto.includes(",") &&
-        texto.includes(".")
+        !materia.unidadePeso
     ) {
 
-        texto =
-            texto
-                .replace(/\./g, "")
-                .replace(",", ".");
-
-    } else if (
-        texto.includes(",")
-    ) {
-
-        texto =
-            texto.replace(",", ".");
+        materia.unidadePeso =
+            materia.unidadeDePeso ||
+            "g";
 
     }
 
-    const resultado =
-        Number(texto);
-
-    return isNaN(resultado)
-        ? padrao
-        : resultado;
-}
-
-
-// ------------------------------------------------------
-// FORMATA DINHEIRO
-// ------------------------------------------------------
-
-function formatarMoeda(valor) {
-
-    return Number(valor || 0)
-        .toLocaleString(
-            "pt-BR",
-            {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }
-        );
-
-}
-
-
-// ------------------------------------------------------
-// FORMATA PESO
-// ------------------------------------------------------
-
-function formatarPeso(valor, unidade = "g") {
-
-    const peso =
-        Number(valor || 0);
-
-    if (!peso) {
-        return "0 " + unidade;
-    }
-
-    let numeroFormatado;
-
-    if (
-        Number.isInteger(peso)
-    ) {
-
-        numeroFormatado =
-            peso.toLocaleString("pt-BR");
-
-    } else {
-
-        numeroFormatado =
-            peso.toLocaleString(
-                "pt-BR",
-                {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 3
-                }
-            );
-
-    }
-
-    return (
-        numeroFormatado +
-        " " +
-        (unidade || "g")
-    );
-
-}
-
-
-// ------------------------------------------------------
-// CALCULAR PESO TOTAL
-// ------------------------------------------------------
-
-function calcularPesoTotal(materia) {
-
-    const unidades =
-        numero(
-            materia.unidades !== undefined
-                ? materia.unidades
-                : materia.estoque,
-            0
-        );
-
-    const pesoUnidade =
-        numero(
-            materia.pesoUnidade,
-            0
-        );
-
-    return (
-        unidades *
-        pesoUnidade
-    );
-
-}
-
-
-// ------------------------------------------------------
-// CALCULAR CUSTO TOTAL
-// ------------------------------------------------------
-
-function calcularCustoTotalMateria(materia) {
-
-    const unidades =
-        numero(
-            materia.unidades !== undefined
-                ? materia.unidades
-                : materia.estoque,
-            0
-        );
-
-    const custo =
-        numero(
-            materia.custo,
-            0
-        );
-
-    return (
-        unidades *
-        custo
-    );
-
-}
+});
 
 
 // ======================================================
@@ -257,24 +111,103 @@ function salvarBanco() {
         JSON.stringify(produtos)
     );
 
+
     localStorage.setItem(
         "carols_materias",
         JSON.stringify(materias)
     );
+
 
     localStorage.setItem(
         "carols_movimentacoes",
         JSON.stringify(movimentacoes)
     );
 
+
     localStorage.setItem(
         "carols_producoes",
         JSON.stringify(producoes)
     );
 
+
     localStorage.setItem(
         "carols_receitas",
         JSON.stringify(receitas)
+    );
+
+}
+
+
+// ======================================================
+// FUNÇÕES AUXILIARES DE PESO
+// ======================================================
+
+function obterPesoMateria(materia) {
+
+    return Number(
+        materia.pesoUnidade ||
+        materia.peso ||
+        materia.pesoPorUnidade ||
+        0
+    );
+
+}
+
+
+function obterUnidadePesoMateria(materia) {
+
+    return (
+        materia.unidadePeso ||
+        materia.unidadeDePeso ||
+        "g"
+    );
+
+}
+
+
+function formatarPeso(valor, unidade) {
+
+    const numero =
+        Number(valor || 0);
+
+    if (!numero) {
+
+        return "—";
+
+    }
+
+
+    let numeroFormatado =
+        numero.toLocaleString(
+            "pt-BR",
+            {
+                maximumFractionDigits: 3
+            }
+        );
+
+
+    return (
+        numeroFormatado +
+        " " +
+        (unidade || "g")
+    );
+
+}
+
+
+function calcularPesoTotalMateria(materia) {
+
+    const unidades =
+        Number(
+            materia.estoque || 0
+        );
+
+    const pesoUnidade =
+        obterPesoMateria(materia);
+
+    return (
+        unidades *
+        pesoUnidade
     );
 
 }
@@ -287,13 +220,21 @@ function salvarBanco() {
 function toggleMenu() {
 
     const sidebar =
-        document.getElementById("sidebar");
+        document.getElementById(
+            "sidebar"
+        );
+
 
     if (!sidebar) {
+
         return;
+
     }
 
-    sidebar.classList.toggle("aberto");
+
+    sidebar.classList.toggle(
+        "aberto"
+    );
 
 }
 
@@ -305,50 +246,64 @@ function toggleMenu() {
 function mostrarAba(id, botao) {
 
     const abas =
-        document.querySelectorAll(".aba");
+        document.querySelectorAll(
+            ".aba"
+        );
 
-    abas.forEach(function (aba) {
 
-        aba.classList.remove("ativa");
+    abas.forEach(
+        function (aba) {
 
-    });
+            aba.classList.remove(
+                "ativa"
+            );
+
+        }
+    );
 
 
     const abaSelecionada =
         document.getElementById(id);
 
+
     if (abaSelecionada) {
 
-        abaSelecionada.classList.add("ativa");
+        abaSelecionada.classList.add(
+            "ativa"
+        );
 
     }
 
 
     const botoes =
-        document.querySelectorAll(".menu-item");
+        document.querySelectorAll(
+            ".menu-item"
+        );
 
-    botoes.forEach(function (item) {
 
-        item.classList.remove("ativo");
+    botoes.forEach(
+        function (item) {
 
-    });
+            item.classList.remove(
+                "ativo"
+            );
+
+        }
+    );
 
 
     if (botao) {
 
-        botao.classList.add("ativo");
+        botao.classList.add(
+            "ativo"
+        );
 
     }
 
 
-    // Atualiza a aba aberta
-
-    if (id === "dashboard") {
-
-        atualizarDashboard();
-
-    }
-
+    // --------------------------------------------------
+    // ATUALIZAR DADOS DA ABA
+    // --------------------------------------------------
 
     if (id === "produtos") {
 
@@ -359,18 +314,11 @@ function mostrarAba(id, botao) {
 
     if (
         id === "materia-prima" ||
-        id === "materiaPrima"
+        id === "materias-primas"
     ) {
 
         carregarMaterias();
-        atualizarItensMovimentacao();
 
-    }
-
-
-    if (id === "estoque") {
-
-        carregarMaterias();
         atualizarItensMovimentacao();
 
     }
@@ -379,10 +327,30 @@ function mostrarAba(id, botao) {
     if (id === "receitas") {
 
         carregarProdutosReceita();
+
         carregarMateriasReceita();
+
         carregarListaReceitas();
+
         carregarIngredientesReceita();
+
         calcularCustoReceita();
+
+    }
+
+
+    if (id === "estoque") {
+
+        carregarMaterias();
+
+        atualizarItensMovimentacao();
+
+    }
+
+
+    if (id === "dashboard") {
+
+        atualizarDashboard();
 
     }
 
@@ -400,6 +368,7 @@ function atualizarDashboard() {
             "totalProdutos"
         );
 
+
     if (totalProdutos) {
 
         totalProdutos.innerText =
@@ -413,6 +382,7 @@ function atualizarDashboard() {
             "totalMateriaPrima"
         );
 
+
     if (totalMateriaPrima) {
 
         totalMateriaPrima.innerText =
@@ -425,6 +395,7 @@ function atualizarDashboard() {
         document.getElementById(
             "ultimaAtualizacao"
         );
+
 
     if (ultimaAtualizacao) {
 
@@ -451,33 +422,38 @@ function gerarCodigoProduto() {
 
     let maiorNumero = 0;
 
-    produtos.forEach(function (produto) {
 
-        const codigo =
-            String(
-                produto.codigo || ""
-            );
+    produtos.forEach(
+        function (produto) {
 
-        const numeroCodigo =
-            parseInt(
-                codigo.replace(
-                    "PROD-",
-                    ""
-                ),
-                10
-            );
+            const codigo =
+                String(
+                    produto.codigo || ""
+                );
 
-        if (
-            !isNaN(numeroCodigo) &&
-            numeroCodigo > maiorNumero
-        ) {
 
-            maiorNumero =
-                numeroCodigo;
+            const numero =
+                parseInt(
+                    codigo.replace(
+                        "PROD-",
+                        ""
+                    ),
+                    10
+                );
+
+
+            if (
+                !isNaN(numero) &&
+                numero > maiorNumero
+            ) {
+
+                maiorNumero =
+                    numero;
+
+            }
 
         }
-
-    });
+    );
 
 
     return (
@@ -498,6 +474,7 @@ function gerarEAN13() {
 
     let numero = "";
 
+
     for (
         let i = 0;
         i < 12;
@@ -514,6 +491,7 @@ function gerarEAN13() {
 
     let soma = 0;
 
+
     for (
         let i = 0;
         i < 12;
@@ -521,7 +499,10 @@ function gerarEAN13() {
     ) {
 
         const digito =
-            Number(numero[i]);
+            Number(
+                numero[i]
+            );
+
 
         if (i % 2 === 0) {
 
@@ -539,6 +520,7 @@ function gerarEAN13() {
 
     const resto =
         soma % 10;
+
 
     const digitoVerificador =
         resto === 0
@@ -568,6 +550,7 @@ function novoProduto() {
             "codigoProduto"
         );
 
+
     if (codigo) {
 
         codigo.value =
@@ -580,6 +563,7 @@ function novoProduto() {
         document.getElementById(
             "eanProduto"
         );
+
 
     if (ean) {
 
@@ -594,6 +578,7 @@ function novoProduto() {
             "nomeProduto"
         );
 
+
     if (nome) {
 
         nome.value = "";
@@ -605,6 +590,7 @@ function novoProduto() {
         document.getElementById(
             "categoriaProduto"
         );
+
 
     if (categoria) {
 
@@ -618,6 +604,7 @@ function novoProduto() {
             "unidadeProduto"
         );
 
+
     if (unidade) {
 
         unidade.value = "";
@@ -629,6 +616,7 @@ function novoProduto() {
         document.getElementById(
             "statusProduto"
         );
+
 
     if (status) {
 
@@ -653,36 +641,42 @@ function atualizarBotaoProduto() {
             "button"
         );
 
-    botoes.forEach(function (botao) {
 
-        const texto =
-            botao.innerText
-                .trim()
-                .toLowerCase();
+    botoes.forEach(
+        function (botao) {
 
-        if (
-            texto === "salvar produto" ||
-            texto === "atualizar produto"
-        ) {
+            const texto =
+                botao.innerText
+                    .trim()
+                    .toLowerCase();
+
 
             if (
-                typeof window.produtoEditando ===
-                "number"
+                texto ===
+                    "salvar produto" ||
+                texto ===
+                    "atualizar produto"
             ) {
 
-                botao.innerText =
-                    "Atualizar Produto";
+                if (
+                    typeof window.produtoEditando ===
+                    "number"
+                ) {
 
-            } else {
+                    botao.innerText =
+                        "Atualizar Produto";
 
-                botao.innerText =
-                    "Salvar Produto";
+                } else {
+
+                    botao.innerText =
+                        "Salvar Produto";
+
+                }
 
             }
 
         }
-
-    });
+    );
 
 }
 
@@ -777,7 +771,8 @@ function salvarProduto() {
         status:
             document.getElementById(
                 "statusProduto"
-            )?.value || "Ativo",
+            )?.value ||
+            "Ativo",
 
         estoque: 0,
 
@@ -794,6 +789,7 @@ function salvarProduto() {
 
 
     produtos.push(produto);
+
 
     salvarBanco();
 
@@ -826,7 +822,9 @@ function carregarProdutos() {
 
 
     if (!tabela) {
+
         return;
+
     }
 
 
@@ -837,14 +835,16 @@ function carregarProdutos() {
         function (produto, index) {
 
             const custo =
-                numero(
-                    produto.custo
+                Number(
+                    produto.custo || 0
                 );
 
+
             const estoque =
-                numero(
-                    produto.estoque
+                Number(
+                    produto.estoque || 0
                 );
+
 
             const valorEstoque =
                 estoque * custo;
@@ -883,11 +883,11 @@ function carregarProdutos() {
                 </td>
 
                 <td>
-                    R$ ${formatarMoeda(custo)}
+                    R$ ${custo.toFixed(2)}
                 </td>
 
                 <td>
-                    R$ ${formatarMoeda(valorEstoque)}
+                    R$ ${valorEstoque.toFixed(2)}
                 </td>
 
                 <td>
@@ -911,7 +911,9 @@ function carregarProdutos() {
             `;
 
 
-            tabela.appendChild(linha);
+            tabela.appendChild(
+                linha
+            );
 
         }
     );
@@ -928,8 +930,11 @@ function editarProduto(index) {
     const produto =
         produtos[index];
 
+
     if (!produto) {
+
         return;
+
     }
 
 
@@ -966,7 +971,8 @@ function editarProduto(index) {
     document.getElementById(
         "statusProduto"
     ).value =
-        produto.status || "Ativo";
+        produto.status ||
+        "Ativo";
 
 
     window.produtoEditando =
@@ -987,8 +993,11 @@ function atualizarProduto(index) {
     const produto =
         produtos[index];
 
+
     if (!produto) {
+
         return;
+
     }
 
 
@@ -1028,7 +1037,8 @@ function atualizarProduto(index) {
     produto.status =
         document.getElementById(
             "statusProduto"
-        )?.value || "Ativo";
+        )?.value ||
+        "Ativo";
 
 
     salvarBanco();
@@ -1041,6 +1051,7 @@ function atualizarProduto(index) {
 
 
     delete window.produtoEditando;
+
 
     novoProduto();
 
@@ -1061,8 +1072,11 @@ function excluirProduto(index) {
     const produto =
         produtos[index];
 
+
     if (!produto) {
+
         return;
+
     }
 
 
@@ -1071,7 +1085,9 @@ function excluirProduto(index) {
             `Deseja excluir o produto "${produto.nome}"?`
         )
     ) {
+
         return;
+
     }
 
 
@@ -1120,7 +1136,7 @@ function gerarCodigoMP() {
                 );
 
 
-            const numeroCodigo =
+            const numero =
                 parseInt(
                     codigo.replace(
                         "MP-",
@@ -1131,12 +1147,12 @@ function gerarCodigoMP() {
 
 
             if (
-                !isNaN(numeroCodigo) &&
-                numeroCodigo > maiorNumero
+                !isNaN(numero) &&
+                numero > maiorNumero
             ) {
 
                 maiorNumero =
-                    numeroCodigo;
+                    numero;
 
             }
 
@@ -1168,6 +1184,7 @@ function novaMateriaPrima() {
             "codigoMP"
         );
 
+
     if (codigo) {
 
         codigo.value =
@@ -1181,6 +1198,7 @@ function novaMateriaPrima() {
             "nomeMP"
         );
 
+
     if (nome) {
 
         nome.value = "";
@@ -1192,6 +1210,7 @@ function novaMateriaPrima() {
         document.getElementById(
             "categoriaMP"
         );
+
 
     if (categoria) {
 
@@ -1205,6 +1224,7 @@ function novaMateriaPrima() {
             "unidadeMP"
         );
 
+
     if (unidade) {
 
         unidade.value = "";
@@ -1212,12 +1232,11 @@ function novaMateriaPrima() {
     }
 
 
-    // Unidades
-
     const estoque =
         document.getElementById(
             "estoqueMP"
         );
+
 
     if (estoque) {
 
@@ -1226,27 +1245,34 @@ function novaMateriaPrima() {
     }
 
 
-    const unidades =
-        obterElemento(
-            "unidadesMP",
-            "quantidadeMP"
+    const custo =
+        document.getElementById(
+            "custoMP"
         );
 
-    if (unidades) {
 
-        unidades.value = "0";
+    if (custo) {
+
+        custo.value = "";
 
     }
 
 
-    // Peso por unidade
+    // --------------------------------------------------
+    // PESO
+    // --------------------------------------------------
 
     const peso =
-        obterElemento(
-            "pesoMP",
-            "pesoUnidadeMP",
-            "pesoMateriaPrima"
+        document.getElementById(
+            "pesoMP"
+        ) ||
+        document.getElementById(
+            "pesoUnidadeMP"
+        ) ||
+        document.getElementById(
+            "pesoPorUnidadeMP"
         );
+
 
     if (peso) {
 
@@ -1255,35 +1281,16 @@ function novaMateriaPrima() {
     }
 
 
-    // Unidade do peso
-
     const unidadePeso =
-        obterElemento(
-            "unidadePesoMP",
-            "unidadePesoMateriaPrima"
+        document.getElementById(
+            "unidadePesoMP"
         );
+
 
     if (unidadePeso) {
 
-        if (!unidadePeso.value) {
-
-            unidadePeso.value = "g";
-
-        }
-
-    }
-
-
-    // Custo
-
-    const custo =
-        document.getElementById(
-            "custoMP"
-        );
-
-    if (custo) {
-
-        custo.value = "";
+        unidadePeso.value =
+            "g";
 
     }
 
@@ -1349,6 +1356,40 @@ function atualizarBotaoMateriaPrima() {
 
 
 // ------------------------------------------------------
+// PEGAR CAMPO DE PESO
+// ------------------------------------------------------
+
+function obterCampoPesoMP() {
+
+    return (
+        document.getElementById(
+            "pesoMP"
+        ) ||
+        document.getElementById(
+            "pesoUnidadeMP"
+        ) ||
+        document.getElementById(
+            "pesoPorUnidadeMP"
+        )
+    );
+
+}
+
+
+// ------------------------------------------------------
+// PEGAR UNIDADE DO PESO
+// ------------------------------------------------------
+
+function obterCampoUnidadePesoMP() {
+
+    return document.getElementById(
+        "unidadePesoMP"
+    );
+
+}
+
+
+// ------------------------------------------------------
 // SALVAR MATÉRIA-PRIMA
 // ------------------------------------------------------
 
@@ -1388,52 +1429,17 @@ function salvarMateriaPrima() {
     }
 
 
-    // --------------------------------------------------
-    // UNIDADES
-    // --------------------------------------------------
-
-    const campoUnidades =
-        obterElemento(
-            "unidadesMP",
-            "quantidadeMP",
-            "estoqueMP"
-        );
-
-
-    const unidades =
-        numero(
-            campoUnidades?.value,
-            0
-        );
-
-
-    // --------------------------------------------------
-    // PESO POR UNIDADE
-    // --------------------------------------------------
-
     const campoPeso =
-        obterElemento(
-            "pesoMP",
-            "pesoUnidadeMP",
-            "pesoMateriaPrima"
-        );
+        obterCampoPesoMP();
+
+
+    const campoUnidadePeso =
+        obterCampoUnidadePesoMP();
 
 
     const pesoUnidade =
-        numero(
-            campoPeso?.value,
-            0
-        );
-
-
-    // --------------------------------------------------
-    // UNIDADE DO PESO
-    // --------------------------------------------------
-
-    const campoUnidadePeso =
-        obterElemento(
-            "unidadePesoMP",
-            "unidadePesoMateriaPrima"
+        Number(
+            campoPeso?.value || 0
         );
 
 
@@ -1442,38 +1448,26 @@ function salvarMateriaPrima() {
         "g";
 
 
-    // --------------------------------------------------
-    // CUSTO POR UNIDADE
-    // --------------------------------------------------
-
-    const campoCusto =
-        document.getElementById(
-            "custoMP"
+    const estoque =
+        Number(
+            document.getElementById(
+                "estoqueMP"
+            )?.value || 0
         );
 
 
     const custo =
-        numero(
-            campoCusto?.value,
-            0
+        Number(
+            document.getElementById(
+                "custoMP"
+            )?.value || 0
         );
 
 
-    if (unidades < 0) {
+    if (estoque < 0) {
 
         alert(
-            "A quantidade de unidades não pode ser negativa."
-        );
-
-        return;
-
-    }
-
-
-    if (pesoUnidade < 0) {
-
-        alert(
-            "O peso por unidade não pode ser negativo."
+            "O estoque não pode ser negativo."
         );
 
         return;
@@ -1492,14 +1486,15 @@ function salvarMateriaPrima() {
     }
 
 
-    const pesoTotal =
-        unidades *
-        pesoUnidade;
+    if (pesoUnidade < 0) {
 
+        alert(
+            "O peso não pode ser negativo."
+        );
 
-    const custoTotal =
-        unidades *
-        custo;
+        return;
+
+    }
 
 
     const materia = {
@@ -1513,9 +1508,6 @@ function salvarMateriaPrima() {
         nome:
             campoNome.value.trim(),
 
-        // Mantém compatibilidade
-        // com a estrutura anterior
-
         categoria:
             document.getElementById(
                 "categoriaMP"
@@ -1527,25 +1519,16 @@ function salvarMateriaPrima() {
             )?.value || "",
 
         estoque:
-            unidades,
+            estoque,
 
-        unidades:
-            unidades,
+        custo:
+            custo,
 
         pesoUnidade:
             pesoUnidade,
 
         unidadePeso:
             unidadePeso,
-
-        pesoTotal:
-            pesoTotal,
-
-        custo:
-            custo,
-
-        custoTotal:
-            custoTotal,
 
         data:
             new Date().toLocaleString(
@@ -1593,7 +1576,9 @@ function carregarMaterias() {
 
 
     if (!tabela) {
+
         return;
+
     }
 
 
@@ -1603,58 +1588,38 @@ function carregarMaterias() {
     materias.forEach(
         function (materia, index) {
 
-            // ------------------------------------------
-            // COMPATIBILIDADE COM BANCO ANTIGO
-            // ------------------------------------------
+            const estoque =
+                Number(
+                    materia.estoque || 0
+                );
 
-            const unidades =
-                numero(
-                    materia.unidades !== undefined
-                        ? materia.unidades
-                        : materia.estoque,
-                    0
+
+            const custo =
+                Number(
+                    materia.custo || 0
                 );
 
 
             const pesoUnidade =
-                numero(
-                    materia.pesoUnidade,
-                    0
+                obterPesoMateria(
+                    materia
                 );
 
 
             const unidadePeso =
-                materia.unidadePeso ||
-                "g";
-
-
-            const pesoTotal =
-                materia.pesoTotal !== undefined
-                    ? numero(
-                        materia.pesoTotal
-                    )
-                    : (
-                        unidades *
-                        pesoUnidade
-                    );
-
-
-            const custo =
-                numero(
-                    materia.custo,
-                    0
+                obterUnidadePesoMateria(
+                    materia
                 );
 
 
+            const pesoTotal =
+                estoque *
+                pesoUnidade;
+
+
             const custoTotal =
-                materia.custoTotal !== undefined
-                    ? numero(
-                        materia.custoTotal
-                    )
-                    : (
-                        unidades *
-                        custo
-                    );
+                estoque *
+                custo;
 
 
             const linha =
@@ -1663,62 +1628,99 @@ function carregarMaterias() {
                 );
 
 
+            // ------------------------------------------------
+            // IMPORTANTE:
+            // A TABELA TEM 7 COLUNAS.
+            // AGORA GERAMOS EXATAMENTE 7 TDs.
+            // ------------------------------------------------
+
             linha.innerHTML = `
 
-                <td>
-                    ${materia.codigo || ""}
-                </td>
-
-                <td>
-                    ${materia.nome || ""}
-                </td>
-
-                <td>
-                    ${unidades}
-                </td>
-
-                <td>
-                    ${formatarPeso(
-                        pesoUnidade,
-                        unidadePeso
-                    )}
-                </td>
+                <!-- 1 - MATÉRIA-PRIMA -->
 
                 <td>
                     <strong>
-                        ${formatarPeso(
-                            pesoTotal,
-                            unidadePeso
-                        )}
+                        ${materia.nome || ""}
                     </strong>
+
+                    <small
+                        style="
+                            display:block;
+                            opacity:.65;
+                            margin-top:3px;
+                        "
+                    >
+                        ${materia.codigo || ""}
+                    </small>
                 </td>
 
-                <td>
-                    R$ ${formatarMoeda(
-                        custo
-                    )}
-                </td>
+
+                <!-- 2 - UNIDADES -->
 
                 <td>
-                    <strong>
-                        R$ ${formatarMoeda(
-                            custoTotal
-                        )}
-                    </strong>
+                    ${estoque}
                 </td>
+
+
+                <!-- 3 - PESO / UNIDADE -->
+
+                <td>
+                    ${
+                        pesoUnidade > 0
+                            ? formatarPeso(
+                                pesoUnidade,
+                                unidadePeso
+                            )
+                            : "—"
+                    }
+                </td>
+
+
+                <!-- 4 - PESO TOTAL -->
+
+                <td>
+                    ${
+                        pesoTotal > 0
+                            ? formatarPeso(
+                                pesoTotal,
+                                unidadePeso
+                            )
+                            : "—"
+                    }
+                </td>
+
+
+                <!-- 5 - CUSTO -->
+
+                <td>
+                    R$ ${custo.toFixed(2)}
+                </td>
+
+
+                <!-- 6 - CUSTO TOTAL -->
+
+                <td>
+                    R$ ${custoTotal.toFixed(2)}
+                </td>
+
+
+                <!-- 7 - AÇÕES -->
 
                 <td>
 
                     <button
                         type="button"
                         onclick="editarMateriaPrima(${index})"
+                        title="Editar"
                     >
                         ✏️
                     </button>
 
+
                     <button
                         type="button"
                         onclick="excluirMateriaPrima(${index})"
+                        title="Excluir"
                     >
                         🗑️
                     </button>
@@ -1749,7 +1751,9 @@ function editarMateriaPrima(index) {
 
 
     if (!materia) {
+
         return;
+
     }
 
 
@@ -1757,6 +1761,7 @@ function editarMateriaPrima(index) {
         document.getElementById(
             "codigoMP"
         );
+
 
     if (codigo) {
 
@@ -1771,6 +1776,7 @@ function editarMateriaPrima(index) {
             "nomeMP"
         );
 
+
     if (nome) {
 
         nome.value =
@@ -1783,6 +1789,7 @@ function editarMateriaPrima(index) {
         document.getElementById(
             "categoriaMP"
         );
+
 
     if (categoria) {
 
@@ -1797,6 +1804,7 @@ function editarMateriaPrima(index) {
             "unidadeMP"
         );
 
+
     if (unidade) {
 
         unidade.value =
@@ -1805,58 +1813,18 @@ function editarMateriaPrima(index) {
     }
 
 
-    const unidades =
-        obterElemento(
-            "unidadesMP",
-            "quantidadeMP",
+    const estoque =
+        document.getElementById(
             "estoqueMP"
         );
 
 
-    if (unidades) {
+    if (estoque) {
 
-        unidades.value =
-            numero(
-                materia.unidades !== undefined
-                    ? materia.unidades
-                    : materia.estoque,
-                0
+        estoque.value =
+            Number(
+                materia.estoque || 0
             );
-
-    }
-
-
-    const peso =
-        obterElemento(
-            "pesoMP",
-            "pesoUnidadeMP",
-            "pesoMateriaPrima"
-        );
-
-
-    if (peso) {
-
-        peso.value =
-            numero(
-                materia.pesoUnidade,
-                0
-            );
-
-    }
-
-
-    const unidadePeso =
-        obterElemento(
-            "unidadePesoMP",
-            "unidadePesoMateriaPrima"
-        );
-
-
-    if (unidadePeso) {
-
-        unidadePeso.value =
-            materia.unidadePeso ||
-            "g";
 
     }
 
@@ -1870,9 +1838,40 @@ function editarMateriaPrima(index) {
     if (custo) {
 
         custo.value =
-            numero(
-                materia.custo,
-                0
+            Number(
+                materia.custo || 0
+            );
+
+    }
+
+
+    // --------------------------------------------------
+    // PESO
+    // --------------------------------------------------
+
+    const campoPeso =
+        obterCampoPesoMP();
+
+
+    if (campoPeso) {
+
+        campoPeso.value =
+            obterPesoMateria(
+                materia
+            );
+
+    }
+
+
+    const campoUnidadePeso =
+        obterCampoUnidadePesoMP();
+
+
+    if (campoUnidadePeso) {
+
+        campoUnidadePeso.value =
+            obterUnidadePesoMateria(
+                materia
             );
 
     }
@@ -1898,18 +1897,16 @@ function atualizarMateriaPrima(index) {
 
 
     if (!materia) {
+
         return;
+
     }
 
 
-    const campoNome =
+    const nome =
         document.getElementById(
             "nomeMP"
-        );
-
-
-    const nome =
-        campoNome?.value.trim();
+        )?.value.trim();
 
 
     if (!nome) {
@@ -1923,66 +1920,45 @@ function atualizarMateriaPrima(index) {
     }
 
 
-    const campoUnidades =
-        obterElemento(
-            "unidadesMP",
-            "quantidadeMP",
-            "estoqueMP"
+    const novoEstoque =
+        Number(
+            document.getElementById(
+                "estoqueMP"
+            )?.value || 0
         );
 
 
-    const unidades =
-        numero(
-            campoUnidades?.value,
-            0
+    const novoCusto =
+        Number(
+            document.getElementById(
+                "custoMP"
+            )?.value || 0
         );
 
 
     const campoPeso =
-        obterElemento(
-            "pesoMP",
-            "pesoUnidadeMP",
-            "pesoMateriaPrima"
-        );
-
-
-    const pesoUnidade =
-        numero(
-            campoPeso?.value,
-            0
-        );
+        obterCampoPesoMP();
 
 
     const campoUnidadePeso =
-        obterElemento(
-            "unidadePesoMP",
-            "unidadePesoMateriaPrima"
+        obterCampoUnidadePesoMP();
+
+
+    const novoPeso =
+        Number(
+            campoPeso?.value || 0
         );
 
 
-    const unidadePeso =
+    const novaUnidadePeso =
         campoUnidadePeso?.value ||
-        materia.unidadePeso ||
         "g";
 
 
-    const campoCusto =
-        document.getElementById(
-            "custoMP"
-        );
-
-
-    const custo =
-        numero(
-            campoCusto?.value,
-            0
-        );
-
-
-    if (unidades < 0) {
+    if (novoEstoque < 0) {
 
         alert(
-            "A quantidade de unidades não pode ser negativa."
+            "O estoque não pode ser negativo."
         );
 
         return;
@@ -1990,21 +1966,21 @@ function atualizarMateriaPrima(index) {
     }
 
 
-    if (pesoUnidade < 0) {
-
-        alert(
-            "O peso por unidade não pode ser negativo."
-        );
-
-        return;
-
-    }
-
-
-    if (custo < 0) {
+    if (novoCusto < 0) {
 
         alert(
             "O custo não pode ser negativo."
+        );
+
+        return;
+
+    }
+
+
+    if (novoPeso < 0) {
+
+        alert(
+            "O peso não pode ser negativo."
         );
 
         return;
@@ -2035,33 +2011,20 @@ function atualizarMateriaPrima(index) {
         )?.value || "";
 
 
-    // Estrutura nova
+    materia.estoque =
+        novoEstoque;
 
-    materia.unidades =
-        unidades;
-
-    materia.pesoUnidade =
-        pesoUnidade;
-
-    materia.unidadePeso =
-        unidadePeso;
-
-    materia.pesoTotal =
-        unidades *
-        pesoUnidade;
 
     materia.custo =
-        custo;
-
-    materia.custoTotal =
-        unidades *
-        custo;
+        novoCusto;
 
 
-    // Compatibilidade antiga
+    materia.pesoUnidade =
+        novoPeso;
 
-    materia.estoque =
-        unidades;
+
+    materia.unidadePeso =
+        novaUnidadePeso;
 
 
     salvarBanco();
@@ -2073,6 +2036,7 @@ function atualizarMateriaPrima(index) {
     carregarMateriasReceita();
 
     atualizarDashboard();
+
 
     novaMateriaPrima();
 
@@ -2095,7 +2059,9 @@ function excluirMateriaPrima(index) {
 
 
     if (!materia) {
+
         return;
+
     }
 
 
@@ -2147,7 +2113,9 @@ function atualizarItensMovimentacao() {
 
 
     if (!select) {
+
         return;
+
     }
 
 
@@ -2200,11 +2168,10 @@ function registrarMovimentacao() {
 
 
     const quantidade =
-        numero(
+        Number(
             document.getElementById(
                 "quantidadeMovimentacao"
-            )?.value,
-            0
+            )?.value || 0
         );
 
 
@@ -2252,31 +2219,23 @@ function registrarMovimentacao() {
     }
 
 
-    const estoqueAtual =
-        numero(
-            materia.unidades !== undefined
-                ? materia.unidades
-                : materia.estoque,
-            0
-        );
-
-
-    let novoEstoque;
-
-
     if (
         operacao === "entrada"
     ) {
 
-        novoEstoque =
-            estoqueAtual +
+        materia.estoque =
+            Number(
+                materia.estoque || 0
+            ) +
             quantidade;
 
     } else {
 
         if (
             quantidade >
-            estoqueAtual
+            Number(
+                materia.estoque || 0
+            )
         ) {
 
             alert(
@@ -2288,33 +2247,13 @@ function registrarMovimentacao() {
         }
 
 
-        novoEstoque =
-            estoqueAtual -
+        materia.estoque =
+            Number(
+                materia.estoque || 0
+            ) -
             quantidade;
 
     }
-
-
-    materia.unidades =
-        novoEstoque;
-
-
-    materia.estoque =
-        novoEstoque;
-
-
-    materia.pesoTotal =
-        novoEstoque *
-        numero(
-            materia.pesoUnidade
-        );
-
-
-    materia.custoTotal =
-        novoEstoque *
-        numero(
-            materia.custo
-        );
 
 
     movimentacoes.push({
@@ -2386,7 +2325,9 @@ function carregarProdutosReceita() {
 
 
     if (!select) {
+
         return;
+
     }
 
 
@@ -2439,7 +2380,9 @@ function carregarMateriasReceita() {
 
 
     if (!select) {
+
         return;
+
     }
 
 
@@ -2498,7 +2441,9 @@ function novaReceita() {
 
 
     if (produto) {
+
         produto.value = "";
+
     }
 
 
@@ -2509,7 +2454,9 @@ function novaReceita() {
 
 
     if (rendimento) {
+
         rendimento.value = 1;
+
     }
 
 
@@ -2520,7 +2467,9 @@ function novaReceita() {
 
 
     if (embalagem) {
+
         embalagem.value = 0;
+
     }
 
 
@@ -2531,7 +2480,9 @@ function novaReceita() {
 
 
     if (outros) {
+
         outros.value = 0;
+
     }
 
 
@@ -2542,7 +2493,9 @@ function novaReceita() {
 
 
     if (margem) {
+
         margem.value = 0;
+
     }
 
 
@@ -2586,9 +2539,8 @@ function adicionarIngrediente() {
 
 
     const quantidade =
-        numero(
-            quantidadeInput.value,
-            0
+        Number(
+            quantidadeInput.value || 0
         );
 
 
@@ -2673,18 +2625,19 @@ function adicionarIngrediente() {
                 quantidade,
 
             custo:
-                numero(
-                    materia.custo
+                Number(
+                    materia.custo || 0
                 ),
 
             pesoUnidade:
-                numero(
-                    materia.pesoUnidade
+                obterPesoMateria(
+                    materia
                 ),
 
             unidadePeso:
-                materia.unidadePeso ||
-                "g"
+                obterUnidadePesoMateria(
+                    materia
+                )
 
         });
 
@@ -2716,7 +2669,9 @@ function atualizarTabelaReceita() {
 
 
     if (!tabela) {
+
         return;
+
     }
 
 
@@ -2727,14 +2682,14 @@ function atualizarTabelaReceita() {
         function (item, index) {
 
             const quantidade =
-                numero(
-                    item.quantidade
+                Number(
+                    item.quantidade || 0
                 );
 
 
             const custoUnitario =
-                numero(
-                    item.custo
+                Number(
+                    item.custo || 0
                 );
 
 
@@ -2764,15 +2719,11 @@ function atualizarTabelaReceita() {
                 </td>
 
                 <td>
-                    R$ ${formatarMoeda(
-                        custoUnitario
-                    )}
+                    R$ ${custoUnitario.toFixed(2)}
                 </td>
 
                 <td>
-                    R$ ${formatarMoeda(
-                        custoTotal
-                    )}
+                    R$ ${custoTotal.toFixed(2)}
                 </td>
 
                 <td>
@@ -2807,7 +2758,8 @@ function removerIngrediente(index) {
 
     if (
         index < 0 ||
-        index >= ingredientesReceita.length
+        index >=
+        ingredientesReceita.length
     ) {
 
         return;
@@ -2852,11 +2804,11 @@ function calcularCustoReceita() {
         function (item) {
 
             custoIngredientes +=
-                numero(
-                    item.quantidade
+                Number(
+                    item.quantidade || 0
                 ) *
-                numero(
-                    item.custo
+                Number(
+                    item.custo || 0
                 );
 
         }
@@ -2864,38 +2816,34 @@ function calcularCustoReceita() {
 
 
     const embalagem =
-        numero(
+        Number(
             document.getElementById(
                 "custoEmbalagem"
-            )?.value,
-            0
+            )?.value || 0
         );
 
 
     const outros =
-        numero(
+        Number(
             document.getElementById(
                 "outrosCustos"
-            )?.value,
-            0
+            )?.value || 0
         );
 
 
     const rendimento =
-        numero(
+        Number(
             document.getElementById(
                 "rendimentoReceita"
-            )?.value,
-            1
+            )?.value || 1
         );
 
 
     const margem =
-        numero(
+        Number(
             document.getElementById(
                 "margemLucro"
-            )?.value,
-            0
+            )?.value || 0
         );
 
 
@@ -2952,9 +2900,7 @@ function calcularCustoReceita() {
 
         resultadoIngredientes.innerText =
             "R$ " +
-            formatarMoeda(
-                custoIngredientes
-            );
+            custoIngredientes.toFixed(2);
 
     }
 
@@ -2963,9 +2909,7 @@ function calcularCustoReceita() {
 
         resultadoCusto.innerText =
             "R$ " +
-            formatarMoeda(
-                custoTotal
-            );
+            custoTotal.toFixed(2);
 
     }
 
@@ -2974,9 +2918,7 @@ function calcularCustoReceita() {
 
         resultadoUnitario.innerText =
             "R$ " +
-            formatarMoeda(
-                custoPorUnidade
-            );
+            custoPorUnidade.toFixed(2);
 
     }
 
@@ -2985,9 +2927,7 @@ function calcularCustoReceita() {
 
         resultadoVenda.innerText =
             "R$ " +
-            formatarMoeda(
-                valorVenda
-            );
+            valorVenda.toFixed(2);
 
     }
 
@@ -3024,7 +2964,9 @@ function salvarReceita() {
 
 
     if (!produtoSelect) {
+
         return;
+
     }
 
 
@@ -3044,7 +2986,8 @@ function salvarReceita() {
 
 
     if (
-        ingredientesReceita.length === 0
+        ingredientesReceita.length ===
+        0
     ) {
 
         alert(
@@ -3100,30 +3043,27 @@ function salvarReceita() {
             ),
 
         rendimento:
-            numero(
+            Number(
                 document.getElementById(
                     "rendimentoReceita"
-                )?.value,
-                1
+                )?.value || 1
             ),
 
         custoIngredientes:
             calculo.ingredientes,
 
         custoEmbalagem:
-            numero(
+            Number(
                 document.getElementById(
                     "custoEmbalagem"
-                )?.value,
-                0
+                )?.value || 0
             ),
 
         outrosCustos:
-            numero(
+            Number(
                 document.getElementById(
                     "outrosCustos"
-                )?.value,
-                0
+                )?.value || 0
             ),
 
         custoTotal:
@@ -3133,11 +3073,10 @@ function salvarReceita() {
             calculo.unitario,
 
         margemLucro:
-            numero(
+            Number(
                 document.getElementById(
                     "margemLucro"
-                )?.value,
-                0
+                )?.value || 0
             ),
 
         valorVenda:
@@ -3252,7 +3191,8 @@ function editarReceita(codigoProduto) {
     if (rendimento) {
 
         rendimento.value =
-            receita.rendimento || 1;
+            receita.rendimento ||
+            1;
 
     }
 
@@ -3266,7 +3206,8 @@ function editarReceita(codigoProduto) {
     if (embalagem) {
 
         embalagem.value =
-            receita.custoEmbalagem || 0;
+            receita.custoEmbalagem ||
+            0;
 
     }
 
@@ -3280,7 +3221,8 @@ function editarReceita(codigoProduto) {
     if (outros) {
 
         outros.value =
-            receita.outrosCustos || 0;
+            receita.outrosCustos ||
+            0;
 
     }
 
@@ -3294,7 +3236,8 @@ function editarReceita(codigoProduto) {
     if (margem) {
 
         margem.value =
-            receita.margemLucro || 0;
+            receita.margemLucro ||
+            0;
 
     }
 
@@ -3302,7 +3245,8 @@ function editarReceita(codigoProduto) {
     ingredientesReceita =
         JSON.parse(
             JSON.stringify(
-                receita.ingredientes || []
+                receita.ingredientes ||
+                []
             )
         );
 
@@ -3331,7 +3275,9 @@ function carregarListaReceitas() {
 
 
     if (!tabela) {
+
         return;
+
     }
 
 
@@ -3358,22 +3304,25 @@ function carregarListaReceitas() {
                 </td>
 
                 <td>
-                    R$ ${formatarMoeda(
-                        receita.custoUnitario
-                    )}
+                    R$ ${Number(
+                        receita.custoUnitario ||
+                        0
+                    ).toFixed(2)}
                 </td>
 
                 <td>
-                    ${numero(
-                        receita.margemLucro
+                    ${Number(
+                        receita.margemLucro ||
+                        0
                     ).toFixed(2)}%
                 </td>
 
                 <td>
                     <strong>
-                        R$ ${formatarMoeda(
-                            receita.valorVenda
-                        )}
+                        R$ ${Number(
+                            receita.valorVenda ||
+                            0
+                        ).toFixed(2)}
                     </strong>
                 </td>
 
@@ -3434,6 +3383,8 @@ function finalizarReceita() {
 
 function iniciarSistema() {
 
+    // Não altera nem apaga nenhum banco.
+
     carregarProdutos();
 
     carregarMaterias();
@@ -3485,21 +3436,7 @@ document.addEventListener(
 
             "margemLucro",
 
-            "quantidadeReceita",
-
-            "unidadesMP",
-
-            "quantidadeMP",
-
-            "estoqueMP",
-
-            "pesoMP",
-
-            "pesoUnidadeMP",
-
-            "pesoMateriaPrima",
-
-            "custoMP"
+            "quantidadeReceita"
 
         ];
 
@@ -3519,5 +3456,71 @@ document.addEventListener(
 
 
 // ======================================================
-// FIM
+// GARANTIR FUNÇÕES GLOBAIS
+// COMPATÍVEL COM ONCLICK DO HTML
+// ======================================================
+
+window.toggleMenu =
+    toggleMenu;
+
+window.mostrarAba =
+    mostrarAba;
+
+window.novoProduto =
+    novoProduto;
+
+window.salvarProduto =
+    salvarProduto;
+
+window.editarProduto =
+    editarProduto;
+
+window.atualizarProduto =
+    atualizarProduto;
+
+window.excluirProduto =
+    excluirProduto;
+
+window.novaMateriaPrima =
+    novaMateriaPrima;
+
+window.salvarMateriaPrima =
+    salvarMateriaPrima;
+
+window.editarMateriaPrima =
+    editarMateriaPrima;
+
+window.atualizarMateriaPrima =
+    atualizarMateriaPrima;
+
+window.excluirMateriaPrima =
+    excluirMateriaPrima;
+
+window.registrarMovimentacao =
+    registrarMovimentacao;
+
+window.novaReceita =
+    novaReceita;
+
+window.adicionarIngrediente =
+    adicionarIngrediente;
+
+window.removerIngrediente =
+    removerIngrediente;
+
+window.salvarReceita =
+    salvarReceita;
+
+window.editarReceita =
+    editarReceita;
+
+window.calcularReceita =
+    calcularReceita;
+
+window.finalizarReceita =
+    finalizarReceita;
+
+
+// ======================================================
+// FIM DO APP.JS
 // ======================================================
