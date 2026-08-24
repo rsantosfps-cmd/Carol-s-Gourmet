@@ -1,7 +1,7 @@
 // ======================================================
 // CAROL'S GOURMET ERP 4.0
 // APP.JS - VERSÃO CORRIGIDA
-// MATÉRIA-PRIMA E RECEITAS EM GRAMAS
+// CONTROLE POR UNIDADE OU POR PESO
 // ======================================================
 
 
@@ -10,23 +10,33 @@
 // ======================================================
 
 let produtos =
-    JSON.parse(localStorage.getItem("carols_produtos")) || [];
+    JSON.parse(
+        localStorage.getItem("carols_produtos")
+    ) || [];
 
 let materias =
-    JSON.parse(localStorage.getItem("carols_materias")) || [];
+    JSON.parse(
+        localStorage.getItem("carols_materias")
+    ) || [];
 
 let movimentacoes =
-    JSON.parse(localStorage.getItem("carols_movimentacoes")) || [];
+    JSON.parse(
+        localStorage.getItem("carols_movimentacoes")
+    ) || [];
 
 let producoes =
-    JSON.parse(localStorage.getItem("carols_producoes")) || [];
+    JSON.parse(
+        localStorage.getItem("carols_producoes")
+    ) || [];
 
 let receitas =
-    JSON.parse(localStorage.getItem("carols_receitas")) || [];
+    JSON.parse(
+        localStorage.getItem("carols_receitas")
+    ) || [];
 
 
 // ======================================================
-// GARANTIR ARRAYS VÁLIDOS
+// GARANTIR ARRAYS
 // ======================================================
 
 if (!Array.isArray(produtos)) {
@@ -66,15 +76,12 @@ materias.forEach(function (materia) {
 
     if (
         materia.pesoUnidade === undefined ||
-        materia.pesoUnidade === null ||
-        materia.pesoUnidade === ""
+        materia.pesoUnidade === null
     ) {
         materia.pesoUnidade =
-            Number(
-                materia.peso ||
-                materia.pesoPorUnidade ||
-                0
-            );
+            materia.peso ||
+            materia.pesoPorUnidade ||
+            0;
     }
 
     if (!materia.unidadePeso) {
@@ -83,14 +90,30 @@ materias.forEach(function (materia) {
             "g";
     }
 
-    materia.estoque =
-        Number(materia.estoque || 0);
+    /*
+     * Compatibilidade:
+     *
+     * Se já existir tipoControle, mantém.
+     *
+     * Se não existir:
+     * - matéria com peso cadastrado => peso
+     * - matéria sem peso => unidade
+     *
+     * Isso não altera o conteúdo do banco.
+     */
 
-    materia.custo =
-        Number(materia.custo || 0);
+    if (!materia.tipoControle) {
 
-    materia.pesoUnidade =
-        Number(materia.pesoUnidade || 0);
+        if (
+            Number(materia.pesoUnidade || 0) > 0
+        ) {
+            materia.tipoControle = "peso";
+        } else {
+            materia.tipoControle = "unidade";
+        }
+
+    }
+
 });
 
 
@@ -128,7 +151,7 @@ function salvarBanco() {
 
 
 // ======================================================
-// FUNÇÕES AUXILIARES DE PESO
+// FUNÇÕES DE PESO
 // ======================================================
 
 function obterPesoMateria(materia) {
@@ -139,6 +162,7 @@ function obterPesoMateria(materia) {
         materia.pesoPorUnidade ||
         0
     );
+
 }
 
 
@@ -149,8 +173,42 @@ function obterUnidadePesoMateria(materia) {
         materia.unidadeDePeso ||
         "g"
     );
+
 }
 
+
+// ======================================================
+// CONVERTER QUALQUER PESO PARA GRAMAS
+// ======================================================
+
+function converterParaGramas(valor, unidade) {
+
+    const numero = Number(valor || 0);
+
+    const u =
+        String(unidade || "g")
+            .toLowerCase()
+            .trim();
+
+    if (u === "kg" || u === "quilo" || u === "quilos") {
+        return numero * 1000;
+    }
+
+    if (
+        u === "mg" ||
+        u === "miligrama" ||
+        u === "miligramas"
+    ) {
+        return numero / 1000;
+    }
+
+    return numero;
+}
+
+
+// ======================================================
+// FORMATAR PESO
+// ======================================================
 
 function formatarPeso(valor, unidade) {
 
@@ -160,101 +218,231 @@ function formatarPeso(valor, unidade) {
         return "—";
     }
 
-    const numeroFormatado =
+    return (
         numero.toLocaleString(
             "pt-BR",
             {
                 maximumFractionDigits: 3
             }
-        );
-
-    return (
-        numeroFormatado +
+        ) +
         " " +
         (unidade || "g")
     );
 }
 
 
-function calcularPesoTotalMateria(materia) {
+// ======================================================
+// TIPO DE CONTROLE
+// unidade = ovos, bananas, etc.
+// peso    = manteiga, chocolate, leite condensado etc.
+// ======================================================
 
-    const unidades =
-        Number(materia.estoque || 0);
+function obterTipoControleMateria(materia) {
 
-    const pesoUnidade =
-        obterPesoMateria(materia);
+    const tipo =
+        String(
+            materia.tipoControle ||
+            materia.tipoControleEstoque ||
+            materia.tipo ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
 
-    return (
-        unidades *
-        pesoUnidade
-    );
+    if (
+        tipo === "peso" ||
+        tipo === "grama" ||
+        tipo === "gramas" ||
+        tipo === "kg" ||
+        tipo === "g"
+    ) {
+        return "peso";
+    }
+
+    if (
+        tipo === "unidade" ||
+        tipo === "unidades" ||
+        tipo === "un"
+    ) {
+        return "unidade";
+    }
+
+    /*
+     * Compatibilidade com registros antigos.
+     */
+    if (
+        Number(
+            materia.pesoUnidade ||
+            materia.peso ||
+            materia.pesoPorUnidade ||
+            0
+        ) > 0
+    ) {
+        return "peso";
+    }
+
+    return "unidade";
 }
 
 
 // ======================================================
-// NOVA FUNÇÃO
-// CUSTO POR GRAMA DA MATÉRIA-PRIMA
+// UNIDADE USADA NA RECEITA
 // ======================================================
-//
-// Exemplo:
-//
-// Matéria-prima:
-// 200 g
-// R$ 11,98
-//
-// Custo por grama:
-// 11,98 / 200 = 0,0599
-//
-// Receita usando 300 g:
-// 300 x 0,0599 = R$ 17,97
-//
+
+function obterUnidadeReceitaMateria(materia) {
+
+    const tipo =
+        obterTipoControleMateria(materia);
+
+    if (tipo === "peso") {
+        return "g";
+    }
+
+    return "un";
+}
+
+
+// ======================================================
+// PESO TOTAL DA MATÉRIA-PRIMA
+// ======================================================
+
+function calcularPesoTotalMateria(materia) {
+
+    const unidades =
+        Number(
+            materia.estoque || 0
+        );
+
+    const peso =
+        converterParaGramas(
+            obterPesoMateria(materia),
+            obterUnidadePesoMateria(materia)
+        );
+
+    return unidades * peso;
+}
+
+
+// ======================================================
+// CUSTO POR GRAMA
 // ======================================================
 
 function calcularCustoPorGrama(materia) {
 
-    if (!materia) {
+    const tipo =
+        obterTipoControleMateria(materia);
+
+    if (tipo !== "peso") {
         return 0;
     }
 
-    const peso =
-        obterPesoMateria(materia);
+    const pesoGramas =
+        converterParaGramas(
+            obterPesoMateria(materia),
+            obterUnidadePesoMateria(materia)
+        );
 
     const custo =
-        Number(materia.custo || 0);
+        Number(
+            materia.custo || 0
+        );
 
     if (
-        peso <= 0 ||
+        pesoGramas <= 0 ||
         custo < 0
     ) {
         return 0;
     }
 
-    return custo / peso;
+    return custo / pesoGramas;
 }
 
 
 // ======================================================
-// CUSTO DE UMA QUANTIDADE EM GRAMAS
+// CALCULAR CUSTO DE UMA QUANTIDADE DA MATÉRIA-PRIMA
 // ======================================================
 
 function calcularCustoQuantidadeMateria(
     materia,
-    quantidadeGramas
+    quantidade
 ) {
 
     if (!materia) {
         return 0;
     }
 
-    const quantidade =
-        Number(quantidadeGramas || 0);
+    const qtd =
+        Number(
+            quantidade || 0
+        );
 
-    const custoPorGrama =
-        calcularCustoPorGrama(materia);
+    if (qtd <= 0) {
+        return 0;
+    }
+
+    const tipo =
+        obterTipoControleMateria(materia);
+
+
+    // --------------------------------------------------
+    // MATÉRIA-PRIMA POR UNIDADE
+    // --------------------------------------------------
+
+    if (tipo === "unidade") {
+
+        return (
+            qtd *
+            Number(
+                materia.custo || 0
+            )
+        );
+
+    }
+
+
+    // --------------------------------------------------
+    // MATÉRIA-PRIMA POR PESO
+    //
+    // Exemplo:
+    //
+    // manteiga:
+    // 200 g = R$ 11,98
+    //
+    // receita:
+    // 300 g
+    //
+    // custo por grama:
+    // 11,98 / 200 = 0,0599
+    //
+    // custo:
+    // 300 * 0,0599 = R$ 17,97
+    // --------------------------------------------------
+
+    const pesoEmGramas =
+        converterParaGramas(
+            obterPesoMateria(materia),
+            obterUnidadePesoMateria(materia)
+        );
+
+    const custoEmbalagem =
+        Number(
+            materia.custo || 0
+        );
+
+    if (
+        pesoEmGramas <= 0
+    ) {
+
+        return 0;
+
+    }
 
     return (
-        quantidade *
-        custoPorGrama
+        qtd *
+        (
+            custoEmbalagem /
+            pesoEmGramas
+        )
     );
 }
 
@@ -266,13 +454,17 @@ function calcularCustoQuantidadeMateria(
 function toggleMenu() {
 
     const sidebar =
-        document.getElementById("sidebar");
+        document.getElementById(
+            "sidebar"
+        );
 
     if (!sidebar) {
         return;
     }
 
-    sidebar.classList.toggle("aberto");
+    sidebar.classList.toggle(
+        "aberto"
+    );
 }
 
 
@@ -283,13 +475,19 @@ function toggleMenu() {
 function mostrarAba(id, botao) {
 
     const abas =
-        document.querySelectorAll(".aba");
+        document.querySelectorAll(
+            ".aba"
+        );
 
-    abas.forEach(function (aba) {
+    abas.forEach(
+        function (aba) {
 
-        aba.classList.remove("ativa");
+            aba.classList.remove(
+                "ativa"
+            );
 
-    });
+        }
+    );
 
 
     const abaSelecionada =
@@ -297,36 +495,44 @@ function mostrarAba(id, botao) {
 
     if (abaSelecionada) {
 
-        abaSelecionada.classList.add("ativa");
+        abaSelecionada.classList.add(
+            "ativa"
+        );
 
     }
 
 
     const botoes =
-        document.querySelectorAll(".menu-item");
+        document.querySelectorAll(
+            ".menu-item"
+        );
 
-    botoes.forEach(function (item) {
+    botoes.forEach(
+        function (item) {
 
-        item.classList.remove("ativo");
+            item.classList.remove(
+                "ativo"
+            );
 
-    });
+        }
+    );
 
 
     if (botao) {
 
-        botao.classList.add("ativo");
+        botao.classList.add(
+            "ativo"
+        );
 
     }
 
 
     // --------------------------------------------------
-    // ATUALIZAR DADOS DA ABA
+    // ATUALIZAR ABA
     // --------------------------------------------------
 
     if (id === "produtos") {
-
         carregarProdutos();
-
     }
 
 
@@ -336,7 +542,6 @@ function mostrarAba(id, botao) {
     ) {
 
         carregarMaterias();
-
         atualizarItensMovimentacao();
 
     }
@@ -345,13 +550,9 @@ function mostrarAba(id, botao) {
     if (id === "receitas") {
 
         carregarProdutosReceita();
-
         carregarMateriasReceita();
-
         carregarListaReceitas();
-
         carregarIngredientesReceita();
-
         calcularCustoReceita();
 
     }
@@ -360,7 +561,6 @@ function mostrarAba(id, botao) {
     if (id === "estoque") {
 
         carregarMaterias();
-
         atualizarItensMovimentacao();
 
     }
@@ -371,6 +571,7 @@ function mostrarAba(id, botao) {
         atualizarDashboard();
 
     }
+
 }
 
 
@@ -419,6 +620,7 @@ function atualizarDashboard() {
             );
 
     }
+
 }
 
 
@@ -426,48 +628,49 @@ function atualizarDashboard() {
 // PRODUTOS
 // ======================================================
 
-// ------------------------------------------------------
-// GERAR CÓDIGO
-// ------------------------------------------------------
-
 function gerarCodigoProduto() {
 
     let maiorNumero = 0;
 
-    produtos.forEach(function (produto) {
+    produtos.forEach(
+        function (produto) {
 
-        const codigo =
-            String(produto.codigo || "");
+            const codigo =
+                String(
+                    produto.codigo || ""
+                );
 
-        const numero =
-            parseInt(
-                codigo.replace("PROD-", ""),
-                10
-            );
+            const numero =
+                parseInt(
+                    codigo.replace(
+                        "PROD-",
+                        ""
+                    ),
+                    10
+                );
 
-        if (
-            !isNaN(numero) &&
-            numero > maiorNumero
-        ) {
+            if (
+                !isNaN(numero) &&
+                numero > maiorNumero
+            ) {
 
-            maiorNumero =
-                numero;
+                maiorNumero =
+                    numero;
+
+            }
 
         }
-
-    });
+    );
 
     return (
         "PROD-" +
-        String(maiorNumero + 1)
-            .padStart(4, "0")
+        String(
+            maiorNumero + 1
+        ).padStart(4, "0")
     );
+
 }
 
-
-// ------------------------------------------------------
-// GERAR EAN-13
-// ------------------------------------------------------
 
 function gerarEAN13() {
 
@@ -496,7 +699,9 @@ function gerarEAN13() {
     ) {
 
         const digito =
-            Number(numero[i]);
+            Number(
+                numero[i]
+            );
 
         if (i % 2 === 0) {
 
@@ -524,12 +729,9 @@ function gerarEAN13() {
         numero +
         digitoVerificador
     );
+
 }
 
-
-// ------------------------------------------------------
-// NOVO PRODUTO
-// ------------------------------------------------------
 
 function novoProduto() {
 
@@ -542,10 +744,8 @@ function novoProduto() {
         );
 
     if (codigo) {
-
         codigo.value =
             gerarCodigoProduto();
-
     }
 
 
@@ -555,10 +755,8 @@ function novoProduto() {
         );
 
     if (ean) {
-
         ean.value =
             gerarEAN13();
-
     }
 
 
@@ -568,9 +766,7 @@ function novoProduto() {
         );
 
     if (nome) {
-
         nome.value = "";
-
     }
 
 
@@ -580,9 +776,7 @@ function novoProduto() {
         );
 
     if (categoria) {
-
         categoria.value = "";
-
     }
 
 
@@ -592,9 +786,7 @@ function novoProduto() {
         );
 
     if (unidade) {
-
         unidade.value = "";
-
     }
 
 
@@ -604,61 +796,57 @@ function novoProduto() {
         );
 
     if (status) {
-
         status.value = "Ativo";
-
     }
 
 
     atualizarBotaoProduto();
+
 }
 
-
-// ------------------------------------------------------
-// BOTÃO PRODUTO
-// ------------------------------------------------------
 
 function atualizarBotaoProduto() {
 
     const botoes =
-        document.querySelectorAll("button");
+        document.querySelectorAll(
+            "button"
+        );
 
-    botoes.forEach(function (botao) {
+    botoes.forEach(
+        function (botao) {
 
-        const texto =
-            botao.innerText
-                .trim()
-                .toLowerCase();
-
-        if (
-            texto === "salvar produto" ||
-            texto === "atualizar produto"
-        ) {
+            const texto =
+                botao.innerText
+                    .trim()
+                    .toLowerCase();
 
             if (
-                typeof window.produtoEditando ===
-                "number"
+                texto === "salvar produto" ||
+                texto === "atualizar produto"
             ) {
 
-                botao.innerText =
-                    "Atualizar Produto";
+                if (
+                    typeof window.produtoEditando ===
+                    "number"
+                ) {
 
-            } else {
+                    botao.innerText =
+                        "Atualizar Produto";
 
-                botao.innerText =
-                    "Salvar Produto";
+                } else {
+
+                    botao.innerText =
+                        "Salvar Produto";
+
+                }
 
             }
 
         }
+    );
 
-    });
 }
 
-
-// ------------------------------------------------------
-// SALVAR PRODUTO
-// ------------------------------------------------------
 
 function salvarProduto() {
 
@@ -703,10 +891,8 @@ function salvarProduto() {
 
 
     if (!codigo) {
-
         codigo =
             gerarCodigoProduto();
-
     }
 
 
@@ -717,10 +903,8 @@ function salvarProduto() {
 
 
     if (!ean) {
-
         ean =
             gerarEAN13();
-
     }
 
 
@@ -763,7 +947,9 @@ function salvarProduto() {
     };
 
 
-    produtos.push(produto);
+    produtos.push(
+        produto
+    );
 
 
     salvarBanco();
@@ -780,12 +966,9 @@ function salvarProduto() {
     alert(
         "Produto salvo com sucesso!"
     );
+
 }
 
-
-// ------------------------------------------------------
-// CARREGAR PRODUTOS
-// ------------------------------------------------------
 
 function carregarProdutos() {
 
@@ -810,46 +993,34 @@ function carregarProdutos() {
                     produto.custo || 0
                 );
 
-
             const estoque =
                 Number(
                     produto.estoque || 0
                 );
-
 
             const valorEstoque =
                 estoque * custo;
 
 
             const linha =
-                document.createElement("tr");
+                document.createElement(
+                    "tr"
+                );
 
 
             linha.innerHTML = `
 
-                <td>
-                    ${produto.codigo || ""}
-                </td>
+                <td>${produto.codigo || ""}</td>
 
-                <td>
-                    ${produto.nome || ""}
-                </td>
+                <td>${produto.nome || ""}</td>
 
-                <td>
-                    ${produto.ean || ""}
-                </td>
+                <td>${produto.ean || ""}</td>
 
-                <td>
-                    ${produto.categoria || ""}
-                </td>
+                <td>${produto.categoria || ""}</td>
 
-                <td>
-                    ${produto.unidade || ""}
-                </td>
+                <td>${produto.unidade || ""}</td>
 
-                <td>
-                    ${estoque}
-                </td>
+                <td>${estoque}</td>
 
                 <td>
                     R$ ${custo.toFixed(2)}
@@ -880,16 +1051,15 @@ function carregarProdutos() {
             `;
 
 
-            tabela.appendChild(linha);
+            tabela.appendChild(
+                linha
+            );
 
         }
     );
+
 }
 
-
-// ------------------------------------------------------
-// EDITAR PRODUTO
-// ------------------------------------------------------
 
 function editarProduto(index) {
 
@@ -943,12 +1113,9 @@ function editarProduto(index) {
 
 
     atualizarBotaoProduto();
+
 }
 
-
-// ------------------------------------------------------
-// ATUALIZAR PRODUTO
-// ------------------------------------------------------
 
 function atualizarProduto(index) {
 
@@ -1011,19 +1178,15 @@ function atualizarProduto(index) {
 
     delete window.produtoEditando;
 
-
     novoProduto();
 
 
     alert(
         "Produto atualizado com sucesso!"
     );
+
 }
 
-
-// ------------------------------------------------------
-// EXCLUIR PRODUTO
-// ------------------------------------------------------
 
 function excluirProduto(index) {
 
@@ -1040,9 +1203,7 @@ function excluirProduto(index) {
             `Deseja excluir o produto "${produto.nome}"?`
         )
     ) {
-
         return;
-
     }
 
 
@@ -1064,16 +1225,13 @@ function excluirProduto(index) {
     alert(
         "Produto excluído."
     );
+
 }
 
 
 // ======================================================
 // MATÉRIAS-PRIMAS
 // ======================================================
-
-// ------------------------------------------------------
-// GERAR CÓDIGO MP
-// ------------------------------------------------------
 
 function gerarCodigoMP() {
 
@@ -1088,7 +1246,6 @@ function gerarCodigoMP() {
                     materia.codigo || ""
                 );
 
-
             const numero =
                 parseInt(
                     codigo.replace(
@@ -1097,7 +1254,6 @@ function gerarCodigoMP() {
                     ),
                     10
                 );
-
 
             if (
                 !isNaN(numero) &&
@@ -1119,12 +1275,34 @@ function gerarCodigoMP() {
             maiorNumero + 1
         ).padStart(4, "0")
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
+// CAMPO TIPO DE CONTROLE
+// ======================================================
+
+function obterCampoTipoControleMP() {
+
+    return (
+        document.getElementById(
+            "tipoControleMP"
+        ) ||
+        document.getElementById(
+            "tipoMP"
+        ) ||
+        document.getElementById(
+            "controleMP"
+        )
+    );
+
+}
+
+
+// ======================================================
 // NOVA MATÉRIA-PRIMA
-// ------------------------------------------------------
+// ======================================================
 
 function novaMateriaPrima() {
 
@@ -1137,10 +1315,8 @@ function novaMateriaPrima() {
         );
 
     if (codigo) {
-
         codigo.value =
             gerarCodigoMP();
-
     }
 
 
@@ -1150,9 +1326,7 @@ function novaMateriaPrima() {
         );
 
     if (nome) {
-
         nome.value = "";
-
     }
 
 
@@ -1162,9 +1336,7 @@ function novaMateriaPrima() {
         );
 
     if (categoria) {
-
         categoria.value = "";
-
     }
 
 
@@ -1174,9 +1346,7 @@ function novaMateriaPrima() {
         );
 
     if (unidade) {
-
         unidade.value = "";
-
     }
 
 
@@ -1186,9 +1356,7 @@ function novaMateriaPrima() {
         );
 
     if (estoque) {
-
         estoque.value = "0";
-
     }
 
 
@@ -1198,43 +1366,45 @@ function novaMateriaPrima() {
         );
 
     if (custo) {
-
         custo.value = "";
-
     }
 
-
-    // --------------------------------------------------
-    // PESO
-    // --------------------------------------------------
 
     const peso =
         obterCampoPesoMP();
 
     if (peso) {
-
         peso.value = "";
-
     }
 
 
     const unidadePeso =
-        obterCampoUnidadePesoMP();
+        document.getElementById(
+            "unidadePesoMP"
+        );
 
     if (unidadePeso) {
-
         unidadePeso.value = "g";
+    }
 
+
+    const tipoControle =
+        obterCampoTipoControleMP();
+
+    if (tipoControle) {
+        tipoControle.value =
+            "unidade";
     }
 
 
     atualizarBotaoMateriaPrima();
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // BOTÃO MATÉRIA-PRIMA
-// ------------------------------------------------------
+// ======================================================
 
 function atualizarBotaoMateriaPrima() {
 
@@ -1254,14 +1424,10 @@ function atualizarBotaoMateriaPrima() {
 
 
             if (
-                texto ===
-                    "salvar matéria-prima" ||
-                texto ===
-                    "salvar materia-prima" ||
-                texto ===
-                    "atualizar matéria-prima" ||
-                texto ===
-                    "atualizar materia-prima"
+                texto === "salvar matéria-prima" ||
+                texto === "salvar materia-prima" ||
+                texto === "atualizar matéria-prima" ||
+                texto === "atualizar materia-prima"
             ) {
 
                 if (
@@ -1283,12 +1449,13 @@ function atualizarBotaoMateriaPrima() {
 
         }
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // PEGAR CAMPO DE PESO
-// ------------------------------------------------------
+// ======================================================
 
 function obterCampoPesoMP() {
 
@@ -1303,24 +1470,26 @@ function obterCampoPesoMP() {
             "pesoPorUnidadeMP"
         )
     );
+
 }
 
 
-// ------------------------------------------------------
-// PEGAR UNIDADE DO PESO
-// ------------------------------------------------------
+// ======================================================
+// CAMPO UNIDADE DE PESO
+// ======================================================
 
 function obterCampoUnidadePesoMP() {
 
     return document.getElementById(
         "unidadePesoMP"
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // SALVAR MATÉRIA-PRIMA
-// ------------------------------------------------------
+// ======================================================
 
 function salvarMateriaPrima() {
 
@@ -1364,6 +1533,58 @@ function salvarMateriaPrima() {
 
     const campoUnidadePeso =
         obterCampoUnidadePesoMP();
+
+
+    const campoTipoControle =
+        obterCampoTipoControleMP();
+
+
+    let tipoControle =
+        campoTipoControle?.value ||
+        "";
+
+
+    /*
+     * Se o HTML ainda não tiver o campo
+     * tipoControleMP, tentamos manter
+     * compatibilidade.
+     */
+
+    if (!tipoControle) {
+
+        if (
+            Number(
+                campoPeso?.value || 0
+            ) > 0
+        ) {
+
+            tipoControle = "peso";
+
+        } else {
+
+            tipoControle = "unidade";
+
+        }
+
+    }
+
+
+    tipoControle =
+        String(
+            tipoControle
+        )
+        .toLowerCase();
+
+
+    if (
+        tipoControle !== "peso" &&
+        tipoControle !== "unidade"
+    ) {
+
+        tipoControle =
+            "unidade";
+
+    }
 
 
     const pesoUnidade =
@@ -1415,10 +1636,31 @@ function salvarMateriaPrima() {
     }
 
 
-    if (pesoUnidade <= 0) {
+    if (pesoUnidade < 0) {
 
         alert(
-            "Informe o peso da embalagem em gramas."
+            "O peso não pode ser negativo."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * IMPORTANTE:
+     *
+     * Peso só é obrigatório quando
+     * a matéria-prima é controlada por peso.
+     */
+
+    if (
+        tipoControle === "peso" &&
+        pesoUnidade <= 0
+    ) {
+
+        alert(
+            "Para uma matéria-prima controlada por peso, informe o peso da embalagem em gramas."
         );
 
         return;
@@ -1453,11 +1695,14 @@ function salvarMateriaPrima() {
         custo:
             custo,
 
+        tipoControle:
+            tipoControle,
+
         pesoUnidade:
             pesoUnidade,
 
         unidadePeso:
-            "g",
+            unidadePeso,
 
         data:
             new Date().toLocaleString(
@@ -1467,7 +1712,9 @@ function salvarMateriaPrima() {
     };
 
 
-    materias.push(materia);
+    materias.push(
+        materia
+    );
 
 
     salvarBanco();
@@ -1486,12 +1733,13 @@ function salvarMateriaPrima() {
     alert(
         "Matéria-prima salva com sucesso!"
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // CARREGAR MATÉRIAS
-// ------------------------------------------------------
+// ======================================================
 
 function carregarMaterias() {
 
@@ -1536,14 +1784,28 @@ function carregarMaterias() {
                 );
 
 
+            const tipoControle =
+                obterTipoControleMateria(
+                    materia
+                );
+
+
             const pesoTotal =
-                estoque *
-                pesoUnidade;
+                calcularPesoTotalMateria(
+                    materia
+                );
 
 
             const custoTotal =
-                estoque *
-                custo;
+                tipoControle === "peso"
+                    ? (
+                        estoque *
+                        custo
+                    )
+                    : (
+                        estoque *
+                        custo
+                    );
 
 
             const custoPorGrama =
@@ -1561,6 +1823,7 @@ function carregarMaterias() {
             linha.innerHTML = `
 
                 <td>
+
                     <strong>
                         ${materia.nome || ""}
                     </strong>
@@ -1574,41 +1837,102 @@ function carregarMaterias() {
                     >
                         ${materia.codigo || ""}
                     </small>
+
                 </td>
 
+
                 <td>
+
                     ${estoque}
+
+                    ${
+                        tipoControle === "peso"
+                            ? " embalagem(ns)"
+                            : " un"
+                    }
+
                 </td>
 
+
                 <td>
+
                     ${
-                        pesoUnidade > 0
+                        tipoControle === "peso"
                             ? formatarPeso(
                                 pesoUnidade,
                                 unidadePeso
                             )
-                            : "—"
+                            : (
+                                pesoUnidade > 0
+                                    ? formatarPeso(
+                                        pesoUnidade,
+                                        unidadePeso
+                                    )
+                                    : "—"
+                            )
                     }
+
                 </td>
 
+
                 <td>
+
                     ${
-                        pesoTotal > 0
+                        tipoControle === "peso"
                             ? formatarPeso(
                                 pesoTotal,
-                                unidadePeso
+                                "g"
                             )
-                            : "—"
+                            : (
+                                pesoTotal > 0
+                                    ? formatarPeso(
+                                        pesoTotal,
+                                        "g"
+                                    )
+                                    : "—"
+                            )
                     }
+
                 </td>
 
-                <td>
-                    R$ ${custo.toFixed(2)}
-                </td>
 
                 <td>
+
+                    ${
+                        tipoControle === "peso"
+                            ? "R$ " +
+                              custo.toFixed(2) +
+                              " / embalagem"
+                            : "R$ " +
+                              custo.toFixed(2) +
+                              " / un"
+                    }
+
+                </td>
+
+
+                <td>
+
                     R$ ${custoTotal.toFixed(2)}
+
+                    ${
+                        tipoControle === "peso" &&
+                        custoPorGrama > 0
+                            ? `
+                                <small
+                                    style="
+                                        display:block;
+                                        opacity:.65;
+                                    "
+                                >
+                                    R$ ${custoPorGrama.toFixed(4)}/g
+                                </small>
+                              `
+                            : ""
+                    }
+
                 </td>
+
 
                 <td>
 
@@ -1619,6 +1943,7 @@ function carregarMaterias() {
                     >
                         ✏️
                     </button>
+
 
                     <button
                         type="button"
@@ -1639,12 +1964,13 @@ function carregarMaterias() {
 
         }
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // EDITAR MATÉRIA-PRIMA
-// ------------------------------------------------------
+// ======================================================
 
 function editarMateriaPrima(index) {
 
@@ -1663,10 +1989,8 @@ function editarMateriaPrima(index) {
         );
 
     if (codigo) {
-
         codigo.value =
             materia.codigo || "";
-
     }
 
 
@@ -1676,10 +2000,8 @@ function editarMateriaPrima(index) {
         );
 
     if (nome) {
-
         nome.value =
             materia.nome || "";
-
     }
 
 
@@ -1689,10 +2011,8 @@ function editarMateriaPrima(index) {
         );
 
     if (categoria) {
-
         categoria.value =
             materia.categoria || "";
-
     }
 
 
@@ -1702,10 +2022,8 @@ function editarMateriaPrima(index) {
         );
 
     if (unidade) {
-
         unidade.value =
             materia.unidade || "";
-
     }
 
 
@@ -1715,12 +2033,10 @@ function editarMateriaPrima(index) {
         );
 
     if (estoque) {
-
         estoque.value =
             Number(
                 materia.estoque || 0
             );
-
     }
 
 
@@ -1730,18 +2046,15 @@ function editarMateriaPrima(index) {
         );
 
     if (custo) {
-
         custo.value =
             Number(
                 materia.custo || 0
             );
-
     }
 
 
     const campoPeso =
         obterCampoPesoMP();
-
 
     if (campoPeso) {
 
@@ -1756,11 +2069,25 @@ function editarMateriaPrima(index) {
     const campoUnidadePeso =
         obterCampoUnidadePesoMP();
 
-
     if (campoUnidadePeso) {
 
         campoUnidadePeso.value =
-            "g";
+            obterUnidadePesoMateria(
+                materia
+            );
+
+    }
+
+
+    const campoTipoControle =
+        obterCampoTipoControleMP();
+
+    if (campoTipoControle) {
+
+        campoTipoControle.value =
+            obterTipoControleMateria(
+                materia
+            );
 
     }
 
@@ -1770,12 +2097,13 @@ function editarMateriaPrima(index) {
 
 
     atualizarBotaoMateriaPrima();
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // ATUALIZAR MATÉRIA-PRIMA
-// ------------------------------------------------------
+// ======================================================
 
 function atualizarMateriaPrima(index) {
 
@@ -1825,10 +2153,57 @@ function atualizarMateriaPrima(index) {
         obterCampoPesoMP();
 
 
-    const novoPeso =
+    const campoUnidadePeso =
+        obterCampoUnidadePesoMP();
+
+
+    const campoTipoControle =
+        obterCampoTipoControleMP();
+
+
+    let novoPeso =
         Number(
             campoPeso?.value || 0
         );
+
+
+    const novaUnidadePeso =
+        campoUnidadePeso?.value ||
+        "g";
+
+
+    let novoTipoControle =
+        campoTipoControle?.value ||
+        materia.tipoControle ||
+        "";
+
+
+    if (!novoTipoControle) {
+
+        novoTipoControle =
+            novoPeso > 0
+                ? "peso"
+                : "unidade";
+
+    }
+
+
+    novoTipoControle =
+        String(
+            novoTipoControle
+        )
+        .toLowerCase();
+
+
+    if (
+        novoTipoControle !== "peso" &&
+        novoTipoControle !== "unidade"
+    ) {
+
+        novoTipoControle =
+            "unidade";
+
+    }
 
 
     if (novoEstoque < 0) {
@@ -1853,10 +2228,24 @@ function atualizarMateriaPrima(index) {
     }
 
 
-    if (novoPeso <= 0) {
+    if (novoPeso < 0) {
 
         alert(
-            "Informe o peso da embalagem em gramas."
+            "O peso não pode ser negativo."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        novoTipoControle === "peso" &&
+        novoPeso <= 0
+    ) {
+
+        alert(
+            "Para uma matéria-prima controlada por peso, informe o peso da embalagem."
         );
 
         return;
@@ -1895,13 +2284,16 @@ function atualizarMateriaPrima(index) {
         novoCusto;
 
 
+    materia.tipoControle =
+        novoTipoControle;
+
+
     materia.pesoUnidade =
         novoPeso;
 
 
-    // Todas as matérias-primas passam a usar gramas
     materia.unidadePeso =
-        "g";
+        novaUnidadePeso;
 
 
     salvarBanco();
@@ -1921,12 +2313,13 @@ function atualizarMateriaPrima(index) {
     alert(
         "Matéria-prima atualizada com sucesso!"
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // EXCLUIR MATÉRIA-PRIMA
-// ------------------------------------------------------
+// ======================================================
 
 function excluirMateriaPrima(index) {
 
@@ -1944,9 +2337,7 @@ function excluirMateriaPrima(index) {
             `Deseja excluir a matéria-prima "${materia.nome}"?`
         )
     ) {
-
         return;
-
     }
 
 
@@ -1970,6 +2361,7 @@ function excluirMateriaPrima(index) {
     alert(
         "Matéria-prima excluída."
     );
+
 }
 
 
@@ -2022,12 +2414,13 @@ function atualizarItensMovimentacao() {
 
         }
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // REGISTRAR MOVIMENTAÇÃO
-// ------------------------------------------------------
+// ======================================================
 
 function registrarMovimentacao() {
 
@@ -2140,6 +2533,11 @@ function registrarMovimentacao() {
         operacao:
             operacao,
 
+        tipoControle:
+            obterTipoControleMateria(
+                materia
+            ),
+
         data:
             new Date().toLocaleString(
                 "pt-BR"
@@ -2164,25 +2562,20 @@ function registrarMovimentacao() {
 
 
     if (campoQuantidade) {
-
         campoQuantidade.value = "";
-
     }
 
 
     alert(
         "Movimentação registrada com sucesso!"
     );
+
 }
 
 
 // ======================================================
 // RECEITAS
 // ======================================================
-
-// ------------------------------------------------------
-// CARREGAR PRODUTOS NA RECEITA
-// ------------------------------------------------------
 
 function carregarProdutosReceita() {
 
@@ -2229,12 +2622,9 @@ function carregarProdutosReceita() {
 
         }
     );
+
 }
 
-
-// ------------------------------------------------------
-// CARREGAR MATÉRIAS NA RECEITA
-// ------------------------------------------------------
 
 function carregarMateriasReceita() {
 
@@ -2274,17 +2664,11 @@ function carregarMateriasReceita() {
             option.textContent =
                 materia.nome +
                 (
-                    obterPesoMateria(materia) > 0
-                        ? " — " +
-                          formatarPeso(
-                              obterPesoMateria(materia),
-                              "g"
-                          ) +
-                          " / R$ " +
-                          Number(
-                              materia.custo || 0
-                          ).toFixed(2)
-                        : ""
+                    obterTipoControleMateria(
+                        materia
+                    ) === "peso"
+                        ? " — g"
+                        : " — un"
                 );
 
 
@@ -2294,12 +2678,86 @@ function carregarMateriasReceita() {
 
         }
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
+// ATUALIZAR INFORMAÇÃO DA QUANTIDADE DA RECEITA
+// ======================================================
+
+function atualizarUnidadeQuantidadeReceita() {
+
+    const select =
+        document.getElementById(
+            "materiaReceita"
+        );
+
+
+    const quantidade =
+        document.getElementById(
+            "quantidadeReceita"
+        );
+
+
+    if (!select || !quantidade) {
+        return;
+    }
+
+
+    const materia =
+        materias.find(
+            function (item) {
+
+                return (
+                    item.codigo ===
+                    select.value
+                );
+
+            }
+        );
+
+
+    if (!materia) {
+
+        quantidade.placeholder =
+            "Quantidade utilizada";
+
+        return;
+
+    }
+
+
+    const tipo =
+        obterTipoControleMateria(
+            materia
+        );
+
+
+    if (tipo === "peso") {
+
+        quantidade.placeholder =
+            "Quantidade em gramas";
+
+        quantidade.title =
+            "Digite a quantidade utilizada em gramas.";
+
+    } else {
+
+        quantidade.placeholder =
+            "Quantidade em unidades";
+
+        quantidade.title =
+            "Digite a quantidade utilizada em unidades.";
+
+    }
+
+}
+
+
+// ======================================================
 // NOVA RECEITA
-// ------------------------------------------------------
+// ======================================================
 
 function novaReceita() {
 
@@ -2314,11 +2772,8 @@ function novaReceita() {
             "produtoReceita"
         );
 
-
     if (produto) {
-
         produto.value = "";
-
     }
 
 
@@ -2327,11 +2782,8 @@ function novaReceita() {
             "rendimentoReceita"
         );
 
-
     if (rendimento) {
-
         rendimento.value = 1;
-
     }
 
 
@@ -2340,11 +2792,8 @@ function novaReceita() {
             "custoEmbalagem"
         );
 
-
     if (embalagem) {
-
         embalagem.value = 0;
-
     }
 
 
@@ -2353,11 +2802,8 @@ function novaReceita() {
             "outrosCustos"
         );
 
-
     if (outros) {
-
         outros.value = 0;
-
     }
 
 
@@ -2366,23 +2812,21 @@ function novaReceita() {
             "margemLucro"
         );
 
-
     if (margem) {
-
         margem.value = 0;
-
     }
 
 
     atualizarTabelaReceita();
 
     calcularCustoReceita();
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // ADICIONAR INGREDIENTE
-// ------------------------------------------------------
+// ======================================================
 
 function adicionarIngrediente() {
 
@@ -2402,9 +2846,7 @@ function adicionarIngrediente() {
         !materiaSelect ||
         !quantidadeInput
     ) {
-
         return;
-
     }
 
 
@@ -2432,7 +2874,7 @@ function adicionarIngrediente() {
     if (quantidade <= 0) {
 
         alert(
-            "Informe a quantidade em gramas."
+            "Informe uma quantidade válida."
         );
 
         return;
@@ -2464,16 +2906,27 @@ function adicionarIngrediente() {
     }
 
 
-    const pesoMateria =
-        obterPesoMateria(
+    const tipo =
+        obterTipoControleMateria(
             materia
         );
 
 
-    if (pesoMateria <= 0) {
+    /*
+     * SOMENTE matéria-prima por peso
+     * precisa ter peso da embalagem.
+     */
+
+    if (
+        tipo === "peso" &&
+        converterParaGramas(
+            obterPesoMateria(materia),
+            obterUnidadePesoMateria(materia)
+        ) <= 0
+    ) {
 
         alert(
-            "Essa matéria-prima não possui peso cadastrado. Cadastre o peso da embalagem em gramas antes de usar na receita."
+            "Essa matéria-prima está configurada por peso, mas não possui o peso da embalagem cadastrado. Edite a matéria-prima e informe o peso."
         );
 
         return;
@@ -2512,8 +2965,18 @@ function adicionarIngrediente() {
             nome:
                 materia.nome,
 
+            tipoControle:
+                tipo,
+
+            unidadeReceita:
+                obterUnidadeReceitaMateria(
+                    materia
+                ),
+
             unidade:
-                "g",
+                obterUnidadeReceitaMateria(
+                    materia
+                ),
 
             quantidade:
                 quantidade,
@@ -2524,10 +2987,14 @@ function adicionarIngrediente() {
                 ),
 
             pesoUnidade:
-                pesoMateria,
+                obterPesoMateria(
+                    materia
+                ),
 
             unidadePeso:
-                "g"
+                obterUnidadePesoMateria(
+                    materia
+                )
 
         });
 
@@ -2539,15 +3006,18 @@ function adicionarIngrediente() {
     materiaSelect.value = "";
 
 
+    atualizarUnidadeQuantidadeReceita();
+
     atualizarTabelaReceita();
 
     calcularCustoReceita();
+
 }
 
 
-// ------------------------------------------------------
-// TABELA DE INGREDIENTES DA RECEITA
-// ------------------------------------------------------
+// ======================================================
+// TABELA DE INGREDIENTES
+// ======================================================
 
 function atualizarTabelaReceita() {
 
@@ -2574,28 +3044,126 @@ function atualizarTabelaReceita() {
                 );
 
 
-            const custoPacote =
-                Number(
-                    item.custo || 0
+            const tipo =
+                item.tipoControle ||
+                (
+                    Number(
+                        item.pesoUnidade || 0
+                    ) > 0
+                        ? "peso"
+                        : "unidade"
                 );
 
 
-            const pesoPacote =
+            const unidade =
+                tipo === "peso"
+                    ? "g"
+                    : "un";
+
+
+            const materiaAtual =
+                materias.find(
+                    function (materia) {
+
+                        return (
+                            materia.codigo ===
+                            item.codigo
+                        );
+
+                    }
+                );
+
+
+            let custoTotal = 0;
+
+
+            if (materiaAtual) {
+
+                custoTotal =
+                    calcularCustoQuantidadeMateria(
+                        materiaAtual,
+                        quantidade
+                    );
+
+            } else {
+
+                /*
+                 * Compatibilidade com receitas
+                 * antigas que já estão salvas.
+                 */
+
+                if (
+                    tipo === "peso" &&
+                    Number(
+                        item.pesoUnidade || 0
+                    ) > 0
+                ) {
+
+                    const pesoGramas =
+                        converterParaGramas(
+                            item.pesoUnidade,
+                            item.unidadePeso || "g"
+                        );
+
+                    custoTotal =
+                        quantidade *
+                        (
+                            Number(
+                                item.custo || 0
+                            ) /
+                            pesoGramas
+                        );
+
+                } else {
+
+                    custoTotal =
+                        quantidade *
+                        Number(
+                            item.custo || 0
+                        );
+
+                }
+
+            }
+
+
+            let custoUnitarioExibido = 0;
+
+
+            if (
+                tipo === "peso" &&
+                materiaAtual
+            ) {
+
+                custoUnitarioExibido =
+                    calcularCustoPorGrama(
+                        materiaAtual
+                    );
+
+            } else if (
+                tipo === "peso" &&
                 Number(
                     item.pesoUnidade || 0
-                );
+                ) > 0
+            ) {
 
+                custoUnitarioExibido =
+                    Number(
+                        item.custo || 0
+                    ) /
+                    converterParaGramas(
+                        item.pesoUnidade,
+                        item.unidadePeso || "g"
+                    );
 
-            const custoPorGrama =
-                pesoPacote > 0
-                    ? custoPacote /
-                      pesoPacote
-                    : 0;
+            } else {
 
+                custoUnitarioExibido =
+                    Number(
+                        item.custo || 0
+                    );
 
-            const custoTotal =
-                quantidade *
-                custoPorGrama;
+            }
 
 
             const linha =
@@ -2610,35 +3178,34 @@ function atualizarTabelaReceita() {
                     ${item.nome || ""}
                 </td>
 
+
                 <td>
-                    ${quantidade.toLocaleString(
-                        "pt-BR"
-                    )} g
+                    ${quantidade}
                 </td>
+
+
+                <td>
+                    ${unidade}
+                </td>
+
 
                 <td>
                     ${
-                        pesoPacote > 0
-                            ? pesoPacote.toLocaleString(
-                                "pt-BR"
-                            ) + " g"
-                            : "—"
+                        tipo === "peso"
+                            ? "R$ " +
+                              custoUnitarioExibido.toFixed(4) +
+                              " / g"
+                            : "R$ " +
+                              custoUnitarioExibido.toFixed(2) +
+                              " / un"
                     }
                 </td>
 
-                <td>
-                    R$ ${custoPacote.toFixed(2)}
-                </td>
 
                 <td>
-                    R$ ${custoPorGrama.toFixed(4)}
+                    R$ ${custoTotal.toFixed(2)}
                 </td>
 
-                <td>
-                    <strong>
-                        R$ ${custoTotal.toFixed(2)}
-                    </strong>
-                </td>
 
                 <td>
 
@@ -2660,22 +3227,22 @@ function atualizarTabelaReceita() {
 
         }
     );
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // REMOVER INGREDIENTE
-// ------------------------------------------------------
+// ======================================================
 
 function removerIngrediente(index) {
 
     if (
         index < 0 ||
-        index >= ingredientesReceita.length
+        index >=
+        ingredientesReceita.length
     ) {
-
         return;
-
     }
 
 
@@ -2684,9 +3251,7 @@ function removerIngrediente(index) {
             "Remover este ingrediente da receita?"
         )
     ) {
-
         return;
-
     }
 
 
@@ -2699,12 +3264,13 @@ function removerIngrediente(index) {
     atualizarTabelaReceita();
 
     calcularCustoReceita();
+
 }
 
 
-// ------------------------------------------------------
-// CALCULAR RECEITA
-// ------------------------------------------------------
+// ======================================================
+// CALCULAR CUSTO DA RECEITA
+// ======================================================
 
 function calcularCustoReceita() {
 
@@ -2720,54 +3286,89 @@ function calcularCustoReceita() {
                 );
 
 
-            const pesoPacote =
-                Number(
-                    item.pesoUnidade || 0
+            if (quantidade <= 0) {
+                return;
+            }
+
+
+            const materia =
+                materias.find(
+                    function (materia) {
+
+                        return (
+                            materia.codigo ===
+                            item.codigo
+                        );
+
+                    }
                 );
 
 
-            const custoPacote =
-                Number(
-                    item.custo || 0
-                );
+            if (materia) {
 
-
-            // --------------------------------------------------
-            // CORREÇÃO PRINCIPAL
-            //
-            // quantidade = gramas usadas na receita
-            // pesoPacote = gramas compradas
-            // custoPacote = preço pago pela embalagem
-            //
-            // Exemplo:
-            //
-            // 300 g usados
-            // 200 g comprados
-            // R$ 11,98 pagos
-            //
-            // 300 × (11,98 / 200)
-            // = R$ 17,97
-            // --------------------------------------------------
-
-            let custoIngrediente = 0;
-
-
-            if (
-                pesoPacote > 0
-            ) {
-
-                custoIngrediente =
-                    quantidade *
-                    (
-                        custoPacote /
-                        pesoPacote
+                custoIngredientes +=
+                    calcularCustoQuantidadeMateria(
+                        materia,
+                        quantidade
                     );
+
+                return;
 
             }
 
 
-            custoIngredientes +=
-                custoIngrediente;
+            /*
+             * Compatibilidade com receitas
+             * antigas.
+             */
+
+            const tipo =
+                item.tipoControle ||
+                (
+                    Number(
+                        item.pesoUnidade || 0
+                    ) > 0
+                        ? "peso"
+                        : "unidade"
+                );
+
+
+            if (
+                tipo === "peso" &&
+                Number(
+                    item.pesoUnidade || 0
+                ) > 0
+            ) {
+
+                const pesoGramas =
+                    converterParaGramas(
+                        item.pesoUnidade,
+                        item.unidadePeso || "g"
+                    );
+
+
+                if (pesoGramas > 0) {
+
+                    custoIngredientes +=
+                        quantidade *
+                        (
+                            Number(
+                                item.custo || 0
+                            ) /
+                            pesoGramas
+                        );
+
+                }
+
+            } else {
+
+                custoIngredientes +=
+                    quantidade *
+                    Number(
+                        item.custo || 0
+                    );
+
+            }
 
         }
     );
@@ -2905,12 +3506,13 @@ function calcularCustoReceita() {
             valorVenda
 
     };
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // SALVAR RECEITA
-// ------------------------------------------------------
+// ======================================================
 
 function salvarReceita() {
 
@@ -2982,6 +3584,82 @@ function salvarReceita() {
         calcularCustoReceita();
 
 
+    /*
+     * Atualizar os dados dos ingredientes
+     * antes de salvar.
+     */
+
+    const ingredientesParaSalvar =
+        ingredientesReceita.map(
+            function (item) {
+
+                const materia =
+                    materias.find(
+                        function (m) {
+
+                            return (
+                                m.codigo ===
+                                item.codigo
+                            );
+
+                        }
+                    );
+
+
+                if (!materia) {
+                    return item;
+                }
+
+
+                return {
+
+                    codigo:
+                        materia.codigo,
+
+                    nome:
+                        materia.nome,
+
+                    tipoControle:
+                        obterTipoControleMateria(
+                            materia
+                        ),
+
+                    unidadeReceita:
+                        obterUnidadeReceitaMateria(
+                            materia
+                        ),
+
+                    unidade:
+                        obterUnidadeReceitaMateria(
+                            materia
+                        ),
+
+                    quantidade:
+                        Number(
+                            item.quantidade || 0
+                        ),
+
+                    custo:
+                        Number(
+                            materia.custo || 0
+                        ),
+
+                    pesoUnidade:
+                        obterPesoMateria(
+                            materia
+                        ),
+
+                    unidadePeso:
+                        obterUnidadePesoMateria(
+                            materia
+                        )
+
+                };
+
+            }
+        );
+
+
     const dadosReceita = {
 
         codigoProduto:
@@ -2991,11 +3669,7 @@ function salvarReceita() {
             produto.nome,
 
         ingredientes:
-            JSON.parse(
-                JSON.stringify(
-                    ingredientesReceita
-                )
-            ),
+            ingredientesParaSalvar,
 
         rendimento:
             Number(
@@ -3089,12 +3763,13 @@ function salvarReceita() {
     carregarListaReceitas();
 
     novaReceita();
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // EDITAR RECEITA
-// ------------------------------------------------------
+// ======================================================
 
 function editarReceita(codigoProduto) {
 
@@ -3205,48 +3880,71 @@ function editarReceita(codigoProduto) {
         );
 
 
-    // --------------------------------------------------
-    // CORRIGIR RECEITAS ANTIGAS
-    // --------------------------------------------------
+    /*
+     * Atualizar receitas antigas com
+     * informações atuais da matéria-prima.
+     */
 
-    ingredientesReceita.forEach(
-        function (item) {
+    ingredientesReceita =
+        ingredientesReceita.map(
+            function (item) {
 
-            const materia =
-                materias.find(
-                    function (m) {
+                const materia =
+                    materias.find(
+                        function (m) {
 
-                        return (
-                            m.codigo ===
-                            item.codigo
-                        );
+                            return (
+                                m.codigo ===
+                                item.codigo
+                            );
 
-                    }
-                );
-
-
-            if (materia) {
-
-                item.pesoUnidade =
-                    obterPesoMateria(
-                        materia
+                        }
                     );
 
-                item.custo =
-                    Number(
-                        materia.custo || 0
-                    );
 
-                item.unidade =
-                    "g";
+                if (!materia) {
+                    return item;
+                }
 
-                item.unidadePeso =
-                    "g";
+
+                return {
+
+                    ...item,
+
+                    tipoControle:
+                        obterTipoControleMateria(
+                            materia
+                        ),
+
+                    unidadeReceita:
+                        obterUnidadeReceitaMateria(
+                            materia
+                        ),
+
+                    unidade:
+                        obterUnidadeReceitaMateria(
+                            materia
+                        ),
+
+                    custo:
+                        Number(
+                            materia.custo || 0
+                        ),
+
+                    pesoUnidade:
+                        obterPesoMateria(
+                            materia
+                        ),
+
+                    unidadePeso:
+                        obterUnidadePesoMateria(
+                            materia
+                        )
+
+                };
 
             }
-
-        }
-    );
+        );
 
 
     window.receitaEditando =
@@ -3256,12 +3954,13 @@ function editarReceita(codigoProduto) {
     atualizarTabelaReceita();
 
     calcularCustoReceita();
+
 }
 
 
-// ------------------------------------------------------
+// ======================================================
 // CARREGAR LISTA DE RECEITAS
-// ------------------------------------------------------
+// ======================================================
 
 function carregarListaReceitas() {
 
@@ -3313,12 +4012,14 @@ function carregarListaReceitas() {
                 </td>
 
                 <td>
+
                     <strong>
                         R$ ${Number(
                             receita.valorVenda ||
                             0
                         ).toFixed(2)}
                     </strong>
+
                 </td>
 
                 <td>
@@ -3341,6 +4042,7 @@ function carregarListaReceitas() {
 
         }
     );
+
 }
 
 
@@ -3351,12 +4053,14 @@ function carregarListaReceitas() {
 function carregarIngredientesReceita() {
 
     atualizarTabelaReceita();
+
 }
 
 
 function calcularReceita() {
 
     return calcularCustoReceita();
+
 }
 
 
@@ -3365,6 +4069,7 @@ function finalizarReceita() {
     novaReceita();
 
     carregarListaReceitas();
+
 }
 
 
@@ -3374,7 +4079,9 @@ function finalizarReceita() {
 
 function iniciarSistema() {
 
-    // NÃO APAGA NEM ALTERA O BANCO EXISTENTE.
+    /*
+     * NÃO APAGA BANCO.
+     */
 
     carregarProdutos();
 
@@ -3391,6 +4098,9 @@ function iniciarSistema() {
     atualizarTabelaReceita();
 
     atualizarDashboard();
+
+    atualizarUnidadeQuantidadeReceita();
+
 }
 
 
@@ -3443,6 +4153,88 @@ document.addEventListener(
 
     }
 );
+
+
+// ======================================================
+// QUANDO TROCAR MATÉRIA-PRIMA
+// ======================================================
+
+document.addEventListener(
+    "change",
+    function (event) {
+
+        if (
+            event.target.id ===
+            "materiaReceita"
+        ) {
+
+            atualizarUnidadeQuantidadeReceita();
+
+        }
+
+
+        if (
+            event.target.id ===
+            "tipoControleMP"
+        ) {
+
+            atualizarInterfaceTipoMateria();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// ATUALIZAR INTERFACE DO TIPO DE MATÉRIA
+// ======================================================
+
+function atualizarInterfaceTipoMateria() {
+
+    const campoTipo =
+        obterCampoTipoControleMP();
+
+
+    if (!campoTipo) {
+        return;
+    }
+
+
+    const campoPeso =
+        obterCampoPesoMP();
+
+
+    const tipo =
+        String(
+            campoTipo.value || "unidade"
+        )
+        .toLowerCase();
+
+
+    if (campoPeso) {
+
+        if (tipo === "peso") {
+
+            campoPeso.placeholder =
+                "Peso da embalagem em gramas";
+
+            campoPeso.title =
+                "Exemplo: embalagem de 200 g";
+
+        } else {
+
+            campoPeso.placeholder =
+                "Peso por unidade (opcional)";
+
+            campoPeso.title =
+                "Opcional. Exemplo: 1 ovo = 50 g";
+
+        }
+
+    }
+
+}
 
 
 // ======================================================
@@ -3513,11 +4305,14 @@ window.finalizarReceita =
 window.calcularCustoReceita =
     calcularCustoReceita;
 
-window.calcularCustoPorGrama =
-    calcularCustoPorGrama;
+window.carregarMaterias =
+    carregarMaterias;
 
-window.calcularCustoQuantidadeMateria =
-    calcularCustoQuantidadeMateria;
+window.carregarProdutos =
+    carregarProdutos;
+
+window.atualizarInterfaceTipoMateria =
+    atualizarInterfaceTipoMateria;
 
 
 // ======================================================
